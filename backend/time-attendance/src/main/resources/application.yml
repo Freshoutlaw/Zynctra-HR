@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: time-attendance
+server:
+  port: 8080

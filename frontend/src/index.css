@@ -1,0 +1,338 @@
+/**
+ * /frontend/src/index.css
+ * 
+ * Global styles and theming
+ * Supports light and dark modes
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Root Variables */
+:root {
+  /* Light Theme */
+  --color-bg: rgb(248, 249, 250);
+  --color-bg-secondary: rgb(240, 241, 245);
+  --color-bg-tertiary: rgb(255, 255, 255);
+  --color-text: rgb(15, 23, 42);
+  --color-text-secondary: rgb(71, 85, 105);
+  --color-text-tertiary: rgb(100, 116, 139);
+  --color-border: rgb(226, 232, 240);
+  --color-border-light: rgb(241, 245, 249);
+  --color-focus: rgb(6, 182, 212);
+}
+
+/* Dark Theme */
+.dark {
+  --color-bg: rgb(3, 7, 30);
+  --color-bg-secondary: rgb(15, 23, 42);
+  --color-bg-tertiary: rgb(30, 41, 59);
+  --color-text: rgb(248, 250, 252);
+  --color-text-secondary: rgb(203, 213, 225);
+  --color-text-tertiary: rgb(148, 163, 184);
+  --color-border: rgb(30, 41, 59);
+  --color-border-light: rgb(51, 65, 85);
+  --color-focus: rgb(6, 182, 212);
+}
+
+/* Base Styles */
+* {
+  @apply transition-colors duration-200;
+}
+
+html,
+body {
+  @apply antialiased;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  @apply font-bold;
+}
+
+h1 {
+  @apply text-4xl md:text-5xl;
+}
+
+h2 {
+  @apply text-3xl md:text-4xl;
+}
+
+h3 {
+  @apply text-2xl md:text-3xl;
+}
+
+p {
+  @apply text-base leading-relaxed;
+}
+
+a {
+  @apply text-cyan-400 hover:text-cyan-300 transition-colors;
+  text-decoration: none;
+}
+
+.dark a {
+  @apply text-cyan-400 hover:text-cyan-300;
+}
+
+/* Forms */
+input,
+textarea,
+select {
+  @apply w-full px-4 py-3 rounded-lg border;
+  background-color: var(--color-bg-tertiary);
+  border-color: var(--color-border);
+  color: var(--color-text);
+  
+  &:focus {
+    @apply outline-none border-cyan-500 ring-2 ring-cyan-500/20;
+  }
+
+  &::placeholder {
+    color: var(--color-text-tertiary);
+  }
+}
+
+/* Buttons */
+button {
+  @apply font-medium cursor-pointer transition-all;
+  
+  &:disabled {
+    @apply cursor-not-allowed opacity-50;
+  }
+
+  &:focus {
+    @apply outline-none ring-2 ring-cyan-500/50;
+  }
+}
+
+/* Cards */
+.card {
+  @apply rounded-lg border p-6;
+  background-color: var(--color-bg-tertiary);
+  border-color: var(--color-border);
+}
+
+.dark .card {
+  background-color: var(--color-bg-secondary);
+  border-color: var(--color-border);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 5px;
+
+  &:hover {
+    background: var(--color-text-tertiary);
+  }
+}
+
+/* Loading Animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Gradient Text */
+.gradient-text {
+  @apply bg-gradient-to-r from-cyan-400 to-cyan-600 bg-clip-text text-transparent;
+}
+
+/* Backdrop Blur */
+.backdrop-blur {
+  backdrop-filter: blur(10px);
+}
+
+/* Focus Visible */
+*:focus-visible {
+  @apply outline-none ring-2 ring-cyan-500/50;
+}
+
+/* Selection */
+::selection {
+  @apply bg-cyan-500/30 text-cyan-300;
+}
+
+.dark::selection {
+  @apply bg-cyan-600/30 text-cyan-300;
+}
+
+/* Utilities */
+.truncate-lines-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.truncate-lines-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Responsive Grid */
+.grid-responsive {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Flex Center */
+.flex-center {
+  @apply flex items-center justify-center;
+}
+
+/* Transitions */
+.transition-smooth {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+/* Animations */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slideInUp 0.5s ease-out;
+}
+
+.animate-slide-down {
+  animation: slideInDown 0.5s ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Dark Mode Specific */
+.dark {
+  color-scheme: dark;
+}
+
+.light {
+  color-scheme: light;
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+
+  .no-print {
+    display: none;
+  }
+}
+
+/* Accessibility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: more) {
+  input,
+  textarea,
+  select {
+    border-width: 2px;
+  }
+
+  button {
+    border-width: 2px;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

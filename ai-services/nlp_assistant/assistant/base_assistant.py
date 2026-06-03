@@ -1,0 +1,2 @@
+class BaseAssistant:
+    pass

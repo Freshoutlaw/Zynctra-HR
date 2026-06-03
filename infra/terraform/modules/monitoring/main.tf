@@ -1,0 +1,1 @@
+# MONITORING module configuration

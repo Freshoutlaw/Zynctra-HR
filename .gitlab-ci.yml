@@ -1,0 +1,5 @@
+# GitLab CI configuration
+stages:
+  - test
+  - build
+  - deploy

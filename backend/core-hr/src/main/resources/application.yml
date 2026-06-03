@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: core-hr
+server:
+  port: 8080

@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: benefits
+server:
+  port: 8080

@@ -1,0 +1,2 @@
+class BaseAnomalyModel:
+    pass

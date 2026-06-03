@@ -1,0 +1,2 @@
+class CompensationAnalyzer:
+    pass

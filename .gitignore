@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+*.log
+.env
+.env.local
+.DS_Store
+dist/
+build/
+target/
+__pycache__/
+*.pyc
+.terraform/
+*.tfstate
+*.tfstate.*

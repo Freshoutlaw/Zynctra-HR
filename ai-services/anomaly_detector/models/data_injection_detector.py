@@ -1,0 +1,2 @@
+class DataInjectionDetector:
+    pass

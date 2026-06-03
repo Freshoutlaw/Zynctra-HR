@@ -1,0 +1,2 @@
+class AttritionPredictor:
+    pass

@@ -1,0 +1,676 @@
+/**
+ * /frontend/src/styles/forms.css
+ * 
+ * Form input, textarea, select, checkbox, radio styles
+ */
+
+/* ============================================================================
+   Form Container
+   ============================================================================ */
+
+.form-group {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.form-row.tight {
+  gap: 1rem;
+}
+
+/* ============================================================================
+   Form Labels
+   ============================================================================ */
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text-primary);
+  transition: color var(--transition-smooth);
+}
+
+.form-label.required::after {
+  content: '*';
+  color: var(--color-error);
+  font-weight: bold;
+}
+
+.form-label.disabled {
+  color: var(--color-disabled-text);
+  cursor: not-allowed;
+}
+
+.form-label-hint {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--color-text-tertiary);
+  margin-left: auto;
+}
+
+/* ============================================================================
+   Text Inputs
+   ============================================================================ */
+
+.form-input,
+input[type='text'],
+input[type='email'],
+input[type='password'],
+input[type='tel'],
+input[type='url'],
+input[type='number'],
+input[type='date'],
+input[type='time'],
+input[type='datetime-local'],
+input[type='search'] {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-family: inherit;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  background-color: var(--color-input-bg);
+  color: var(--color-text-primary);
+  transition: all var(--transition-smooth);
+  outline: none;
+}
+
+.form-input::placeholder,
+input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.form-input:hover,
+input:hover {
+  border-color: var(--color-border-secondary);
+}
+
+.form-input:focus,
+input:focus {
+  border-color: var(--color-input-focus);
+  background-color: var(--color-input-bg);
+  box-shadow: 0 0 0 3px var(--color-focus-bg);
+  box-shadow: 0 0 0 3px rgba(0, 217, 255, 0.1);
+}
+
+.form-input:disabled,
+input:disabled {
+  background-color: var(--color-disabled-bg);
+  color: var(--color-disabled-text);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-input.error,
+input.error {
+  border-color: var(--color-error);
+  background-color: rgba(239, 68, 68, 0.05);
+}
+
+.form-input.error:focus,
+input.error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.form-input.success,
+input.success {
+  border-color: var(--color-success);
+  background-color: rgba(34, 197, 94, 0.05);
+}
+
+.form-input.success:focus,
+input.success:focus {
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+
+/* ============================================================================
+   Textarea
+   ============================================================================ */
+
+.form-textarea,
+textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-family: inherit;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  background-color: var(--color-input-bg);
+  color: var(--color-text-primary);
+  transition: all var(--transition-smooth);
+  outline: none;
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-textarea::placeholder,
+textarea::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.form-textarea:hover,
+textarea:hover {
+  border-color: var(--color-border-secondary);
+}
+
+.form-textarea:focus,
+textarea:focus {
+  border-color: var(--color-input-focus);
+  box-shadow: 0 0 0 3px rgba(0, 217, 255, 0.1);
+}
+
+.form-textarea:disabled,
+textarea:disabled {
+  background-color: var(--color-disabled-bg);
+  color: var(--color-disabled-text);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-textarea.error,
+textarea.error {
+  border-color: var(--color-error);
+  background-color: rgba(239, 68, 68, 0.05);
+}
+
+.form-textarea.success,
+textarea.success {
+  border-color: var(--color-success);
+  background-color: rgba(34, 197, 94, 0.05);
+}
+
+/* ============================================================================
+   Select / Dropdown
+   ============================================================================ */
+
+.form-select,
+select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  padding-right: 2.5rem;
+  font-size: 1rem;
+  font-family: inherit;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  background-color: var(--color-input-bg);
+  color: var(--color-text-primary);
+  transition: all var(--transition-smooth);
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2300d9ff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px 12px;
+}
+
+.dark .form-select,
+.dark select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2300d9ff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+}
+
+.form-select:hover,
+select:hover {
+  border-color: var(--color-border-secondary);
+}
+
+.form-select:focus,
+select:focus {
+  border-color: var(--color-input-focus);
+  box-shadow: 0 0 0 3px rgba(0, 217, 255, 0.1);
+}
+
+.form-select:disabled,
+select:disabled {
+  background-color: var(--color-disabled-bg);
+  color: var(--color-disabled-text);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-select option,
+select option {
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-tertiary);
+}
+
+.dark .form-select option,
+.dark select option {
+  background-color: var(--color-bg-secondary);
+}
+
+/* ============================================================================
+   Checkbox
+   ============================================================================ */
+
+.form-checkbox {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.form-checkbox input[type='checkbox'] {
+  position: relative;
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+  margin: 0;
+}
+
+.form-checkbox input[type='checkbox']:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.form-checkbox label {
+  cursor: pointer;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.form-checkbox input[type='checkbox']:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(0, 217, 255, 0.1);
+}
+
+/* ============================================================================
+   Radio Button
+   ============================================================================ */
+
+.form-radio {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.form-radio input[type='radio'] {
+  position: relative;
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+  margin: 0;
+}
+
+.form-radio input[type='radio']:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.form-radio label {
+  cursor: pointer;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.form-radio input[type='radio']:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(0, 217, 255, 0.1);
+}
+
+.form-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.form-radio-group.horizontal {
+  flex-direction: row;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* ============================================================================
+   Helper Text & Validation
+   ============================================================================ */
+
+.form-help {
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.form-error {
+  font-size: 0.75rem;
+  color: var(--color-error);
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: 500;
+  animation: slideInUp 0.3s ease-out;
+}
+
+.form-success {
+  font-size: 0.75rem;
+  color: var(--color-success);
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: 500;
+}
+
+.form-warning {
+  font-size: 0.75rem;
+  color: var(--color-warning);
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: 500;
+}
+
+/* ============================================================================
+   Input Icons
+   ============================================================================ */
+
+.form-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.form-input-icon {
+  position: absolute;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  color: var(--color-text-tertiary);
+  font-size: 1rem;
+}
+
+.form-input-wrapper .form-input,
+.form-input-wrapper input {
+  padding-right: 3rem;
+}
+
+.form-input-icon.error {
+  color: var(--color-error);
+}
+
+.form-input-icon.success {
+  color: var(--color-success);
+}
+
+.form-input-icon.warning {
+  color: var(--color-warning);
+}
+
+/* ============================================================================
+   Password Strength Indicator
+   ============================================================================ */
+
+.password-strength {
+  display: flex;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.password-strength-bar {
+  height: 0.25rem;
+  flex: 1;
+  background-color: var(--color-border-primary);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.password-strength-bar.weak {
+  background-color: var(--color-error);
+}
+
+.password-strength-bar.fair {
+  background-color: var(--color-warning);
+}
+
+.password-strength-bar.good {
+  background-color: var(--color-info);
+}
+
+.password-strength-bar.strong {
+  background-color: var(--color-success);
+}
+
+.password-strength-bar.excellent {
+  background-color: var(--color-primary);
+}
+
+.password-strength-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.password-strength-text.weak {
+  color: var(--color-error);
+}
+
+.password-strength-text.fair {
+  color: var(--color-warning);
+}
+
+.password-strength-text.good {
+  color: var(--color-info);
+}
+
+.password-strength-text.strong {
+  color: var(--color-success);
+}
+
+.password-strength-text.excellent {
+  color: var(--color-primary);
+}
+
+/* ============================================================================
+   Form Buttons
+   ============================================================================ */
+
+.form-button-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.form-button-group.align-right {
+  justify-content: flex-end;
+}
+
+.form-button-group.align-center {
+  justify-content: center;
+}
+
+.form-button-group.align-left {
+  justify-content: flex-start;
+}
+
+/* ============================================================================
+   File Input
+   ============================================================================ */
+
+.form-file {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.form-file input[type='file'] {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.form-file-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 2rem;
+  border: 2px dashed var(--color-border-primary);
+  border-radius: 0.5rem;
+  background-color: var(--color-bg-secondary);
+  cursor: pointer;
+  transition: all var(--transition-smooth);
+  text-align: center;
+}
+
+.form-file input[type='file']:hover + .form-file-label {
+  border-color: var(--color-primary);
+  background-color: rgba(0, 217, 255, 0.05);
+}
+
+.form-file input[type='file']:focus + .form-file-label {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(0, 217, 255, 0.1);
+}
+
+.form-file-text {
+  font-size: 0.875rem;
+}
+
+.form-file-hint {
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+}
+
+/* ============================================================================
+   Form Loading State
+   ============================================================================ */
+
+.form-loading {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.form-loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--color-overlay);
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================================================================
+   Range Slider
+   ============================================================================ */
+
+.form-range,
+input[type='range'] {
+  width: 100%;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: var(--color-border-primary);
+  outline: none;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.form-range::-webkit-slider-thumb,
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background: var(--color-primary);
+  cursor: pointer;
+  box-shadow: var(--shadow-glow-primary);
+  transition: all var(--transition-smooth);
+}
+
+.form-range::-webkit-slider-thumb:hover,
+input[type='range']::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.form-range::-moz-range-thumb,
+input[type='range']::-moz-range-thumb {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background: var(--color-primary);
+  cursor: pointer;
+  border: none;
+  box-shadow: var(--shadow-glow-primary);
+  transition: all var(--transition-smooth);
+}
+
+.form-range::-moz-range-thumb:hover,
+input[type='range']::-moz-range-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* ============================================================================
+   Fieldset
+   ============================================================================ */
+
+fieldset {
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+legend {
+  padding: 0 0.5rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+/* ============================================================================
+   Form Validation States (Tailwind friendly)
+   ============================================================================ */
+
+.has-error .form-input,
+.has-error input {
+  border-color: var(--color-error);
+}
+
+.has-success .form-input,
+.has-success input {
+  border-color: var(--color-success);
+}
+
+.has-warning .form-input,
+.has-warning input {
+  border-color: var(--color-warning);
+}

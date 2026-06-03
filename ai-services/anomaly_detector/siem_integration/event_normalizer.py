@@ -1,0 +1,2 @@
+class EventNormalizer:
+    pass

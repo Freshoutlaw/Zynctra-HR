@@ -1,0 +1,2 @@
+class FAQChatbot:
+    pass
