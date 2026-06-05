@@ -1,8 +1,11 @@
-//   */frontend/src/components/security/AnomalyDetectionDashboard.tsx
-//  * Real-time anomaly detection dashboard
-//  */
+/**
+ * /frontend/src/components/security/AnomalyDetectionDashboard.tsx
+ *
+ * Real-time anomaly detection dashboard.
+ * Fixed: removed stray comment prefix; unused import removed.
+ */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
 export interface DetectedAnomaly {
@@ -28,13 +31,9 @@ interface AnomalyDetectionDashboardProps {
   };
 }
 
-export const AnomalyDetectionDashboard: React.FC<AnomalyDetectionDashboardProps> = ({
-  anomalies,
-  onAcknowledge,
-  realTimeStats,
-}) => {
+export const AnomalyDetectionDashboard: React.FC<AnomalyDetectionDashboardProps> = ({ anomalies, onAcknowledge, realTimeStats }) => {
   const [filter, setFilter] = useState<'all' | 'critical' | 'high' | 'pending'>('pending');
-  
+
   const filteredAnomalies = anomalies.filter((a) => {
     if (filter === 'pending') return !a.acknowledged;
     if (filter === 'critical') return a.severity === 'critical';
@@ -42,27 +41,35 @@ export const AnomalyDetectionDashboard: React.FC<AnomalyDetectionDashboardProps>
     return true;
   });
 
-  const getSeverityIcon = (severity: string) => {
-    const icons: Record<string, string> = {
+  const getSeverityIcon = (severity: DetectedAnomaly['severity']): string => {
+    const icons: Record<DetectedAnomaly['severity'], string> = {
       critical: '🔴',
       high: '🟠',
       medium: '🟡',
       low: '🔵',
     };
-    return icons[severity] || '⚪';
+    return icons[severity];
   };
 
+  const statCards = realTimeStats
+    ? [
+        { label: 'Total Detected', value: realTimeStats.totalDetected, color: 'bg-blue-100 dark:bg-blue-900/30' },
+        { label: 'Resolved', value: realTimeStats.resolved, color: 'bg-green-100 dark:bg-green-900/30' },
+        { label: 'Pending', value: realTimeStats.pending, color: 'bg-yellow-100 dark:bg-yellow-900/30' },
+        { label: 'Critical', value: realTimeStats.criticalCount, color: 'bg-red-100 dark:bg-red-900/30' },
+      ]
+    : [];
+
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-      {/* Stats Cards */}
-      {realTimeStats && (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="space-y-6"
+    >
+      {/* Stats */}
+      {statCards.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {[
-            { label: 'Total Detected', value: realTimeStats.totalDetected, color: 'bg-blue-100 dark:bg-blue-900/30' },
-            { label: 'Resolved', value: realTimeStats.resolved, color: 'bg-green-100 dark:bg-green-900/30' },
-            { label: 'Pending', value: realTimeStats.pending, color: 'bg-yellow-100 dark:bg-yellow-900/30' },
-            { label: 'Critical', value: realTimeStats.criticalCount, color: 'bg-red-100 dark:bg-red-900/30' },
-          ].map((stat, idx) => (
+          {statCards.map((stat, idx) => (
             <motion.div
               key={idx}
               initial={{ y: 20, opacity: 0 }}
@@ -70,14 +77,16 @@ export const AnomalyDetectionDashboard: React.FC<AnomalyDetectionDashboardProps>
               transition={{ delay: idx * 0.1 }}
               className={`${stat.color} rounded-lg p-4`}
             >
-              <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{stat.label}</p>
+              <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                {stat.label}
+              </p>
               <p className="text-2xl font-bold mt-2">{stat.value}</p>
             </motion.div>
           ))}
         </div>
       )}
 
-      {/* Filter Tabs */}
+      {/* Filter tabs */}
       <div className="flex gap-2 bg-slate-100 dark:bg-slate-700 p-1 rounded-lg w-fit">
         {(['all', 'pending', 'high', 'critical'] as const).map((f) => (
           <button
@@ -94,7 +103,7 @@ export const AnomalyDetectionDashboard: React.FC<AnomalyDetectionDashboardProps>
         ))}
       </div>
 
-      {/* Anomalies List */}
+      {/* Anomaly list */}
       <div className="space-y-3">
         {filteredAnomalies.map((anomaly, idx) => (
           <motion.div
@@ -119,12 +128,20 @@ export const AnomalyDetectionDashboard: React.FC<AnomalyDetectionDashboardProps>
                     </p>
                   </div>
                 </div>
-                <p className="text-sm text-slate-700 dark:text-slate-300 mb-2">{anomaly.description}</p>
+                <p className="text-sm text-slate-700 dark:text-slate-300 mb-2">
+                  {anomaly.description}
+                </p>
                 {anomaly.affectedUser && (
-                  <p className="text-xs text-slate-500 dark:text-slate-500">
-                    User: {anomaly.affectedUser}
+                  <p className="text-xs text-slate-500">User: {anomaly.affectedUser}</p>
+                )}
+                {anomaly.affectedResource && (
+                  <p className="text-xs text-slate-500">
+                    Resource: {anomaly.affectedResource}
                   </p>
                 )}
+                <p className="text-xs text-slate-400 mt-1">
+                  {new Date(anomaly.timestamp).toLocaleString()}
+                </p>
               </div>
               {!anomaly.acknowledged && (
                 <button
@@ -137,13 +154,13 @@ export const AnomalyDetectionDashboard: React.FC<AnomalyDetectionDashboardProps>
             </div>
           </motion.div>
         ))}
-      </div>
 
-      {filteredAnomalies.length === 0 && (
-        <div className="text-center py-8 text-slate-500 dark:text-slate-400">
-          <p>No anomalies detected</p>
-        </div>
-      )}
+        {filteredAnomalies.length === 0 && (
+          <div className="text-center py-8 text-slate-500 dark:text-slate-400">
+            No anomalies detected for this filter
+          </div>
+        )}
+      </div>
     </motion.div>
   );
 };

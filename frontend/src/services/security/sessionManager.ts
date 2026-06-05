@@ -1,7 +1,7 @@
 /**
  * /frontend/src/services/security/sessionManager.ts
- * 
- * Session management and security
+ *
+ * Session management and security (pure service — no React hooks).
  */
 
 export interface Session {
@@ -15,13 +15,17 @@ export interface Session {
 }
 
 class SessionManager {
-  private SESSION_KEY = 'zynctra_session';
-  private TOKEN_KEY = 'zynctra_token';
-  private REFRESH_KEY = 'zynctra_refresh_token';
-  private INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes
-  private inactivityTimer: NodeJS.Timeout | null = null;
+  private readonly SESSION_KEY = 'zynctra_session';
+  private readonly TOKEN_KEY = 'zynctra_token';
+  private readonly REFRESH_KEY = 'zynctra_refresh_token';
+  private readonly INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 min
+  private inactivityTimer: ReturnType<typeof setTimeout> | null = null;
 
-  createSession(token: string, refreshToken: string, expiresIn: number): Session {
+  createSession(
+    token: string,
+    refreshToken: string,
+    expiresIn: number
+  ): Session {
     const session: Session = {
       id: `session_${Date.now()}`,
       userId: this.extractUserIdFromToken(token),
@@ -32,26 +36,28 @@ class SessionManager {
       lastActivity: new Date(),
     };
 
-    localStorage.setItem(this.SESSION_KEY, JSON.stringify(session));
-    localStorage.setItem(this.TOKEN_KEY, token);
-    localStorage.setItem(this.REFRESH_KEY, refreshToken);
-
+    sessionStorage.setItem(this.SESSION_KEY, JSON.stringify(session));
+    sessionStorage.setItem(this.TOKEN_KEY, token);
+    sessionStorage.setItem(this.REFRESH_KEY, refreshToken);
     this.setupInactivityTimer();
     return session;
   }
 
   getSession(): Session | null {
-    const session = localStorage.getItem(this.SESSION_KEY);
-    return session ? JSON.parse(session) : null;
+    try {
+      const raw = sessionStorage.getItem(this.SESSION_KEY);
+      return raw ? (JSON.parse(raw) as Session) : null;
+    } catch {
+      return null;
+    }
   }
 
-  updateActivity() {
+  updateActivity(): void {
     const session = this.getSession();
-    if (session) {
-      session.lastActivity = new Date();
-      localStorage.setItem(this.SESSION_KEY, JSON.stringify(session));
-      this.resetInactivityTimer();
-    }
+    if (!session) return;
+    session.lastActivity = new Date();
+    sessionStorage.setItem(this.SESSION_KEY, JSON.stringify(session));
+    this.resetInactivityTimer();
   }
 
   isSessionValid(): boolean {
@@ -60,18 +66,18 @@ class SessionManager {
     return new Date() < new Date(session.expiresAt);
   }
 
-  clearSession() {
-    localStorage.removeItem(this.SESSION_KEY);
-    localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem(this.REFRESH_KEY);
+  clearSession(): void {
+    sessionStorage.removeItem(this.SESSION_KEY);
+    sessionStorage.removeItem(this.TOKEN_KEY);
+    sessionStorage.removeItem(this.REFRESH_KEY);
     this.clearInactivityTimer();
   }
 
-  private setupInactivityTimer() {
+  private setupInactivityTimer(): void {
     this.resetInactivityTimer();
   }
 
-  private resetInactivityTimer() {
+  private resetInactivityTimer(): void {
     this.clearInactivityTimer();
     this.inactivityTimer = setTimeout(() => {
       this.clearSession();
@@ -79,8 +85,8 @@ class SessionManager {
     }, this.INACTIVITY_TIMEOUT);
   }
 
-  private clearInactivityTimer() {
-    if (this.inactivityTimer) {
+  private clearInactivityTimer(): void {
+    if (this.inactivityTimer !== null) {
       clearTimeout(this.inactivityTimer);
       this.inactivityTimer = null;
     }
@@ -88,8 +94,11 @@ class SessionManager {
 
   private extractUserIdFromToken(token: string): string {
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.sub || payload.userId || '';
+      const payload = JSON.parse(atob(token.split('.')[1]!)) as {
+        sub?: string;
+        userId?: string;
+      };
+      return payload.sub ?? payload.userId ?? '';
     } catch {
       return '';
     }

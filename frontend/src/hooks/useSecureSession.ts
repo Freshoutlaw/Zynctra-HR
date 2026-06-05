@@ -1,48 +1,84 @@
 /**
  * /frontend/src/hooks/useSecureSession.ts
- * 
- * Hook for secure session management
+ *
+ * Hook for secure session management — monitors activity and
+ * syncs with the AuthContext session state.
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import sessionManager, { Session } from '../services/security/sessionManager';
+import { useAuth } from './useAuth';
+import { getStoredAccessToken, decodeJWT } from '../context/AuthContext';
 
-export const useSecureSession = () => {
-  const [session, setSession] = useState<Session | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+export interface SecureSessionState {
+  isValid: boolean;
+  timeUntilExpireMs: number | null;
+}
+
+export const useSecureSession = (): SecureSessionState & {
+  extendSession: () => void;
+} => {
+  const { isAuthenticated, logout, refreshToken } = useAuth();
+  const [isValid, setIsValid] = useState(true);
+  const [timeUntilExpireMs, setTimeUntilExpireMs] = useState<number | null>(null);
+
+  const validate = useCallback(async () => {
+    if (!isAuthenticated) {
+      setIsValid(false);
+      return;
+    }
+    const token = getStoredAccessToken();
+    if (!token) {
+      setIsValid(false);
+      return;
+    }
+    const decoded = decodeJWT(token);
+    const exp = decoded['exp'] as number | undefined;
+    if (!exp) return;
+
+    const nowSec = Date.now() / 1000;
+    const remaining = (exp - nowSec) * 1000;
+
+    if (remaining <= 0) {
+      setIsValid(false);
+      await logout();
+      return;
+    }
+
+    // Proactively refresh when < 5 minutes remain
+    if (remaining < 5 * 60 * 1000) {
+      const success = await refreshToken();
+      if (!success) {
+        setIsValid(false);
+        await logout();
+        return;
+      }
+    }
+
+    setIsValid(true);
+    setTimeUntilExpireMs(remaining);
+  }, [isAuthenticated, logout, refreshToken]);
 
   useEffect(() => {
-    const currentSession = sessionManager.getSession();
-    setSession(currentSession);
-    setIsAuthenticated(sessionManager.isSessionValid());
+    void validate();
+    const interval = setInterval(() => void validate(), 60_000);
+    return () => clearInterval(interval);
+  }, [validate]);
 
-    // Monitor activity
-    const handleActivity = () => {
-      sessionManager.updateActivity();
-    };
+  // Track user activity — reset any local idle timers
+  const extendSession = useCallback(() => {
+    void validate();
+  }, [validate]);
 
-    document.addEventListener('mousemove', handleActivity);
-    document.addEventListener('keydown', handleActivity);
-    document.addEventListener('click', handleActivity);
-
+  useEffect(() => {
+    const events = ['mousemove', 'keydown', 'click', 'scroll'];
+    const handler = () => extendSession();
+    for (const ev of events) document.addEventListener(ev, handler, { passive: true });
     return () => {
-      document.removeEventListener('mousemove', handleActivity);
-      document.removeEventListener('keydown', handleActivity);
-      document.removeEventListener('click', handleActivity);
+      for (const ev of events) document.removeEventListener(ev, handler);
     };
-  }, []);
+  }, [extendSession]);
 
-  const logout = useCallback(() => {
-    sessionManager.clearSession();
-    setSession(null);
-    setIsAuthenticated(false);
-  }, []);
-
-  return {
-    session,
-    isAuthenticated,
-    logout,
-  };
+  return { isValid, timeUntilExpireMs, extendSession };
 };
 
 export default useSecureSession;

@@ -1,14 +1,15 @@
 /**
  * /frontend/src/hooks/useApi.hook.ts
- * 
- * Hook for making API calls with loading and error handling
+ *
+ * Hook for making API calls with loading and error handling.
+ * Fixed: uses the corrected apiClient with proper param support.
  */
 
 import { useState, useCallback, useEffect } from 'react';
-import apiClient from '../services/api/apiClient';
+import apiClient, { type RequestOptions } from '../services/api/apiClient';
 
-interface UseApiOptions {
-  onSuccess?: (data: any) => void;
+interface UseApiOptions extends RequestOptions {
+  onSuccess?: (data: unknown) => void;
   onError?: (error: Error) => void;
   autoFetch?: boolean;
 }
@@ -17,45 +18,43 @@ interface UseApiReturn<T> {
   data: T | null;
   isLoading: boolean;
   error: Error | null;
-  fetch: () => Promise<T>;
-  refetch: () => Promise<T>;
+  fetch: () => Promise<T | null>;
+  refetch: () => Promise<T | null>;
   reset: () => void;
 }
 
-/**
- * useApi Hook for GET requests
- */
 export const useApi = <T,>(
   url: string,
   options: UseApiOptions = {}
 ): UseApiReturn<T> => {
-  const { onSuccess, onError, autoFetch = true } = options;
+  const { onSuccess, onError, autoFetch = true, params, headers } = options;
   const [data, setData] = useState<T | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetchData = useCallback(async (): Promise<T> => {
+  const fetchData = useCallback(async (): Promise<T | null> => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await apiClient.get<T>(url);
-      setData(response.data);
-      onSuccess?.(response.data);
-      return response.data;
+      const response = await apiClient.get<T>(url, { params, headers });
+      if (response.data !== undefined) {
+        setData(response.data);
+        onSuccess?.(response.data);
+        return response.data;
+      }
+      return null;
     } catch (err) {
-      const error = err instanceof Error ? err : new Error(String(err));
-      setError(error);
-      onError?.(error);
-      throw error;
+      const e = err instanceof Error ? err : new Error(String(err));
+      setError(e);
+      onError?.(e);
+      return null;
     } finally {
       setIsLoading(false);
     }
-  }, [url, onSuccess, onError]);
+  }, [url, params, headers, onSuccess, onError]);
 
   useEffect(() => {
-    if (autoFetch) {
-      fetchData();
-    }
+    if (autoFetch) void fetchData();
   }, [autoFetch, fetchData]);
 
   const reset = useCallback(() => {
@@ -64,18 +63,15 @@ export const useApi = <T,>(
     setIsLoading(false);
   }, []);
 
-  return {
-    data,
-    isLoading,
-    error,
-    fetch: fetchData,
-    refetch: fetchData,
-    reset,
-  };
+  return { data, isLoading, error, fetch: fetchData, refetch: fetchData, reset };
 };
 
-interface UseMutationOptions {
-  onSuccess?: (data: any) => void;
+// ---------------------------------------------------------------------------
+// Mutation hook (POST / PUT / PATCH / DELETE)
+// ---------------------------------------------------------------------------
+
+interface UseMutationOptions extends RequestOptions {
+  onSuccess?: (data: unknown) => void;
   onError?: (error: Error) => void;
 }
 
@@ -83,42 +79,45 @@ interface UseMutationReturn<T> {
   data: T | null;
   isLoading: boolean;
   error: Error | null;
-  mutate: (data?: any) => Promise<T>;
+  mutate: (payload?: unknown) => Promise<T | null>;
   reset: () => void;
 }
 
-/**
- * useMutation Hook for POST/PUT/DELETE requests
- */
 export const useMutation = <T,>(
   method: 'post' | 'put' | 'patch' | 'delete',
   url: string,
   options: UseMutationOptions = {}
 ): UseMutationReturn<T> => {
-  const { onSuccess, onError } = options;
+  const { onSuccess, onError, params, headers } = options;
   const [data, setData] = useState<T | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
   const mutate = useCallback(
-    async (payload?: any): Promise<T> => {
+    async (payload?: unknown): Promise<T | null> => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await apiClient[method]<T>(url, payload);
-        setData(response.data);
-        onSuccess?.(response.data);
-        return response.data;
+        const response =
+          method === 'delete'
+            ? await apiClient.delete<T>(url, { params, headers })
+            : await apiClient[method]<T>(url, payload, { params, headers });
+        if (response.data !== undefined) {
+          setData(response.data);
+          onSuccess?.(response.data);
+          return response.data;
+        }
+        return null;
       } catch (err) {
-        const error = err instanceof Error ? err : new Error(String(err));
-        setError(error);
-        onError?.(error);
-        throw error;
+        const e = err instanceof Error ? err : new Error(String(err));
+        setError(e);
+        onError?.(e);
+        return null;
       } finally {
         setIsLoading(false);
       }
     },
-    [method, url, onSuccess, onError]
+    [method, url, params, headers, onSuccess, onError]
   );
 
   const reset = useCallback(() => {
@@ -127,44 +126,16 @@ export const useMutation = <T,>(
     setIsLoading(false);
   }, []);
 
-  return {
-    data,
-    isLoading,
-    error,
-    mutate,
-    reset,
-  };
+  return { data, isLoading, error, mutate, reset };
 };
 
-/**
- * Shorthand hooks for common mutations
- */
-export const usePostMutation = <T,>(
-  url: string,
-  options?: UseMutationOptions
-): UseMutationReturn<T> => {
-  return useMutation<T>('post', url, options);
-};
-
-export const usePutMutation = <T,>(
-  url: string,
-  options?: UseMutationOptions
-): UseMutationReturn<T> => {
-  return useMutation<T>('put', url, options);
-};
-
-export const usePatchMutation = <T,>(
-  url: string,
-  options?: UseMutationOptions
-): UseMutationReturn<T> => {
-  return useMutation<T>('patch', url, options);
-};
-
-export const useDeleteMutation = <T,>(
-  url: string,
-  options?: UseMutationOptions
-): UseMutationReturn<T> => {
-  return useMutation<T>('delete', url, options);
-};
+export const usePostMutation = <T,>(url: string, opts?: UseMutationOptions) =>
+  useMutation<T>('post', url, opts);
+export const usePutMutation = <T,>(url: string, opts?: UseMutationOptions) =>
+  useMutation<T>('put', url, opts);
+export const usePatchMutation = <T,>(url: string, opts?: UseMutationOptions) =>
+  useMutation<T>('patch', url, opts);
+export const useDeleteMutation = <T,>(url: string, opts?: UseMutationOptions) =>
+  useMutation<T>('delete', url, opts);
 
 export default useApi;

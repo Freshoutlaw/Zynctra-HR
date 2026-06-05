@@ -9,7 +9,6 @@
 
     /* Module Resolution */
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "paths": {
       "@/*": ["./src/*"],
@@ -48,7 +47,6 @@
     "sourceMap": true,
     "jsx": "react-jsx",
     "importHelpers": true,
-    "importsNotUsedAsValues": "error",
     "verbatimModuleSyntax": true,
 
     /* Interop Constraints */

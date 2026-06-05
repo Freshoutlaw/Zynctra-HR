@@ -374,3 +374,29 @@ export const validatePassword = (password: string): { valid: boolean; errors: st
 };
 
 export default useAuth;
+
+
+
+
+
+/**
+ * /frontend/src/hooks/useAuth.ts
+ *
+ * Re-exports the useAuth hook and all auth utilities from AuthContext
+ * so existing imports of '../../hooks/useAuth' continue to work.
+ */
+
+// export {
+//   useAuth as default,
+//   useAuth,
+//   AuthProvider,
+//   getCsrfToken,
+//   getStoredAccessToken,
+//   getStoredRefreshToken,
+//   storeTokenSecurely,
+//   clearStoredTokens,
+//   decodeJWT,
+//   sanitizeInput,
+//   validateEmail,
+//   validatePassword,
+// } from '../context/AuthContext';

@@ -1,22 +1,15 @@
-// Placeholder: Sidebar.tsx
-import React from 'react';
-
-const Sidebar: React.FC = () => {
-  return <div>Placeholder Component</div>;
-};
-
-export default Sidebar;
 /**
  * /frontend/src/components/layout/Sidebar.tsx
- * 
+ *
  * Collapsible sidebar with navigation menu
  */
 
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import useAuth from '../../hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth';
 import { useTheme } from '../../context/ThemeContext';
+import { UserRole } from '../../types/auth.types';
 
 interface MenuItemProps {
   label: string;
@@ -24,24 +17,24 @@ interface MenuItemProps {
   path: string;
   badge?: number;
   isActive: boolean;
+  isDark: boolean;
+  isCollapsed: boolean;
+  onClick: () => void;
 }
 
-/**
- * MenuItem Component
- */
-const MenuItem: React.FC<MenuItemProps & { isDark: boolean; onClick: () => void }> = ({
+const MenuItem: React.FC<MenuItemProps> = ({
   label,
   icon,
-  path,
+  path: _path,
   badge,
   isActive,
   isDark,
+  isCollapsed,
   onClick,
 }) => (
-  <motion.a
-    href={path}
+  <motion.button
     onClick={onClick}
-    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition relative group ${
+    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition relative group w-full text-left ${
       isActive
         ? 'bg-gradient-to-r from-cyan-500/30 to-cyan-600/20 text-cyan-300 border border-cyan-500/50'
         : isDark
@@ -50,10 +43,11 @@ const MenuItem: React.FC<MenuItemProps & { isDark: boolean; onClick: () => void 
     }`}
     whileHover={{ x: 4 }}
     whileTap={{ scale: 0.98 }}
+    title={isCollapsed ? label : undefined}
   >
-    <span className="text-lg">{icon}</span>
-    <span className="text-sm font-medium">{label}</span>
-    {badge && badge > 0 && (
+    <span className="text-lg flex-shrink-0">{icon}</span>
+    {!isCollapsed && <span className="text-sm font-medium">{label}</span>}
+    {badge !== undefined && badge > 0 && (
       <motion.span
         className="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full"
         initial={{ scale: 0 }}
@@ -62,16 +56,15 @@ const MenuItem: React.FC<MenuItemProps & { isDark: boolean; onClick: () => void 
         {badge}
       </motion.span>
     )}
-  </motion.a>
+  </motion.button>
 );
 
-/**
- * Sidebar Component
- */
-const Sidebar: React.FC<{ isOpen?: boolean; onClose?: () => void }> = ({
-  isOpen = true,
-  onClose,
-}) => {
+interface SidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -81,67 +74,33 @@ const Sidebar: React.FC<{ isOpen?: boolean; onClose?: () => void }> = ({
   const isDark = effectiveTheme === 'dark';
 
   const baseMenuItems = [
-    {
-      label: 'Dashboard',
-      icon: '📊',
-      path: '/dashboard',
-    },
-    {
-      label: 'Subscription',
-      icon: '💳',
-      path: '/dashboard/subscription',
-    },
-    {
-      label: 'Employees',
-      icon: '👥',
-      path: '/dashboard/employees',
-    },
-    {
-      label: 'Payroll',
-      icon: '💰',
-      path: '/dashboard/payroll',
-    },
-    {
-      label: 'Performance',
-      icon: '📈',
-      path: '/dashboard/performance',
-    },
-    {
-      label: 'Documents',
-      icon: '📁',
-      path: '/dashboard/documents',
-    },
+    { label: 'Dashboard', icon: '📊', path: '/dashboard' },
+    { label: 'Subscription', icon: '💳', path: '/dashboard/subscription' },
+    { label: 'Employees', icon: '👥', path: '/dashboard/employees' },
+    { label: 'Payroll', icon: '💰', path: '/dashboard/payroll' },
+    { label: 'Performance', icon: '📈', path: '/dashboard/performance' },
+    { label: 'Documents', icon: '📁', path: '/dashboard/documents' },
   ];
 
   const adminMenuItems = [
-    {
-      label: 'Organizations',
-      icon: '🏢',
-      path: '/admin/organizations',
-    },
-    {
-      label: 'Subscriptions',
-      icon: '🔑',
-      path: '/admin/subscriptions',
-    },
-    {
-      label: 'Audit Logs',
-      icon: '📋',
-      path: '/admin/audit-logs',
-    },
-    {
-      label: 'Settings',
-      icon: '⚙️',
-      path: '/admin/settings',
-    },
+    { label: 'Organizations', icon: '🏢', path: '/admin/organizations' },
+    { label: 'Subscriptions', icon: '🔑', path: '/admin/subscriptions' },
+    { label: 'Audit Logs', icon: '📋', path: '/admin/audit-logs' },
+    { label: 'Settings', icon: '⚙️', path: '/admin/settings' },
   ];
 
-  const isAdmin = user?.role === 'SUPER_ADMIN';
+  const isAdmin =
+    user?.role === UserRole.SUPER_ADMIN || user?.role === UserRole.TENANT_ADMIN;
   const menuItems = isAdmin ? [...baseMenuItems, ...adminMenuItems] : baseMenuItems;
+
+  const handleNavigate = (path: string) => {
+    navigate(path);
+    onClose?.();
+  };
 
   return (
     <>
-      {/* Mobile Overlay */}
+      {/* Mobile overlay */}
       {isOpen && (
         <motion.div
           className="fixed inset-0 bg-black/50 md:hidden z-40"
@@ -152,17 +111,12 @@ const Sidebar: React.FC<{ isOpen?: boolean; onClose?: () => void }> = ({
         />
       )}
 
-      {/* Sidebar */}
       <motion.aside
         className={`fixed md:sticky top-16 left-0 h-[calc(100vh-4rem)] z-40 transition-all border-r ${
-          isDark
-            ? 'bg-slate-900/95 border-slate-800'
-            : 'bg-white/95 border-slate-200'
-        } ${
-          isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
-        } ${isCollapsed ? 'w-20' : 'w-64'}`}
-        initial={{ x: isOpen ? 0 : -256 }}
-        animate={{ x: isOpen ? 0 : -256 }}
+          isDark ? 'bg-slate-900/95 border-slate-800' : 'bg-white/95 border-slate-200'
+        } ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} ${
+          isCollapsed ? 'w-20' : 'w-64'
+        }`}
       >
         {/* Header */}
         <div
@@ -187,42 +141,33 @@ const Sidebar: React.FC<{ isOpen?: boolean; onClose?: () => void }> = ({
           </motion.button>
         </div>
 
-        {/* Menu Items */}
+        {/* Nav items */}
         <nav className="flex-1 overflow-y-auto p-4 space-y-2">
-          {menuItems.map((item) => {
-            const isActive = location.pathname.startsWith(item.path);
-            return (
-              <MenuItem
-                key={item.path}
-                {...item}
-                isActive={isActive}
-                isDark={isDark}
-                onClick={() => {
-                  navigate(item.path);
-                  onClose?.();
-                }}
-              />
-            );
-          })}
+          {menuItems.map((item) => (
+            <MenuItem
+              key={item.path}
+              {...item}
+              isActive={location.pathname.startsWith(item.path)}
+              isDark={isDark}
+              isCollapsed={isCollapsed}
+              onClick={() => handleNavigate(item.path)}
+            />
+          ))}
         </nav>
 
         {/* Footer */}
         <div
           className={`p-4 border-t ${isDark ? 'border-slate-800' : 'border-slate-200'}`}
         >
-          <motion.button
-            onClick={() => navigate('/dashboard/settings')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${
-              isDark
-                ? 'text-slate-400 hover:text-slate-300 hover:bg-slate-800/50'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-            }`}
-            whileHover={{ x: 4 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <span className="text-lg">⚙️</span>
-            {!isCollapsed && <span className="text-sm font-medium">Settings</span>}
-          </motion.button>
+          <MenuItem
+            label="Settings"
+            icon="⚙️"
+            path="/dashboard/settings"
+            isActive={location.pathname === '/dashboard/settings'}
+            isDark={isDark}
+            isCollapsed={isCollapsed}
+            onClick={() => handleNavigate('/dashboard/settings')}
+          />
         </div>
       </motion.aside>
     </>

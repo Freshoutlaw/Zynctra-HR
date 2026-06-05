@@ -1,14 +1,20 @@
 /**
  * /frontend/src/components/common/Button.tsx
- * 
- * Reusable button component with multiple variants
+ *
+ * Reusable button component with multiple variants.
  */
 
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from '../../context/ThemeContext';
 
-type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'danger' | 'success' | 'ghost';
+type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'outline'
+  | 'danger'
+  | 'success'
+  | 'ghost';
 type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -20,9 +26,6 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   fullWidth?: boolean;
 }
 
-/**
- * Button Component
- */
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
@@ -42,15 +45,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const { effectiveTheme } = useTheme();
     const isDark = effectiveTheme === 'dark';
 
-    // Size classes
-    const sizeClasses = {
+    const sizeClasses: Record<ButtonSize, string> = {
       sm: 'px-3 py-1.5 text-sm',
       md: 'px-4 py-2 text-sm',
       lg: 'px-6 py-3 text-base',
       xl: 'px-8 py-4 text-lg',
     };
 
-    // Variant classes
     const variantClasses: Record<ButtonVariant, string> = {
       primary:
         'bg-gradient-to-r from-cyan-400 to-cyan-600 text-slate-900 hover:shadow-lg hover:shadow-cyan-500/50 font-semibold',
@@ -68,58 +69,34 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         : 'text-slate-700 hover:bg-slate-100',
     };
 
+    const isDisabled = disabled || isLoading;
+
     return (
       <motion.button
         ref={ref}
-        className={`
-          inline-flex items-center justify-center gap-2
-          rounded-lg font-medium transition-all
-          disabled:opacity-50 disabled:cursor-not-allowed
-          focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500
-          ${sizeClasses[size]}
-          ${variantClasses[variant]}
-          ${fullWidth ? 'w-full' : ''}
-          ${className}
-        `}
-        disabled={disabled || isLoading}
-        whileHover={disabled ? {} : { scale: 1.05 }}
-        whileTap={disabled ? {} : { scale: 0.95 }}
-        {...props}
+        className={`inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500 ${
+          sizeClasses[size]
+        } ${variantClasses[variant]} ${fullWidth ? 'w-full' : ''} ${className}`}
+        disabled={isDisabled}
+        whileHover={!isDisabled ? { scale: 1.05 } : undefined}
+        whileTap={!isDisabled ? { scale: 0.95 } : undefined}
+        {...(props as Record<string, unknown>)}
       >
-        {/* Icon (Left) */}
         {icon && iconPosition === 'left' && !isLoading && (
-          <motion.span
-            className="flex items-center justify-center"
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-          >
-            {icon}
-          </motion.span>
+          <span className="flex items-center justify-center">{icon}</span>
         )}
-
-        {/* Loading Spinner */}
         {isLoading && (
           <motion.span
-            className="inline-block animate-spin"
             animate={{ rotate: 360 }}
             transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+            className="inline-block"
           >
             ⟳
           </motion.span>
         )}
-
-        {/* Text */}
         {children && <span>{children}</span>}
-
-        {/* Icon (Right) */}
         {icon && iconPosition === 'right' && !isLoading && (
-          <motion.span
-            className="flex items-center justify-center"
-            initial={{ opacity: 0, x: 10 }}
-            animate={{ opacity: 1, x: 0 }}
-          >
-            {icon}
-          </motion.span>
+          <span className="flex items-center justify-center">{icon}</span>
         )}
       </motion.button>
     );

@@ -1,13 +1,13 @@
 /**
  * /frontend/src/hooks/useTerminal.ts
- * 
- * Hook for terminal command execution
+ *
+ * Hook for terminal command execution via terminalService.
  */
 
 import { useState, useCallback } from 'react';
 import terminalService from '../services/api/terminalService';
 
-export interface TerminalCommand {
+export interface TerminalCommandRecord {
   id: string;
   command: string;
   output: string;
@@ -16,28 +16,28 @@ export interface TerminalCommand {
 }
 
 export const useTerminal = () => {
-  const [commands, setCommands] = useState<TerminalCommand[]>([]);
+  const [commands, setCommands] = useState<TerminalCommandRecord[]>([]);
   const [isExecuting, setIsExecuting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const executeCommand = useCallback(async (command: string) => {
     if (!command.trim()) return;
-
     setIsExecuting(true);
     setError(null);
-
     try {
       const result = await terminalService.executeCommand(command);
-      const newCommand: TerminalCommand = {
+      const record: TerminalCommandRecord = {
         id: `cmd_${Date.now()}`,
         command,
-        output: result.output || '',
+        output: result.output ?? '',
         error: result.error,
         timestamp: new Date(),
       };
-      setCommands((prev) => [...prev, newCommand]);
+      setCommands((prev) => [...prev, record]);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Command execution failed');
+      setError(
+        err instanceof Error ? err.message : 'Command execution failed'
+      );
     } finally {
       setIsExecuting(false);
     }
@@ -47,13 +47,7 @@ export const useTerminal = () => {
     setCommands([]);
   }, []);
 
-  return {
-    commands,
-    isExecuting,
-    error,
-    executeCommand,
-    clearHistory,
-  };
+  return { commands, isExecuting, error, executeCommand, clearHistory };
 };
 
 export default useTerminal;

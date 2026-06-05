@@ -1,7 +1,7 @@
 /**
  * /frontend/src/services/websocket/terminalWsHandler.ts
- * 
- * Terminal command WebSocket handler
+ *
+ * Terminal command WebSocket handler.
  */
 
 import WebSocketClient from './wsClient';
@@ -15,79 +15,85 @@ export interface TerminalOutput {
   executionTime: number;
 }
 
+type OutputListener = (outputs: TerminalOutput[]) => void;
+
 class TerminalWebSocketHandler {
-  private ws: WebSocketClient;
+  private readonly ws: WebSocketClient;
   private commandOutputs: TerminalOutput[] = [];
-  private listeners: Set<Function> = new Set();
+  private readonly listeners = new Set<OutputListener>();
   private currentCommandId: string | null = null;
 
   constructor(wsClient: WebSocketClient) {
     this.ws = wsClient;
-    this.setupHandlers();
+    this.ws.on('terminal_output', (d) =>
+      this.handleOutput(d as { output: string })
+    );
+    this.ws.on('terminal_error', (d) =>
+      this.handleError(d as { error: string })
+    );
+    this.ws.on('command_executed', (d) =>
+      this.handleCommandExecuted(d as Record<string, unknown>)
+    );
   }
 
-  private setupHandlers() {
-    this.ws.on('terminal_output', (data) => this.handleOutput(data));
-    this.ws.on('terminal_error', (data) => this.handleError(data));
-    this.ws.on('command_executed', (data) => this.handleCommandExecuted(data));
-  }
-
-  private handleOutput(data: any) {
-    if (this.currentCommandId) {
-      const output = this.commandOutputs.find((c) => c.id === this.currentCommandId);
-      if (output) {
-        output.output += data.output;
-        this.notifyListeners();
-      }
+  private handleOutput(data: { output: string }): void {
+    if (!this.currentCommandId) return;
+    const existing = this.commandOutputs.find(
+      (c) => c.id === this.currentCommandId
+    );
+    if (existing) {
+      existing.output += data.output;
+      this.notify();
     }
   }
 
-  private handleError(data: any) {
-    if (this.currentCommandId) {
-      const output = this.commandOutputs.find((c) => c.id === this.currentCommandId);
-      if (output) {
-        output.error = data.error;
-        this.notifyListeners();
-      }
+  private handleError(data: { error: string }): void {
+    if (!this.currentCommandId) return;
+    const existing = this.commandOutputs.find(
+      (c) => c.id === this.currentCommandId
+    );
+    if (existing) {
+      existing.error = data.error;
+      this.notify();
     }
   }
 
-  private handleCommandExecuted(data: any) {
-    const terminalOutput: TerminalOutput = {
-      id: data.id,
-      command: data.command,
-      output: data.output || '',
-      error: data.error,
+  private handleCommandExecuted(data: Record<string, unknown>): void {
+    const record: TerminalOutput = {
+      id: data['id'] as string,
+      command: data['command'] as string,
+      output: (data['output'] as string | undefined) ?? '',
+      error: data['error'] as string | undefined,
       timestamp: new Date(),
-      executionTime: data.executionTime || 0,
+      executionTime: (data['executionTime'] as number | undefined) ?? 0,
     };
-    this.commandOutputs.push(terminalOutput);
-    this.notifyListeners();
+    this.commandOutputs = [...this.commandOutputs, record];
+    this.notify();
   }
 
   executeCommand(command: string): string {
-    const commandId = `cmd_${Date.now()}`;
-    this.currentCommandId = commandId;
-    this.ws.send('execute_command', { id: commandId, command });
-    return commandId;
+    const id = `cmd_${Date.now()}`;
+    this.currentCommandId = id;
+    this.ws.send('execute_command', { id, command });
+    return id;
   }
 
   getOutputs(): TerminalOutput[] {
     return this.commandOutputs;
   }
 
-  clearOutputs() {
+  clearOutputs(): void {
     this.commandOutputs = [];
-    this.notifyListeners();
+    this.notify();
   }
 
-  subscribe(callback: Function) {
-    this.listeners.add(callback);
-    return () => this.listeners.delete(callback);
+  subscribe(cb: OutputListener): () => void {
+    this.listeners.add(cb);
+    return () => this.listeners.delete(cb);
   }
 
-  private notifyListeners() {
-    this.listeners.forEach((callback) => callback(this.commandOutputs));
+  private notify(): void {
+    for (const cb of this.listeners) cb(this.commandOutputs);
   }
 }
 

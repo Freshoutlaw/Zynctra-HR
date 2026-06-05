@@ -1,31 +1,33 @@
 /**
  * /frontend/src/services/storage/secureLocalStorage.ts
- * 
- * Secure local storage with encryption (mock)
+ *
+ * Secure localStorage wrapper with optional base64 obfuscation.
+ * In production, replace the encode/decode with real AES-GCM encryption.
  */
 
 class SecureLocalStorage {
-  private prefix = 'zynctra_secure_';
+  private readonly prefix = 'zynctra_secure_';
 
-  set(key: string, value: any, encrypt: boolean = false): void {
+  set<T>(key: string, value: T, encode = false): void {
     try {
-      const serialized = JSON.stringify(value);
-      const data = encrypt ? this.simpleEncrypt(serialized) : serialized;
-      localStorage.setItem(this.prefix + key, data);
-    } catch (error) {
-      console.error('Failed to save to secure storage:', error);
+      const serialised = JSON.stringify(value);
+      localStorage.setItem(
+        this.prefix + key,
+        encode ? this.encode(serialised) : serialised
+      );
+    } catch (err) {
+      console.error('[SecureStorage] set failed:', err);
     }
   }
 
-  get<T>(key: string, decrypt: boolean = false): T | null {
+  get<T>(key: string, decode = false): T | null {
     try {
-      const data = localStorage.getItem(this.prefix + key);
-      if (!data) return null;
-
-      const serialized = decrypt ? this.simpleDecrypt(data) : data;
-      return JSON.parse(serialized);
-    } catch (error) {
-      console.error('Failed to read from secure storage:', error);
+      const raw = localStorage.getItem(this.prefix + key);
+      if (!raw) return null;
+      const str = decode ? this.decode(raw) : raw;
+      return JSON.parse(str) as T;
+    } catch (err) {
+      console.error('[SecureStorage] get failed:', err);
       return null;
     }
   }
@@ -35,19 +37,17 @@ class SecureLocalStorage {
   }
 
   clear(): void {
-    Object.keys(localStorage)
-      .filter((key) => key.startsWith(this.prefix))
-      .forEach((key) => localStorage.removeItem(key));
+    for (const key of Object.keys(localStorage)) {
+      if (key.startsWith(this.prefix)) localStorage.removeItem(key);
+    }
   }
 
-  private simpleEncrypt(data: string): string {
-    // Simple base64 encoding (in production use proper encryption)
-    return btoa(data);
+  private encode(data: string): string {
+    try { return btoa(encodeURIComponent(data)); } catch { return data; }
   }
 
-  private simpleDecrypt(data: string): string {
-    // Simple base64 decoding (in production use proper decryption)
-    return atob(data);
+  private decode(data: string): string {
+    try { return decodeURIComponent(atob(data)); } catch { return data; }
   }
 }
 

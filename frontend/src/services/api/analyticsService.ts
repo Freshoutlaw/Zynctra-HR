@@ -68,3 +68,73 @@ class AnalyticsService {
 
 export default new AnalyticsService();
 // EOF
+
+
+/**
+ * /frontend/src/services/api/analyticsService.ts
+ *
+ * Analytics and reporting API service
+ */
+
+// import apiClient from './apiClient';
+
+// class AnalyticsService {
+//   async getHeadcountData(period?: string) {
+//     const res = await apiClient.get('/analytics/headcount', {
+//       params: period ? { period } : undefined,
+//     });
+//     return res.data;
+//   }
+
+//   async getTurnoverData(period?: string) {
+//     const res = await apiClient.get('/analytics/turnover', {
+//       params: period ? { period } : undefined,
+//     });
+//     return res.data;
+//   }
+
+//   async getPayrollAnalysis(period?: string) {
+//     const res = await apiClient.get('/analytics/payroll', {
+//       params: period ? { period } : undefined,
+//     });
+//     return res.data;
+//   }
+
+//   async getPerformanceMetrics(department?: string) {
+//     const res = await apiClient.get('/analytics/performance', {
+//       params: department ? { department } : undefined,
+//     });
+//     return res.data;
+//   }
+
+//   async getEngagementScores() {
+//     const res = await apiClient.get('/analytics/engagement');
+//     return res.data;
+//   }
+
+//   async getDashboardData() {
+//     const res = await apiClient.get('/analytics/dashboard');
+//     return res.data;
+//   }
+
+//   async generateCustomReport(config: unknown) {
+//     const res = await apiClient.post('/analytics/reports/custom', config);
+//     return res.data;
+//   }
+
+//   async exportData(format: 'csv' | 'excel' | 'pdf', reportId?: string) {
+//     const res = await apiClient.post(`/analytics/export/${format}`, {
+//       reportId,
+//     });
+//     return res.data;
+//   }
+
+//   async getComparisonData(metric: string, compareBy?: string) {
+//     const res = await apiClient.get(`/analytics/compare/${metric}`, {
+//       params: compareBy ? { compareBy } : undefined,
+//     });
+//     return res.data;
+//   }
+// }
+
+// export default new AnalyticsService();

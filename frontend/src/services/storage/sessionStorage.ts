@@ -1,26 +1,26 @@
 /**
  * /frontend/src/services/storage/sessionStorage.ts
- * 
- * Session storage management
+ *
+ * Session storage management wrapper.
  */
 
 class SessionStorageManager {
-  private prefix = 'zynctra_session_';
+  private readonly prefix = 'zynctra_session_';
 
-  set(key: string, value: any): void {
+  set<T>(key: string, value: T): void {
     try {
       sessionStorage.setItem(this.prefix + key, JSON.stringify(value));
-    } catch (error) {
-      console.error('Failed to save to session storage:', error);
+    } catch (err) {
+      console.error('[SessionStorage] set failed:', err);
     }
   }
 
   get<T>(key: string): T | null {
     try {
-      const data = sessionStorage.getItem(this.prefix + key);
-      return data ? JSON.parse(data) : null;
-    } catch (error) {
-      console.error('Failed to read from session storage:', error);
+      const raw = sessionStorage.getItem(this.prefix + key);
+      return raw ? (JSON.parse(raw) as T) : null;
+    } catch (err) {
+      console.error('[SessionStorage] get failed:', err);
       return null;
     }
   }
@@ -30,9 +30,9 @@ class SessionStorageManager {
   }
 
   clear(): void {
-    Object.keys(sessionStorage)
-      .filter((key) => key.startsWith(this.prefix))
-      .forEach((key) => sessionStorage.removeItem(key));
+    for (const key of Object.keys(sessionStorage)) {
+      if (key.startsWith(this.prefix)) sessionStorage.removeItem(key);
+    }
   }
 
   exists(key: string): boolean {
@@ -41,8 +41,8 @@ class SessionStorageManager {
 
   keys(): string[] {
     return Object.keys(sessionStorage)
-      .filter((key) => key.startsWith(this.prefix))
-      .map((key) => key.replace(this.prefix, ''));
+      .filter((k) => k.startsWith(this.prefix))
+      .map((k) => k.slice(this.prefix.length));
   }
 }
 

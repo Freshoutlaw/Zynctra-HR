@@ -1,77 +1,65 @@
-// cat > /mnt/user-data/outputs/securityService.ts << 'EOF'
 /**
  * /frontend/src/services/api/securityService.ts
- * 
+ *
  * Security and compliance API service
  */
 
 import apiClient from './apiClient';
 
 class SecurityService {
-  async getAuditLogs(filters?: any) {
-    const response = await apiClient.get('/security/audit-logs', {
-      params: filters,
-    });
-    return response.data;
+  async getAuditLogs(filters?: Record<string, string | number | boolean>) {
+    const res = await apiClient.get('/security/audit-logs', { params: filters });
+    return res.data ?? [];
   }
 
   async getAnomalies(type?: string) {
-    const response = await apiClient.get('/security/anomalies', {
-      params: { type },
+    const res = await apiClient.get('/security/anomalies', {
+      params: type ? { type } : undefined,
     });
-    return response.data;
+    return res.data ?? [];
   }
 
   async reportAnomaly(anomalyId: string, action: string) {
-    const response = await apiClient.post(
-      `/security/anomalies/${anomalyId}/${action}`
-    );
-    return response.data;
+    const res = await apiClient.post(`/security/anomalies/${anomalyId}/${action}`);
+    return res.data;
   }
 
   async getMFAStatus(userId: string) {
-    const response = await apiClient.get(`/security/users/${userId}/mfa`);
-    return response.data;
+    const res = await apiClient.get(`/security/users/${userId}/mfa`);
+    return res.data;
   }
 
-  async updateMFA(userId: string, config: any) {
-    const response = await apiClient.post(
-      `/security/users/${userId}/mfa`,
-      config
-    );
-    return response.data;
+  async updateMFA(userId: string, config: unknown) {
+    const res = await apiClient.post(`/security/users/${userId}/mfa`, config);
+    return res.data;
   }
 
   async getIPWhitelist() {
-    const response = await apiClient.get('/security/ip-whitelist');
-    return response.data;
+    const res = await apiClient.get('/security/ip-whitelist');
+    return res.data ?? [];
   }
 
   async addIPWhitelist(ip: string, description?: string) {
-    const response = await apiClient.post('/security/ip-whitelist', {
-      ip,
-      description,
-    });
-    return response.data;
+    const res = await apiClient.post('/security/ip-whitelist', { ip, description });
+    return res.data;
   }
 
   async removeIPWhitelist(id: string) {
-    const response = await apiClient.delete(`/security/ip-whitelist/${id}`);
-    return response.data;
+    const res = await apiClient.delete(`/security/ip-whitelist/${id}`);
+    return res.data;
   }
 
   async getAccessLogs(userId?: string) {
-    const response = await apiClient.get('/security/access-logs', {
-      params: { userId },
+    const res = await apiClient.get('/security/access-logs', {
+      params: userId ? { userId } : undefined,
     });
-    return response.data;
+    return res.data ?? [];
   }
 
   async getComplianceStatus() {
-    const response = await apiClient.get('/security/compliance');
-    return response.data;
+    const res = await apiClient.get('/security/compliance');
+    return res.data;
   }
 }
 
 export default new SecurityService();
-// EOF

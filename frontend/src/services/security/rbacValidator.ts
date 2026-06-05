@@ -1,81 +1,89 @@
 /**
  * /frontend/src/services/security/rbacValidator.ts
- * 
- * Role-based access control validation
+ *
+ * Role-based access control validation (pure service — no React).
+ * Note: UserRole enum is re-defined here to avoid circular dep with auth.types.
  */
 
-export enum UserRole {
-  SUPER_ADMIN = 'super_admin',
-  ADMIN = 'admin',
-  MANAGER = 'manager',
-  EMPLOYEE = 'employee',
-  GUEST = 'guest',
+export enum RBACRole {
+  SUPER_ADMIN = 'SUPER_ADMIN',
+  TENANT_ADMIN = 'TENANT_ADMIN',
+  MANAGER = 'MANAGER',
+  HR_SPECIALIST = 'HR_SPECIALIST',
+  USER = 'USER',
 }
 
-export interface Permission {
+export interface RBACPermission {
   resource: string;
   action: string;
 }
 
+const ROLE_PERMISSIONS: Record<RBACRole, RBACPermission[]> = {
+  [RBACRole.SUPER_ADMIN]: [{ resource: '*', action: '*' }],
+  [RBACRole.TENANT_ADMIN]: [
+    { resource: 'users', action: 'read' },
+    { resource: 'users', action: 'create' },
+    { resource: 'users', action: 'update' },
+    { resource: 'reports', action: 'read' },
+    { resource: 'settings', action: 'read' },
+    { resource: 'settings', action: 'update' },
+    { resource: 'audit', action: 'read' },
+    { resource: 'billing', action: 'read' },
+    { resource: 'billing', action: 'update' },
+  ],
+  [RBACRole.MANAGER]: [
+    { resource: 'employees', action: 'read' },
+    { resource: 'employees', action: 'update' },
+    { resource: 'reports', action: 'read' },
+    { resource: 'payroll', action: 'read' },
+    { resource: 'performance', action: 'read' },
+    { resource: 'performance', action: 'update' },
+  ],
+  [RBACRole.HR_SPECIALIST]: [
+    { resource: 'employees', action: 'read' },
+    { resource: 'employees', action: 'create' },
+    { resource: 'employees', action: 'update' },
+    { resource: 'payroll', action: 'read' },
+    { resource: 'payroll', action: 'update' },
+    { resource: 'benefits', action: 'read' },
+    { resource: 'benefits', action: 'update' },
+  ],
+  [RBACRole.USER]: [
+    { resource: 'profile', action: 'read' },
+    { resource: 'profile', action: 'update' },
+    { resource: 'documents', action: 'read' },
+    { resource: 'attendance', action: 'read' },
+  ],
+};
+
 class RBACValidator {
-  private rolePermissions: Record<UserRole, Permission[]> = {
-    [UserRole.SUPER_ADMIN]: [
-      { resource: '*', action: '*' }, // Full access
-    ],
-    [UserRole.ADMIN]: [
-      { resource: 'users', action: 'read' },
-      { resource: 'users', action: 'create' },
-      { resource: 'users', action: 'update' },
-      { resource: 'reports', action: 'read' },
-      { resource: 'settings', action: 'read' },
-      { resource: 'settings', action: 'update' },
-      { resource: 'audit', action: 'read' },
-    ],
-    [UserRole.MANAGER]: [
-      { resource: 'employees', action: 'read' },
-      { resource: 'employees', action: 'update' },
-      { resource: 'reports', action: 'read' },
-      { resource: 'payroll', action: 'read' },
-      { resource: 'performance', action: 'read' },
-    ],
-    [UserRole.EMPLOYEE]: [
-      { resource: 'profile', action: 'read' },
-      { resource: 'profile', action: 'update' },
-      { resource: 'documents', action: 'read' },
-      { resource: 'attendance', action: 'read' },
-    ],
-    [UserRole.GUEST]: [{ resource: 'public', action: 'read' }],
-  };
-
-  hasPermission(role: UserRole, resource: string, action: string): boolean {
-    const permissions = this.rolePermissions[role];
-    if (!permissions) return false;
-
-    return permissions.some(
-      (perm) =>
-        (perm.resource === '*' || perm.resource === resource) &&
-        (perm.action === '*' || perm.action === action)
+  hasPermission(role: RBACRole, resource: string, action: string): boolean {
+    const perms = ROLE_PERMISSIONS[role] ?? [];
+    return perms.some(
+      (p) =>
+        (p.resource === '*' || p.resource === resource) &&
+        (p.action === '*' || p.action === action)
     );
   }
 
-  canAccess(role: UserRole, resource: string): boolean {
+  canAccess(role: RBACRole, resource: string): boolean {
     return this.hasPermission(role, resource, 'read');
   }
 
-  canEdit(role: UserRole, resource: string): boolean {
+  canEdit(role: RBACRole, resource: string): boolean {
     return this.hasPermission(role, resource, 'update');
   }
 
-  canCreate(role: UserRole, resource: string): boolean {
+  canCreate(role: RBACRole, resource: string): boolean {
     return this.hasPermission(role, resource, 'create');
   }
 
-  canDelete(role: UserRole, resource: string): boolean {
+  canDelete(role: RBACRole, resource: string): boolean {
     return this.hasPermission(role, resource, 'delete');
   }
 
-  getPermissionsForRole(role: UserRole): Permission[] {
-    return this.rolePermissions[role] || [];
+  getPermissionsForRole(role: RBACRole): RBACPermission[] {
+    return ROLE_PERMISSIONS[role] ?? [];
   }
 }
 

@@ -1,14 +1,14 @@
 /**
  * /frontend/src/components/billing/FeatureLock.tsx
- * 
- * Component that displays when a feature is not accessible
- * Shows upgrade CTA with required plan information
+ *
+ * Component displayed when a feature is not accessible.
+ * Shows upgrade CTA with the required plan information.
  */
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import useFeatureAccess from '../../hooks/useFeatureAccess';
+import { useFeatureAccess } from '../../hooks/useFeatureAccess';
 import { useTheme } from '../../context/ThemeContext';
 import { SubscriptionPlan } from '../../types/billing.types';
 
@@ -21,9 +21,22 @@ interface FeatureLockProps {
   onUpgradeClick?: () => void;
 }
 
-/**
- * FeatureLock Component
- */
+const planNames: Record<SubscriptionPlan, string> = {
+  [SubscriptionPlan.FREE]: 'Free Plan',
+  [SubscriptionPlan.STANDARD]: 'Standard Plan',
+  [SubscriptionPlan.PREMIUM]: 'Premium Plan',
+};
+
+const planEmojis: Record<SubscriptionPlan, string> = {
+  [SubscriptionPlan.FREE]: '🎯',
+  [SubscriptionPlan.STANDARD]: '⭐',
+  [SubscriptionPlan.PREMIUM]: '👑',
+};
+
+// ---------------------------------------------------------------------------
+// Main gate component
+// ---------------------------------------------------------------------------
+
 export const FeatureLock: React.FC<FeatureLockProps> = ({
   featureId,
   featureName,
@@ -33,29 +46,13 @@ export const FeatureLock: React.FC<FeatureLockProps> = ({
   onUpgradeClick,
 }) => {
   const navigate = useNavigate();
-  const { canAccess, requiredPlan, isLocked } = useFeatureAccess(featureId);
-  const { theme } = useTheme();
+  const { canAccess, requiredPlan } = useFeatureAccess(featureId);
+  const { effectiveTheme } = useTheme();
+  const isDark = effectiveTheme === 'dark';
 
-  // If accessible, show content
-  if (canAccess) {
-    return <>{children}</>;
-  }
+  if (canAccess) return <>{children}</>;
 
-  const isDark = theme === 'dark';
-
-  const planNames: Record<SubscriptionPlan, string> = {
-    [SubscriptionPlan.FREE]: 'Free Plan',
-    [SubscriptionPlan.STANDARD]: 'Standard Plan',
-    [SubscriptionPlan.PREMIUM]: 'Premium Plan',
-  };
-
-  const planEmojis: Record<SubscriptionPlan, string> = {
-    [SubscriptionPlan.FREE]: '🎯',
-    [SubscriptionPlan.STANDARD]: '⭐',
-    [SubscriptionPlan.PREMIUM]: '👑',
-  };
-
-  const handleUpgradeClick = () => {
+  const handleUpgrade = () => {
     if (onUpgradeClick) {
       onUpgradeClick();
     } else {
@@ -74,7 +71,6 @@ export const FeatureLock: React.FC<FeatureLockProps> = ({
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
     >
-      {/* Lock Icon */}
       <motion.div
         className="text-6xl mb-6"
         animate={{ scale: [1, 1.1, 1] }}
@@ -83,17 +79,19 @@ export const FeatureLock: React.FC<FeatureLockProps> = ({
         🔒
       </motion.div>
 
-      {/* Title */}
       <h3 className="text-2xl font-bold mb-2">
-        {featureName || 'Premium Feature'}
+        {featureName ?? 'Premium Feature'}
       </h3>
 
-      {/* Description */}
-      <p className={`text-center mb-6 max-w-md ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-        {description || 'This feature is only available on higher tier plans. Upgrade now to get access.'}
+      <p
+        className={`text-center mb-6 max-w-md ${
+          isDark ? 'text-slate-400' : 'text-slate-600'
+        }`}
+      >
+        {description ??
+          'This feature is only available on higher tier plans. Upgrade now to get access.'}
       </p>
 
-      {/* Required Plan Badge */}
       <motion.div
         className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 font-semibold ${
           isDark
@@ -108,10 +106,9 @@ export const FeatureLock: React.FC<FeatureLockProps> = ({
         <span>Requires {planNames[requiredPlan]}</span>
       </motion.div>
 
-      {/* Upgrade Button */}
       {showButton && (
         <motion.button
-          onClick={handleUpgradeClick}
+          onClick={handleUpgrade}
           className="px-8 py-3 rounded-lg font-semibold bg-gradient-to-r from-cyan-400 to-cyan-600 text-slate-900 hover:shadow-lg hover:shadow-cyan-500/50 transition"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -120,30 +117,31 @@ export const FeatureLock: React.FC<FeatureLockProps> = ({
         </motion.button>
       )}
 
-      {/* Info Text */}
-      <p className={`text-xs mt-6 ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>
+      <p
+        className={`text-xs mt-6 ${
+          isDark ? 'text-slate-500' : 'text-slate-500'
+        }`}
+      >
         Get instant access by upgrading your subscription
       </p>
     </motion.div>
   );
 };
 
-/**
- * Inline Feature Lock (smaller version)
- */
-export const InlineFeatureLock: React.FC<Omit<FeatureLockProps, 'children'>> = (props) => {
+// ---------------------------------------------------------------------------
+// Inline lock badge
+// ---------------------------------------------------------------------------
+
+export const InlineFeatureLock: React.FC<Pick<FeatureLockProps, 'featureId' | 'featureName'>> = ({ featureId, featureName }) => {
   const navigate = useNavigate();
-  const { canAccess } = useFeatureAccess(props.featureId);
-  const { theme } = useTheme();
+  const { canAccess } = useFeatureAccess(featureId);
+  const { effectiveTheme } = useTheme();
+  const isDark = effectiveTheme === 'dark';
 
-  if (canAccess) {
-    return null;
-  }
-
-  const isDark = theme === 'dark';
+  if (canAccess) return null;
 
   return (
-    <motion.div
+    <motion.button
       className={`inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-semibold cursor-pointer ${
         isDark
           ? 'bg-yellow-500/20 border border-yellow-500/50 text-yellow-300 hover:bg-yellow-500/30'
@@ -154,42 +152,39 @@ export const InlineFeatureLock: React.FC<Omit<FeatureLockProps, 'children'>> = (
       onClick={() => navigate('/pricing')}
       whileHover={{ scale: 1.05 }}
     >
-      🔒 {props.featureName || 'Premium'}
-    </motion.div>
+      🔒 {featureName ?? 'Premium'}
+    </motion.button>
   );
 };
 
-/**
- * Feature Lock Overlay (for content preview)
- */
+// ---------------------------------------------------------------------------
+// Overlay lock (blurs content behind it)
+// ---------------------------------------------------------------------------
+
 export const FeatureLockOverlay: React.FC<{
   isLocked: boolean;
   featureName?: string;
   children: React.ReactNode;
 }> = ({ isLocked, featureName, children }) => {
   const navigate = useNavigate();
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
+  const { effectiveTheme } = useTheme();
+  const isDark = effectiveTheme === 'dark';
 
-  if (!isLocked) {
-    return <>{children}</>;
-  }
+  if (!isLocked) return <>{children}</>;
 
   return (
     <div className="relative group">
-      <div className="opacity-50 pointer-events-none">{children}</div>
+      <div className="opacity-50 pointer-events-none select-none">{children}</div>
 
       <motion.div
         className={`absolute inset-0 rounded-lg flex flex-col items-center justify-center backdrop-blur-sm ${
-          isDark
-            ? 'bg-black/40'
-            : 'bg-white/40'
+          isDark ? 'bg-black/40' : 'bg-white/40'
         }`}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
         <div className="text-4xl mb-2">🔒</div>
-        <p className="font-bold text-white mb-2">{featureName || 'Premium Feature'}</p>
+        <p className="font-bold text-white mb-2">{featureName ?? 'Premium Feature'}</p>
         <button
           onClick={() => navigate('/pricing')}
           className="px-4 py-2 rounded-lg bg-cyan-600 text-white font-semibold hover:bg-cyan-700 transition text-sm"

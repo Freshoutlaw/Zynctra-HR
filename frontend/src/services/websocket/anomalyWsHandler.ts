@@ -1,55 +1,45 @@
 /**
  * /frontend/src/services/websocket/anomalyWsHandler.ts
- * 
- * WebSocket handler for real-time anomaly detection
+ *
+ * WebSocket handler for real-time anomaly detection.
  */
 
 import WebSocketClient from './wsClient';
 
+type AnomalyHandler = (data: unknown) => void;
+
 class AnomalyWebSocketHandler {
-  private ws: WebSocketClient;
-  private listeners: Map<string, Function[]> = new Map();
+  private readonly ws: WebSocketClient;
+  private readonly listeners = new Map<string, AnomalyHandler[]>();
 
   constructor(wsClient: WebSocketClient) {
     this.ws = wsClient;
-    this.setupHandlers();
+    this.ws.on('anomaly_detected', (d) => this.emit('detected', d));
+    this.ws.on('anomaly_resolved', (d) => this.emit('resolved', d));
+    this.ws.on('anomaly_update', (d) => this.emit('updated', d));
   }
 
-  private setupHandlers() {
-    this.ws.on('anomaly_detected', (data) => this.handleAnomalyDetected(data));
-    this.ws.on('anomaly_resolved', (data) => this.handleAnomalyResolved(data));
-    this.ws.on('anomaly_update', (data) => this.handleAnomalyUpdate(data));
+  on(event: string, callback: AnomalyHandler): void {
+    if (!this.listeners.has(event)) this.listeners.set(event, []);
+    this.listeners.get(event)!.push(callback);
   }
 
-  private handleAnomalyDetected(data: any) {
-    this.notifyListeners('detected', data);
-  }
-
-  private handleAnomalyResolved(data: any) {
-    this.notifyListeners('resolved', data);
-  }
-
-  private handleAnomalyUpdate(data: any) {
-    this.notifyListeners('updated', data);
-  }
-
-  on(event: string, callback: Function) {
-    if (!this.listeners.has(event)) {
-      this.listeners.set(event, []);
+  off(event: string, callback: AnomalyHandler): void {
+    const handlers = this.listeners.get(event);
+    if (handlers) {
+      this.listeners.set(event, handlers.filter((h) => h !== callback));
     }
-    this.listeners.get(event)?.push(callback);
   }
 
-  private notifyListeners(event: string, data: any) {
-    const callbacks = this.listeners.get(event) || [];
-    callbacks.forEach((cb) => cb(data));
+  private emit(event: string, data: unknown): void {
+    for (const cb of this.listeners.get(event) ?? []) cb(data);
   }
 
-  acknowledgeAnomaly(anomalyId: string) {
+  acknowledgeAnomaly(anomalyId: string): void {
     this.ws.send('acknowledge_anomaly', { anomalyId });
   }
 
-  resolveAnomaly(anomalyId: string) {
+  resolveAnomaly(anomalyId: string): void {
     this.ws.send('resolve_anomaly', { anomalyId });
   }
 }

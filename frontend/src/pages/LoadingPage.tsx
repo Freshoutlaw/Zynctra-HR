@@ -1,293 +1,133 @@
-import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-
 /**
- * Props interface for LoadingPage component
+ * /frontend/src/pages/LoadingPage.tsx
+ *
+ * Cinematic loading splash shown while auth state is resolving.
+ * Fixed: does not auto-navigate — that responsibility is in App.tsx.
+ * This component is purely visual; it renders until isLoading is false.
  */
+
+import React from 'react';
+import { motion } from 'framer-motion';
+
 interface LoadingPageProps {
-  minDisplayTime?: number;
-  onLoadComplete?: () => void;
-  fallbackRoute?: string;
+  message?: string;
 }
 
-/**
- * LoadingPage Component
- * 
- * Ultra-sleek cinematic loading sequence featuring:
- * - Animated brand logo (Z geometric design)
- * - Staggered subtitle animation
- * - Smooth transition to main application
- * - Accessibility compliant (aria labels, reduced motion support)
- * 
- * Security: Client-side only, no sensitive data stored
- */
 const LoadingPage: React.FC<LoadingPageProps> = ({
-  minDisplayTime = 2400,
-  onLoadComplete,
-  fallbackRoute = '/login',
+  message = 'Initialising secure systems…',
 }) => {
-  const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Variants for logo animation
-  const logoContainerVariants = {
-    initial: { opacity: 0, scale: 0.6 },
-    animate: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.8,
-        ease: 'easeOut',
-        staggerChildren: 0.1,
-      },
-    },
-    exit: {
-      opacity: 0,
-      scale: 1.1,
-      transition: { duration: 0.6, ease: 'easeIn' },
-    },
-  };
-
-  const letterVariants = {
-    initial: { opacity: 0, y: 20 },
-    animate: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: 'easeOut' },
-    },
-  };
-
-  const subtitleVariants = {
-    initial: { opacity: 0, y: 10 },
-    animate: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.7,
-        ease: 'easeOut',
-        delay: 0.6,
-      },
-    },
-    exit: {
-      opacity: 0,
-      transition: { duration: 0.3 },
-    },
-  };
-
-  const progressBarVariants = {
-    initial: { scaleX: 0 },
-    animate: {
-      scaleX: 1,
-      transition: {
-        duration: minDisplayTime / 1000,
-        ease: 'linear',
-        delay: 0.8,
-      },
-    },
-  };
-
-  const pageVariants = {
-    exit: {
-      opacity: 0,
-      transition: { duration: 0.5, ease: 'easeInOut' },
-    },
-  };
-
-  // Glow effect animation for logo
-  const glowVariants = {
-    initial: { opacity: 0 },
-    animate: {
-      opacity: [0.3, 0.6, 0.3],
-      transition: {
-        duration: 3,
-        repeat: Infinity,
-        ease: 'easeInOut',
-        delay: 0.8,
-      },
-    },
-  };
-
-  useEffect(() => {
-    const loadingTimer = setTimeout(() => {
-      setIsLoading(false);
-
-      if (onLoadComplete) {
-        onLoadComplete();
-      }
-
-      // Route based on authentication status
-      const navigationDelay = setTimeout(() => {
-        if (isAuthenticated) {
-          navigate('/dashboard');
-        } else {
-          navigate(fallbackRoute);
-        }
-      }, 600); // Allow exit animation to complete
-
-      return () => clearTimeout(navigationDelay);
-    }, minDisplayTime);
-
-    return () => clearTimeout(loadingTimer);
-  }, [isAuthenticated, navigate, fallbackRoute, onLoadComplete, minDisplayTime]);
-
   return (
-    <AnimatePresence mode="wait">
-      {isLoading && (
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 z-50">
+      {/* Subtle grid background */}
+      <div
+        className="absolute inset-0 opacity-5"
+        style={{
+          backgroundImage:
+            'linear-gradient(90deg,#00d9ff 1px,transparent 1px),linear-gradient(#00d9ff 1px,transparent 1px)',
+          backgroundSize: '50px 50px',
+        }}
+      />
+
+      <div className="relative z-10 flex flex-col items-center gap-8">
+        {/* Logo */}
         <motion.div
-          className="loading-page"
-          variants={pageVariants}
-          initial="initial"
-          exit="exit"
-          aria-label="Application loading"
-          role="status"
+          initial={{ opacity: 0, scale: 0.6 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
         >
-          {/* Dark gradient background */}
-          <div className="fixed inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" />
-
-          {/* Animated grid pattern background */}
-          <motion.div
-            className="absolute inset-0 opacity-10"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.1 }}
-            transition={{ duration: 1.2 }}
-            style={{
-              backgroundImage:
-                'linear-gradient(90deg, #00d9ff 1px transparent 1px), linear-gradient(#00d9ff 1px, transparent 1px)',
-              backgroundSize: '50px 50px',
-            }}
-          />
-
-          {/* Centered content container */}
-          <div className="relative z-10 flex flex-col items-center justify-center min-h-screen gap-8">
-            {/* Logo container with glow effect */}
-            <motion.div
-              className="relative"
-              variants={logoContainerVariants}
-              initial="initial"
-              animate="animate"
-            >
-              {/* Glow background effect */}
-              <motion.div
-                className="absolute inset-0 rounded-full bg-cyan-500/20 blur-3xl"
-                variants={glowVariants}
-                initial="initial"
-                animate="animate"
-                aria-hidden="true"
-              />
-
-              {/* SVG Logo - Zynctra Z Icon */}
-              <motion.svg
-                viewBox="0 0 200 200"
-                className="w-32 h-32 md:w-40 md:h-40"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-label="Zynctra logo"
-                role="img"
-              >
-                {/* Outer geometric frame */}
-                <motion.g stroke="#00d9ff" strokeWidth="3" fill="none" strokeLinecap="round">
-                  {/* Top left triangle */}
-                  <motion.path
-                    d="M 50 50 L 100 50 L 75 80 Z"
-                    variants={letterVariants}
-                    initial="initial"
-                    animate="animate"
-                  />
-
-                  {/* Top right triangle */}
-                  <motion.path
-                    d="M 100 50 L 150 50 L 125 80 Z"
-                    variants={letterVariants}
-                    initial="initial"
-                    animate="animate"
-                  />
-
-                  {/* Center lightning bolt */}
-                  <motion.path
-                    d="M 100 60 L 115 95 L 100 90 L 120 130 L 80 100 L 95 105 Z"
-                    fill="#00d9ff"
-                    variants={letterVariants}
-                    initial="initial"
-                    animate="animate"
-                  />
-
-                  {/* Bottom left triangle */}
-                  <motion.path
-                    d="M 50 150 L 75 120 L 100 150 Z"
-                    variants={letterVariants}
-                    initial="initial"
-                    animate="animate"
-                  />
-
-                  {/* Bottom right triangle */}
-                  <motion.path
-                    d="M 100 150 L 125 120 L 150 150 Z"
-                    variants={letterVariants}
-                    initial="initial"
-                    animate="animate"
-                  />
-                </motion.g>
-              </motion.svg>
-            </motion.div>
-
-            {/* Subtitle with staggered animation */}
-            <motion.div
-              className="text-center"
-              variants={subtitleVariants}
-              initial="initial"
-              animate="animate"
-            >
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-4">
-                Zynctra HR
-              </h1>
-              <p className="text-lg md:text-xl text-cyan-300 font-light tracking-wide">
-                All-in-One HR Platform
-              </p>
-            </motion.div>
-
-            {/* Progress bar */}
-            <motion.div
-              className="w-48 h-1 bg-slate-700 rounded-full overflow-hidden mt-12"
-              role="progressbar"
-              aria-valuenow={0}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-label="Application loading progress"
-            >
-              <motion.div
-                className="h-full bg-gradient-to-r from-cyan-400 to-cyan-500 rounded-full"
-                variants={progressBarVariants}
-                initial="initial"
-                animate="animate"
-                style={{ originX: 0 }}
-              />
-            </motion.div>
-
-            {/* Loading text */}
-            <motion.div
-              className="mt-8 text-sm text-slate-400 tracking-wider"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 2, repeat: Infinity, delay: 1.2 }}
-            >
-              Initializing secure systems...
-            </motion.div>
-          </div>
-
-          {/* Decorative corner elements */}
-          <motion.div
-            className="fixed bottom-8 right-8 w-8 h-8"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.3 }}
-            transition={{ delay: 1.5 }}
+          <motion.svg
+            viewBox="0 0 200 200"
+            className="w-32 h-32"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-label="Zynctra logo"
           >
-            <div className="w-full h-full border-2 border-cyan-500 rounded-lg transform rotate-45" />
-          </motion.div>
+            <g stroke="#00d9ff" strokeWidth="3" fill="none" strokeLinecap="round">
+              <motion.path
+                d="M 50 50 L 100 50 L 75 80 Z"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+              />
+              <motion.path
+                d="M 100 50 L 150 50 L 125 80 Z"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              />
+              <motion.path
+                d="M 100 60 L 115 95 L 100 90 L 120 130 L 80 100 L 95 105 Z"
+                fill="#00d9ff"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.5 }}
+              />
+              <motion.path
+                d="M 50 150 L 75 120 L 100 150 Z"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+              />
+              <motion.path
+                d="M 100 150 L 125 120 L 150 150 Z"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+              />
+            </g>
+          </motion.svg>
         </motion.div>
-      )}
-    </AnimatePresence>
+
+        {/* Brand name */}
+        <motion.div
+          className="text-center"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.6 }}
+        >
+          <h1 className="text-4xl font-bold text-white mb-2 tracking-tight">
+            Zynctra HR
+          </h1>
+          <p className="text-cyan-300 font-light tracking-wide">
+            All-in-One HR Platform
+          </p>
+        </motion.div>
+
+        {/* Progress bar */}
+        <motion.div
+          className="w-48 h-1 bg-slate-700 rounded-full overflow-hidden"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+          role="progressbar"
+          aria-label="Loading"
+        >
+          <motion.div
+            className="h-full bg-gradient-to-r from-cyan-400 to-cyan-600 rounded-full"
+            initial={{ scaleX: 0, originX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 2, ease: 'easeInOut', delay: 0.9 }}
+          />
+        </motion.div>
+
+        {/* Status message */}
+        <motion.p
+          className="text-sm text-slate-400 tracking-wider"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 1.2 }}
+        >
+          {message}
+        </motion.p>
+      </div>
+
+      {/* Corner decoration */}
+      <motion.div
+        className="absolute bottom-8 right-8 w-8 h-8 border-2 border-cyan-500 rounded-lg rotate-45 opacity-30"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.3 }}
+        transition={{ delay: 1.5 }}
+      />
+    </div>
   );
 };
 

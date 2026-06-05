@@ -1,16 +1,18 @@
-// cat > /mnt/user-data/outputs/wsClient.ts << 'EOF'
 /**
  * /frontend/src/services/websocket/wsClient.ts
- * 
+ *
  * WebSocket client for real-time features
  */
 
+type MessageHandler = (data: unknown) => void;
+
 class WebSocketClient {
   private ws: WebSocket | null = null;
-  private url: string;
-  private messageHandlers: Map<string, Function[]> = new Map();
+  private readonly url: string;
+  private readonly messageHandlers = new Map<string, MessageHandler[]>();
   private reconnectAttempts = 0;
-  private maxReconnectAttempts = 5;
+  private readonly maxReconnectAttempts = 5;
+  private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(url: string) {
     this.url = url;
@@ -22,73 +24,72 @@ class WebSocketClient {
         this.ws = new WebSocket(this.url);
 
         this.ws.onopen = () => {
-          console.log('WebSocket connected');
           this.reconnectAttempts = 0;
           resolve();
         };
 
-        this.ws.onmessage = (event) => {
-          const data = JSON.parse(event.data);
-          this.handleMessage(data);
+        this.ws.onmessage = (event: MessageEvent<string>) => {
+          try {
+            const data = JSON.parse(event.data) as { type?: string };
+            if (data.type) this.handleMessage(data.type, data);
+          } catch {
+            console.warn('[WS] Failed to parse message', event.data);
+          }
         };
 
         this.ws.onerror = (error) => {
-          console.error('WebSocket error:', error);
+          console.error('[WS] error:', error);
           reject(error);
         };
 
         this.ws.onclose = () => {
-          console.log('WebSocket disconnected');
-          this.attemptReconnect();
+          this.scheduleReconnect();
         };
-      } catch (error) {
-        reject(error);
+      } catch (err) {
+        reject(err);
       }
     });
   }
 
-  private handleMessage(data: any) {
-    const type = data.type;
-    const handlers = this.messageHandlers.get(type) || [];
-    handlers.forEach((handler) => handler(data));
+  private handleMessage(type: string, data: unknown): void {
+    const handlers = this.messageHandlers.get(type) ?? [];
+    for (const handler of handlers) handler(data);
   }
 
-  on(eventType: string, handler: Function) {
+  on(eventType: string, handler: MessageHandler): void {
     if (!this.messageHandlers.has(eventType)) {
       this.messageHandlers.set(eventType, []);
     }
-    this.messageHandlers.get(eventType)?.push(handler);
+    this.messageHandlers.get(eventType)!.push(handler);
   }
 
-  off(eventType: string, handler: Function) {
+  off(eventType: string, handler: MessageHandler): void {
     const handlers = this.messageHandlers.get(eventType);
     if (handlers) {
-      const index = handlers.indexOf(handler);
-      if (index > -1) {
-        handlers.splice(index, 1);
-      }
+      this.messageHandlers.set(
+        eventType,
+        handlers.filter((h) => h !== handler)
+      );
     }
   }
 
-  send(eventType: string, data?: any) {
-    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+  send(eventType: string, data?: Record<string, unknown>): void {
+    if (this.ws?.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify({ type: eventType, ...data }));
     }
   }
 
-  private attemptReconnect() {
-    if (this.reconnectAttempts < this.maxReconnectAttempts) {
-      this.reconnectAttempts++;
-      const delay = Math.pow(2, this.reconnectAttempts) * 1000;
-      console.log(`Attempting reconnect in ${delay}ms...`);
-      setTimeout(() => this.connect().catch(console.error), delay);
-    }
+  private scheduleReconnect(): void {
+    if (this.reconnectAttempts >= this.maxReconnectAttempts) return;
+    this.reconnectAttempts++;
+    const delay = Math.pow(2, this.reconnectAttempts) * 1000;
+    this.reconnectTimer = setTimeout(() => void this.connect().catch(console.error), delay);
   }
 
-  disconnect() {
-    if (this.ws) {
-      this.ws.close();
-    }
+  disconnect(): void {
+    if (this.reconnectTimer) clearTimeout(this.reconnectTimer);
+    this.ws?.close();
+    this.ws = null;
   }
 
   isConnected(): boolean {
@@ -97,4 +98,3 @@ class WebSocketClient {
 }
 
 export default WebSocketClient;
-// EOF

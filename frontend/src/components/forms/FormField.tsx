@@ -1,7 +1,7 @@
 /**
  * /frontend/src/components/forms/FormField.tsx
- * 
- * Reusable form field wrapper with validation
+ *
+ * Reusable form field wrapper with label, hint, and error display.
  */
 
 import React from 'react';
@@ -16,9 +16,6 @@ interface FormFieldProps {
   className?: string;
 }
 
-/**
- * FormField Component
- */
 const FormField: React.FC<FormFieldProps> = ({
   label,
   error,
@@ -31,27 +28,43 @@ const FormField: React.FC<FormFieldProps> = ({
   const isDark = effectiveTheme === 'dark';
 
   return (
-    <div className={`form-group ${className}`}>
+    <div className={`mb-4 ${className}`}>
       {label && (
-        <label className={`form-label ${required ? 'required' : ''} ${error ? 'text-red-400' : ''}`}>
+        <label
+          className={`block text-sm font-semibold mb-2 ${
+            error ? 'text-red-400' : isDark ? 'text-slate-300' : 'text-slate-700'
+          }`}
+        >
           {label}
-          {hint && <span className="form-label-hint">{hint}</span>}
+          {required && <span className="text-red-500 ml-1">*</span>}
+          {hint && !error && (
+            <span
+              className={`ml-2 text-xs font-normal ${
+                isDark ? 'text-slate-500' : 'text-slate-400'
+              }`}
+            >
+              {hint}
+            </span>
+          )}
         </label>
       )}
 
-      {/* Input/Select/Textarea wrapper */}
-      <div className="relative">
-        {children}
-      </div>
+      <div className="relative">{children}</div>
 
-      {/* Error message */}
-      {error && <div className="form-error">✕ {error}</div>}
+      {error && (
+        <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
+          ✕ {error}
+        </p>
+      )}
 
-      {/* Help text */}
-      {!error && hint && (
-        <div className={`form-help text-xs mt-1 ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>
+      {!error && hint && label && (
+        <p
+          className={`mt-1 text-xs ${
+            isDark ? 'text-slate-500' : 'text-slate-500'
+          }`}
+        >
           {hint}
-        </div>
+        </p>
       )}
     </div>
   );

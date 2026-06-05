@@ -1,72 +1,73 @@
-// cat > /mnt/user-data/outputs/employeeService.ts << 'EOF'
 /**
  * /frontend/src/services/api/employeeService.ts
- * 
+ *
  * Employee management API service
  */
 
 import apiClient from './apiClient';
 
 class EmployeeService {
-  async getEmployees(filters?: any) {
-    const response = await apiClient.get('/employees', { params: filters });
-    return response.data;
+  async getEmployees(filters?: Record<string, string | number | boolean>) {
+    const res = await apiClient.get('/employees', { params: filters });
+    return res.data ?? [];
   }
 
   async getEmployee(employeeId: string) {
-    const response = await apiClient.get(`/employees/${employeeId}`);
-    return response.data;
+    const res = await apiClient.get(`/employees/${employeeId}`);
+    return res.data;
   }
 
-  async createEmployee(employeeData: any) {
-    const response = await apiClient.post('/employees', employeeData);
-    return response.data;
+  async createEmployee(employeeData: unknown) {
+    const res = await apiClient.post('/employees', employeeData);
+    return res.data;
   }
 
-  async updateEmployee(employeeId: string, updates: any) {
-    const response = await apiClient.patch(`/employees/${employeeId}`, updates);
-    return response.data;
+  async updateEmployee(employeeId: string, updates: unknown) {
+    const res = await apiClient.patch(`/employees/${employeeId}`, updates);
+    return res.data;
   }
 
   async deleteEmployee(employeeId: string) {
-    const response = await apiClient.delete(`/employees/${employeeId}`);
-    return response.data;
+    const res = await apiClient.delete(`/employees/${employeeId}`);
+    return res.data;
   }
 
   async getEmployeeDocuments(employeeId: string) {
-    const response = await apiClient.get(`/employees/${employeeId}/documents`);
-    return response.data;
+    const res = await apiClient.get(`/employees/${employeeId}/documents`);
+    return res.data ?? [];
   }
 
   async uploadDocument(employeeId: string, file: File, type: string) {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('type', type);
-    const response = await apiClient.post(
-      `/employees/${employeeId}/documents`,
-      formData,
-      { headers: { 'Content-Type': 'multipart/form-data' } }
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL ?? ''}/employees/${employeeId}/documents`,
+      { method: 'POST', credentials: 'include', body: formData }
     );
-    return response.data;
+    if (!response.ok) throw new Error('Document upload failed');
+    return response.json();
   }
 
-  async getAttendance(employeeId: string, period?: string) {
-    const response = await apiClient.get(`/employees/${employeeId}/attendance`, {
-      params: { period },
+  async getAttendance(
+    employeeId: string,
+    period?: string
+  ) {
+    const res = await apiClient.get(`/employees/${employeeId}/attendance`, {
+      params: period ? { period } : undefined,
     });
-    return response.data;
+    return res.data;
   }
 
   async getPerformance(employeeId: string) {
-    const response = await apiClient.get(`/employees/${employeeId}/performance`);
-    return response.data;
+    const res = await apiClient.get(`/employees/${employeeId}/performance`);
+    return res.data;
   }
 
   async getBenefits(employeeId: string) {
-    const response = await apiClient.get(`/employees/${employeeId}/benefits`);
-    return response.data;
+    const res = await apiClient.get(`/employees/${employeeId}/benefits`);
+    return res.data;
   }
 }
 
 export default new EmployeeService();
-// EOF

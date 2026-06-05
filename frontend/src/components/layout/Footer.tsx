@@ -1,14 +1,6 @@
-// Placeholder: Footer.tsx
-import React from 'react';
-
-const Footer: React.FC = () => {
-  return <div>Placeholder Component</div>;
-};
-
-export default Footer;
 /**
  * /frontend/src/components/layout/Footer.tsx
- * 
+ *
  * Application footer with links and information
  */
 
@@ -16,13 +8,9 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from '../../context/ThemeContext';
 
-/**
- * Footer Component
- */
 const Footer: React.FC = () => {
   const { effectiveTheme } = useTheme();
   const isDark = effectiveTheme === 'dark';
-
   const currentYear = new Date().getFullYear();
 
   const links = {
@@ -55,15 +43,12 @@ const Footer: React.FC = () => {
   return (
     <footer
       className={`border-t transition ${
-        isDark
-          ? 'bg-slate-900 border-slate-800'
-          : 'bg-slate-50 border-slate-200'
+        isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-50 border-slate-200'
       }`}
     >
-      {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-8">
-          {/* Brand Section */}
+          {/* Brand */}
           <motion.div
             className="lg:col-span-1"
             initial={{ opacity: 0, y: 20 }}
@@ -76,19 +61,15 @@ const Footer: React.FC = () => {
               </div>
               <span className="font-bold text-lg">Zynctra</span>
             </div>
-            <p
-              className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}
-            >
+            <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
               All-in-One HR Platform
             </p>
-            <p
-              className={`text-xs mt-2 ${isDark ? 'text-slate-500' : 'text-slate-500'}`}
-            >
+            <p className={`text-xs mt-2 ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>
               Streamline your HR operations with AI-powered insights.
             </p>
           </motion.div>
 
-          {/* Product Links */}
+          {/* Product */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -112,7 +93,7 @@ const Footer: React.FC = () => {
             </ul>
           </motion.div>
 
-          {/* Company Links */}
+          {/* Company */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -136,7 +117,7 @@ const Footer: React.FC = () => {
             </ul>
           </motion.div>
 
-          {/* Legal Links */}
+          {/* Legal */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -160,7 +141,7 @@ const Footer: React.FC = () => {
             </ul>
           </motion.div>
 
-          {/* Social Links */}
+          {/* Social */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -187,40 +168,28 @@ const Footer: React.FC = () => {
           </motion.div>
         </div>
 
-        {/* Divider */}
-        <div
-          className={`h-px ${isDark ? 'bg-slate-800' : 'bg-slate-200'} my-8`}
-        />
+        <div className={`h-px ${isDark ? 'bg-slate-800' : 'bg-slate-200'} my-8`} />
 
-        {/* Bottom Section */}
         <div className="flex flex-col md:flex-row justify-between items-center">
-          {/* Copyright */}
-          <p
-            className={`text-sm ${isDark ? 'text-slate-500' : 'text-slate-600'}`}
-          >
+          <p className={`text-sm ${isDark ? 'text-slate-500' : 'text-slate-600'}`}>
             © {currentYear} Zynctra. All rights reserved.
           </p>
-
-          {/* Status */}
           <div className="flex items-center gap-2 mt-4 md:mt-0">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
             <span className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
               All systems operational
             </span>
           </div>
-
-          {/* Version */}
-          <p
-            className={`text-xs mt-4 md:mt-0 ${isDark ? 'text-slate-600' : 'text-slate-500'}`}
-          >
+          <p className={`text-xs mt-4 md:mt-0 ${isDark ? 'text-slate-600' : 'text-slate-500'}`}>
             v1.0.0
           </p>
         </div>
       </div>
 
-      {/* Bottom Bar */}
       <div
-        className={`border-t ${isDark ? 'border-slate-800 bg-slate-900/50' : 'border-slate-200 bg-slate-100/50'}`}
+        className={`border-t ${
+          isDark ? 'border-slate-800 bg-slate-900/50' : 'border-slate-200 bg-slate-100/50'
+        }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <p className={`text-xs text-center ${isDark ? 'text-slate-500' : 'text-slate-600'}`}>

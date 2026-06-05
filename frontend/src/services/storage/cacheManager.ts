@@ -1,44 +1,37 @@
 /**
  * /frontend/src/services/storage/cacheManager.ts
- * 
- * Cache management with TTL and invalidation
+ *
+ * In-memory cache with TTL and LRU-style eviction.
  */
 
-export interface CacheEntry<T> {
+interface CacheEntry<T> {
   data: T;
   timestamp: number;
   ttl: number;
 }
 
 class CacheManager {
-  private cache: Map<string, CacheEntry<any>> = new Map();
-  private maxSize = 100;
+  private readonly cache = new Map<string, CacheEntry<unknown>>();
+  private readonly maxSize = 100;
 
-  set<T>(key: string, data: T, ttlSeconds: number = 3600): void {
+  set<T>(key: string, data: T, ttlSeconds = 3600): void {
     if (this.cache.size >= this.maxSize) {
-      const oldestKey = Array.from(this.cache.entries()).reduce((oldest, [k, v]) =>
-        v.timestamp < oldest[1].timestamp ? [k, v] : oldest
+      // Evict oldest entry
+      const oldest = [...this.cache.entries()].sort(
+        (a, b) => a[1].timestamp - b[1].timestamp
       )[0];
-      this.cache.delete(oldestKey);
+      if (oldest) this.cache.delete(oldest[0]);
     }
-
-    this.cache.set(key, {
-      data,
-      timestamp: Date.now(),
-      ttl: ttlSeconds * 1000,
-    });
+    this.cache.set(key, { data, timestamp: Date.now(), ttl: ttlSeconds * 1000 });
   }
 
   get<T>(key: string): T | null {
     const entry = this.cache.get(key);
     if (!entry) return null;
-
-    const now = Date.now();
-    if (now - entry.timestamp > entry.ttl) {
+    if (Date.now() - entry.timestamp > entry.ttl) {
       this.cache.delete(key);
       return null;
     }
-
     return entry.data as T;
   }
 
@@ -55,12 +48,12 @@ class CacheManager {
   }
 
   invalidatePattern(pattern: RegExp): void {
-    Array.from(this.cache.keys())
-      .filter((key) => pattern.test(key))
-      .forEach((key) => this.cache.delete(key));
+    for (const key of this.cache.keys()) {
+      if (pattern.test(key)) this.cache.delete(key);
+    }
   }
 
-  getStats() {
+  getStats(): { size: number; maxSize: number; usage: number } {
     return {
       size: this.cache.size,
       maxSize: this.maxSize,

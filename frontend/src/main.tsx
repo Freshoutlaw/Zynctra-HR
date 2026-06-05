@@ -1,8 +1,7 @@
 /**
  * /frontend/src/main.tsx
- * 
- * Application entry point
- * Initializes all providers and mounts React app
+ *
+ * Application entry point — initialises all providers and mounts React app.
  */
 
 import React from 'react';
@@ -10,28 +9,24 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 import { ThemeProvider } from './context/ThemeContext';
-import { initSupabase } from './services/supabase/supabaseClient';
+import { AuthProvider } from './context/AuthContext';
 import { getFeatureFlagService } from './services/billing/featureFlags';
 
-// Initialize Supabase
-try {
-  initSupabase();
-  console.log('[Supabase] Connected successfully');
-} catch (error) {
-  console.warn('[Supabase] Connection skipped - not configured for development');
-}
-
-// Initialize feature flags
+// Initialise feature flags (non-blocking)
 const flags = getFeatureFlagService();
-flags.initialize().catch((error) => {
-  console.warn('[FeatureFlags] Failed to initialize:', error);
+void flags.initialize().catch(() => {
+  console.warn('[FeatureFlags] Failed to initialize — using defaults.');
 });
 
-// Mount app
-ReactDOM.createRoot(document.getElementById('root')!).render(
+const rootEl = document.getElementById('root');
+if (!rootEl) throw new Error('Root element not found');
+
+ReactDOM.createRoot(rootEl).render(
   <React.StrictMode>
     <ThemeProvider>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </ThemeProvider>
   </React.StrictMode>
 );

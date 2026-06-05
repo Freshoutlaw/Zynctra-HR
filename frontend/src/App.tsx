@@ -1,14 +1,18 @@
 /**
  * /frontend/src/App.tsx
- * 
- * Root application component
- * Handles routing, authentication, and middleware
+ *
+ * Root application component — handles routing and route guards.
+ * AuthProvider is mounted in main.tsx; useAuth() is safe here.
  */
 
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
-import { useTheme } from './context/ThemeContext';
 import { getFeatureFlagService } from './services/billing/featureFlags';
 
 // Pages
@@ -23,108 +27,80 @@ import PaymentVerification from './pages/PaymentVerification';
 import AdminPanel from './pages/AdminPanel';
 import DashboardPage from './pages/DashboardPage';
 import NotFoundPage from './pages/NotFoundPage';
+import { UserRole } from './types/auth.types';
 
-/**
- * Protected Route Wrapper
- */
+// ---------------------------------------------------------------------------
+// Route guard
+// ---------------------------------------------------------------------------
+
 interface ProtectedRouteProps {
   element: React.ReactNode;
-  requiredRole?: string;
-  requireSubscription?: boolean;
+  requiredRole?: UserRole;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   element,
   requiredRole,
-  requireSubscription,
 }) => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, isLoading } = useAuth();
 
-  // Not authenticated
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // Check role
-  if (requiredRole && user?.role !== requiredRole) {
+  if (isLoading) return <LoadingPage />;
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (requiredRole && user?.role !== requiredRole)
     return <Navigate to="/dashboard" replace />;
-  }
-
-  // Check subscription
-  if (requireSubscription) {
-    const flags = getFeatureFlagService();
-    if (!flags.isFreeModeActive()) {
-      // Would check actual subscription here
-    }
-  }
 
   return <>{element}</>;
 };
 
-/**
- * App Component
- */
+// ---------------------------------------------------------------------------
+// App
+// ---------------------------------------------------------------------------
+
 const App: React.FC = () => {
-  const { isAuthenticated, isLoading, user } = useAuth();
-  const { effectiveTheme } = useTheme();
+  const { isLoading } = useAuth();
   const flags = getFeatureFlagService();
 
-  // Initialize feature flags on mount
   useEffect(() => {
-    flags.initialize();
+    void flags.initialize();
   }, []);
 
-  // Loading
-  if (isLoading) {
-    return <LoadingPage />;
-  }
+  if (isLoading) return <LoadingPage />;
 
   return (
     <Router>
       <Routes>
-        {/* Public Routes */}
+        {/* Public */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
-        {/* Pricing - Only visible when paid mode is enabled */}
+        {/* Pricing — only shown when monetisation is on */}
         {!flags.isFreeModeActive() && (
           <Route path="/pricing" element={<PricingPage />} />
         )}
 
-        {/* Protected Routes */}
+        {/* Protected */}
         <Route
           path="/dashboard"
-          element={
-            <ProtectedRoute
-              element={<DashboardPage />}
-              requireSubscription={true}
-            />
-          }
+          element={<ProtectedRoute element={<DashboardPage />} />}
         />
-
         <Route
           path="/dashboard/subscription"
-          element={
-            <ProtectedRoute element={<SubscriptionDashboard />} />
-          }
+          element={<ProtectedRoute element={<SubscriptionDashboard />} />}
         />
-
         <Route
           path="/payment-verification"
-          element={
-            <ProtectedRoute element={<PaymentVerification />} />
-          }
+          element={<ProtectedRoute element={<PaymentVerification />} />}
         />
 
-        {/* Admin Routes */}
+        {/* Admin */}
         <Route
-          path="/admin"
+          path="/admin/*"
           element={
             <ProtectedRoute
               element={<AdminPanel />}
-              requiredRole="SUPER_ADMIN"
+              requiredRole={UserRole.SUPER_ADMIN}
             />
           }
         />

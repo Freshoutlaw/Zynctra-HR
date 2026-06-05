@@ -1,7 +1,7 @@
 /**
  * /frontend/src/services/websocket/realtimeNotificationHandler.ts
- * 
- * Real-time notification handler via WebSocket
+ *
+ * Real-time notification handler via WebSocket.
  */
 
 import WebSocketClient from './wsClient';
@@ -16,74 +16,72 @@ export interface Notification {
   read: boolean;
 }
 
+type NotificationListener = (notifications: Notification[]) => void;
+
 class RealtimeNotificationHandler {
-  private ws: WebSocketClient;
+  private readonly ws: WebSocketClient;
   private notifications: Notification[] = [];
-  private listeners: Set<Function> = new Set();
+  private readonly listeners = new Set<NotificationListener>();
 
   constructor(wsClient: WebSocketClient) {
     this.ws = wsClient;
-    this.setupHandlers();
+    this.ws.on('notification', (d) =>
+      this.handleNotification(d as Record<string, unknown>)
+    );
+    this.ws.on('notifications_batch', (d) =>
+      this.handleBatch(d as { notifications: Record<string, unknown>[] })
+    );
   }
 
-  private setupHandlers() {
-    this.ws.on('notification', (data) => this.handleNotification(data));
-    this.ws.on('notifications_batch', (data) => this.handleBatch(data));
-  }
-
-  private handleNotification(data: any) {
-    const notification: Notification = {
-      id: data.id,
-      type: data.type,
-      title: data.title,
-      message: data.message,
-      priority: data.priority || 'medium',
-      timestamp: new Date(data.timestamp),
+  private handleNotification(data: Record<string, unknown>): void {
+    const n: Notification = {
+      id: data['id'] as string,
+      type: data['type'] as string,
+      title: data['title'] as string,
+      message: data['message'] as string,
+      priority: (data['priority'] as Notification['priority']) ?? 'medium',
+      timestamp: new Date((data['timestamp'] as string) ?? Date.now()),
       read: false,
     };
-    this.notifications.unshift(notification);
-    this.notifyListeners();
+    this.notifications = [n, ...this.notifications];
+    this.notify();
   }
 
-  private handleBatch(data: any) {
-    if (Array.isArray(data.notifications)) {
-      data.notifications.forEach((n: any) => {
-        this.handleNotification(n);
-      });
-    }
+  private handleBatch(data: { notifications: Record<string, unknown>[] }): void {
+    for (const n of data.notifications ?? []) this.handleNotification(n);
   }
 
   getNotifications(): Notification[] {
     return this.notifications;
   }
 
-  markAsRead(notificationId: string) {
-    const notification = this.notifications.find((n) => n.id === notificationId);
-    if (notification) {
-      notification.read = true;
+  markAsRead(notificationId: string): void {
+    const n = this.notifications.find((x) => x.id === notificationId);
+    if (n) {
+      n.read = true;
       this.ws.send('mark_notification_read', { notificationId });
-      this.notifyListeners();
+      this.notify();
     }
   }
 
-  markAllAsRead() {
-    this.notifications.forEach((n) => (n.read = true));
+  markAllAsRead(): void {
+    for (const n of this.notifications) n.read = true;
     this.ws.send('mark_all_notifications_read');
-    this.notifyListeners();
+    this.notify();
   }
 
-  clearNotifications() {
+  clearNotifications(): void {
     this.notifications = [];
-    this.notifyListeners();
+    this.notify();
   }
 
-  subscribe(callback: Function) {
-    this.listeners.add(callback);
-    return () => this.listeners.delete(callback);
+  subscribe(cb: NotificationListener): () => void {
+    this.listeners.add(cb);
+    return () => this.listeners.delete(cb);
   }
 
-  private notifyListeners() {
-    this.listeners.forEach((callback) => callback(this.notifications));
+  private notify(): void {
+    for (const cb of this.listeners) cb(this.notifications);
   }
 }
 

@@ -1,7 +1,7 @@
 /**
  * /frontend/src/components/common/Spinner.tsx
- * 
- * Loading spinner component
+ *
+ * Loading spinner component.
  */
 
 import React from 'react';
@@ -16,23 +16,24 @@ interface SpinnerProps {
   message?: string;
 }
 
-/**
- * Spinner Component
- */
-const Spinner: React.FC<SpinnerProps> = ({ size = 'md', fullScreen = false, message }) => {
+const sizeClasses: Record<SpinnerSize, string> = {
+  sm: 'w-6 h-6',
+  md: 'w-12 h-12',
+  lg: 'w-16 h-16',
+  xl: 'w-20 h-20',
+};
+
+const Spinner: React.FC<SpinnerProps> = ({
+  size = 'md',
+  fullScreen = false,
+  message,
+}) => {
   const { effectiveTheme } = useTheme();
   const isDark = effectiveTheme === 'dark';
 
-  const sizeClasses = {
-    sm: 'w-6 h-6',
-    md: 'w-12 h-12',
-    lg: 'w-16 h-16',
-    xl: 'w-20 h-20',
-  };
-
-  const spinner = (
+  const spinnerEl = (
     <motion.div
-      className={`${sizeClasses[size]} rounded-full border-4 border-current`}
+      className={`${sizeClasses[size]} rounded-full border-4`}
       style={{
         borderTopColor: 'rgb(0, 217, 255)',
         borderRightColor: 'transparent',
@@ -47,14 +48,12 @@ const Spinner: React.FC<SpinnerProps> = ({ size = 'md', fullScreen = false, mess
   if (fullScreen) {
     return (
       <div
-        className={`
-          fixed inset-0 flex items-center justify-center
-          ${isDark ? 'bg-slate-900/50' : 'bg-white/50'}
-          backdrop-blur-sm z-50
-        `}
+        className={`fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm ${
+          isDark ? 'bg-slate-900/50' : 'bg-white/50'
+        }`}
       >
         <div className="flex flex-col items-center gap-4">
-          <div className="text-cyan-400">{spinner}</div>
+          <div className="text-cyan-400">{spinnerEl}</div>
           {message && (
             <p className={`text-sm font-medium ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
               {message}
@@ -65,7 +64,9 @@ const Spinner: React.FC<SpinnerProps> = ({ size = 'md', fullScreen = false, mess
     );
   }
 
-  return <div className="flex items-center justify-center text-cyan-400">{spinner}</div>;
+  return (
+    <div className="flex items-center justify-center text-cyan-400">{spinnerEl}</div>
+  );
 };
 
 export default Spinner;

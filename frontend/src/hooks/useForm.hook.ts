@@ -1,7 +1,7 @@
 /**
  * /frontend/src/hooks/useForm.hook.ts
- * 
- * Hook for managing form state and validation
+ *
+ * Hook for managing form state and validation.
  */
 
 import { useState, useCallback, ChangeEvent, FormEvent } from 'react';
@@ -21,20 +21,19 @@ interface UseFormReturn<T> {
   errors: FormErrors;
   isSubmitting: boolean;
   isDirty: boolean;
-  touched: { [key: string]: boolean };
-  setFieldValue: (field: string, value: any) => void;
+  touched: Record<string, boolean>;
+  setFieldValue: (field: keyof T & string, value: unknown) => void;
   setFieldError: (field: string, error: string) => void;
   setValues: (values: T) => void;
   resetForm: () => void;
-  handleChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+  handleChange: (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => void;
   handleSubmit: (e: FormEvent) => Promise<void>;
   setTouched: (field: string) => void;
 }
 
-/**
- * useForm Hook
- */
-export const useForm = <T extends Record<string, any>>(
+export const useForm = <T extends Record<string, unknown>>(
   options: UseFormOptions<T>
 ): UseFormReturn<T> => {
   const { initialValues, onSubmit, validate } = options;
@@ -43,73 +42,64 @@ export const useForm = <T extends Record<string, any>>(
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
-  const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
+  const [touched, setTouchedMap] = useState<Record<string, boolean>>({});
 
-  const setFieldValue = useCallback((field: string, value: any) => {
-    setValues((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-    setIsDirty(true);
-    // Clear error when field is edited
-    if (errors[field]) {
+  const setFieldValue = useCallback(
+    (field: keyof T & string, value: unknown) => {
+      setValues((prev) => ({ ...prev, [field]: value }));
+      setIsDirty(true);
       setErrors((prev) => {
-        const { [field]: _, ...rest } = prev;
-        return rest;
+        const next = { ...prev };
+        delete next[field];
+        return next;
       });
-    }
-  }, [errors]);
+    },
+    []
+  );
 
   const setFieldError = useCallback((field: string, error: string) => {
-    setErrors((prev) => ({
-      ...prev,
-      [field]: error,
-    }));
+    setErrors((prev) => ({ ...prev, [field]: error }));
   }, []);
 
-  const setTouchedField = useCallback((field: string) => {
-    setTouched((prev) => ({
-      ...prev,
-      [field]: true,
-    }));
+  const setTouched = useCallback((field: string) => {
+    setTouchedMap((prev) => ({ ...prev, [field]: true }));
   }, []);
 
   const handleChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    (
+      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    ) => {
       const { name, value, type } = e.target;
-
-      if (type === 'checkbox') {
-        const isChecked = (e.target as HTMLInputElement).checked;
-        setFieldValue(name, isChecked);
-      } else if (type === 'number') {
-        setFieldValue(name, Number(value));
-      } else {
-        setFieldValue(name, value);
-      }
-
-      setTouchedField(name);
+      const finalValue =
+        type === 'checkbox'
+          ? (e.target as HTMLInputElement).checked
+          : type === 'number'
+            ? Number(value)
+            : value;
+      setFieldValue(name as keyof T & string, finalValue);
+      setTouched(name);
     },
-    [setFieldValue, setTouchedField]
+    [setFieldValue, setTouched]
   );
 
   const handleSubmit = useCallback(
     async (e: FormEvent) => {
       e.preventDefault();
-
-      // Validate
       if (validate) {
-        const newErrors = validate(values);
-        if (Object.keys(newErrors).length > 0) {
-          setErrors(newErrors);
+        const errs = validate(values);
+        if (Object.keys(errs).length > 0) {
+          setErrors(errs);
           return;
         }
       }
-
       setIsSubmitting(true);
       try {
         await onSubmit(values);
-      } catch (error) {
-        console.error('Form submission error:', error);
+      } catch (err) {
+        console.error('[useForm] submit error:', err);
+        setErrors({
+          submit: err instanceof Error ? err.message : 'An error occurred',
+        });
       } finally {
         setIsSubmitting(false);
       }
@@ -121,7 +111,7 @@ export const useForm = <T extends Record<string, any>>(
     setValues(initialValues);
     setErrors({});
     setIsDirty(false);
-    setTouched({});
+    setTouchedMap({});
   }, [initialValues]);
 
   return {
@@ -136,7 +126,7 @@ export const useForm = <T extends Record<string, any>>(
     resetForm,
     handleChange,
     handleSubmit,
-    setTouched: setTouchedField,
+    setTouched,
   };
 };
 
