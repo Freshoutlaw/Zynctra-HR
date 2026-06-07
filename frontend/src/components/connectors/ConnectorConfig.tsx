@@ -182,8 +182,8 @@ const ConnectorConfig: React.FC<ConnectorConfigProps> = ({
           onClick={handleSave}
           disabled={isLoading}
           className="flex-1 py-2 px-4 bg-cyan-500 hover:bg-cyan-600 text-slate-900 font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition"
-          whileHover={!isLoading ? { scale: 1.02 } : undefined}
-          whileTap={!isLoading ? { scale: 0.98 } : undefined}
+          whileHover={!isLoading  ? { scale: 1.02 } : {}}
+          whileTap={!isLoading  ? { scale: 0.98 } : {}}
         >
           {isLoading ? 'Saving…' : connector.connected ? 'Update' : 'Connect'}
         </motion.button>

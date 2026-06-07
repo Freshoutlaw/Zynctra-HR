@@ -36,8 +36,8 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
               : 'shadow'
         } ${className}`}
         onClick={onClick}
-        whileHover={hover ? { y: -4 } : undefined}
-        whileTap={hover ? { scale: 0.98 } : undefined}
+        whileHover={hover  ? { y: -4 } : {}}
+        whileTap={hover  ? { scale: 0.98 } : {}}
       >
         {children}
       </motion.div>

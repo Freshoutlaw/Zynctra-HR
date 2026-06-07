@@ -58,10 +58,7 @@ const DashboardPage: React.FC = () => {
   }, []);
 
   const displayName =
-    user?.fullName?.split(' ')[0] ??
-    user?.firstName ??
-    user?.email ??
-    'there';
+    user?.firstName ?? user?.email ?? 'there';
 
   return (
     <AppLayout showSidebar showFooter={false}>
@@ -188,7 +185,7 @@ const DashboardPage: React.FC = () => {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.05 }}
-                whileHover={accessible ? { y: -3 } : undefined}
+                whileHover={accessible  ? { y: -3 } : {}}
                 onClick={accessible ? () => navigate(feature.path) : undefined}
               >
                 {!accessible && (
@@ -226,8 +223,8 @@ const DashboardPage: React.FC = () => {
                         ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
                         : 'bg-slate-300 text-slate-500 cursor-not-allowed'
                   }`}
-                  whileHover={accessible ? { scale: 1.03 } : undefined}
-                  whileTap={accessible ? { scale: 0.97 } : undefined}
+                  whileHover={accessible  ? { scale: 1.03 } : {}}
+                  whileTap={accessible  ? { scale: 0.97 } : {}}
                 >
                   {accessible ? 'Open' : 'Upgrade to Access'}
                 </motion.button>

@@ -27,7 +27,7 @@ import PaymentVerification from './pages/PaymentVerification';
 import AdminPanel from './pages/AdminPanel';
 import DashboardPage from './pages/DashboardPage';
 import NotFoundPage from './pages/NotFoundPage';
-import { UserRole } from './types/auth.types';
+import type { UserRole } from './types/auth.types';
 
 // ---------------------------------------------------------------------------
 // Route guard

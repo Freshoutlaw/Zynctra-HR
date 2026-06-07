@@ -7,7 +7,7 @@
 
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import {
+import type {
   BillingState,
   Subscription,
   PlanConfig,

@@ -16,7 +16,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
-import { UserRole, SecurityEvent, EventSeverity } from '../types/auth.types';
+import type { UserRole } from '../types/auth.types';
 import { orgBillingService, auditLogService } from '../services/supabase/supabaseClient';
 import { getFeatureFlagService } from '../services/billing/featureFlags';
 import { useTheme } from '../context/ThemeContext';

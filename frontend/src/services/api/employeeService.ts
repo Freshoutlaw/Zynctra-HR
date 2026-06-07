@@ -8,7 +8,8 @@ import apiClient from './apiClient';
 
 class EmployeeService {
   async getEmployees(filters?: Record<string, string | number | boolean>) {
-    const res = await apiClient.get('/employees', { params: filters });
+    const requestOptions = filters ? { params: filters } : {};
+    const res = await apiClient.get('/employees', requestOptions);
     return res.data ?? [];
   }
 
@@ -53,9 +54,8 @@ class EmployeeService {
     employeeId: string,
     period?: string
   ) {
-    const res = await apiClient.get(`/employees/${employeeId}/attendance`, {
-      params: period ? { period } : undefined,
-    });
+    const requestOptions = period ? { params: { period } } : {};
+    const res = await apiClient.get(`/employees/${employeeId}/attendance`, requestOptions);
     return res.data;
   }
 

@@ -8,7 +8,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import useBillingStore from '../stores/billingStore';
-import {
+import type {
   SubscriptionPlan,
   BillingPeriod,
   PaymentStatus,

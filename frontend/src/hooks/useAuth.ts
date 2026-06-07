@@ -12,7 +12,7 @@
 
 import { useContext, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext as AuthContextType, User, SessionToken } from '../types/auth.types';
+import type { AuthContext as AuthContextType, User, SessionToken } from '../types/auth.types';
 
 // Auth context (created separately in AuthProvider)
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);

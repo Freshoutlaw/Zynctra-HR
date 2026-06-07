@@ -5,7 +5,7 @@
  * Fixed: uses import.meta.env; no duplicate getCsrfToken definition.
  */
 
-import { UserRole } from '../types/auth.types';
+import type { UserRole } from '../types/auth.types';
 import { getStoredAccessToken, getStoredRefreshToken, decodeJWT } from '../context/AuthContext';
 
 export const isAuthenticated = (): boolean => !!getStoredAccessToken();

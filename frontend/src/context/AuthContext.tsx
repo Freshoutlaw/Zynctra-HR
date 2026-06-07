@@ -13,7 +13,7 @@ import React, {
   useState,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, UserRole, AuthContext as AuthContextType } from '../types/auth.types';
+import type { User, UserRole, AuthContext as AuthContextType } from '../types/auth.types';
 
 // ---------------------------------------------------------------------------
 // Helpers (pure functions — safe to use outside React)

@@ -194,8 +194,8 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
           type="submit"
           disabled={isLoading}
           className="px-6 py-2 rounded-lg font-semibold bg-gradient-to-r from-cyan-400 to-cyan-600 text-slate-900 hover:shadow-lg hover:shadow-cyan-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition"
-          whileHover={!isLoading ? { scale: 1.02 } : undefined}
-          whileTap={!isLoading ? { scale: 0.98 } : undefined}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
         >
           {isLoading
             ? mode === 'create'

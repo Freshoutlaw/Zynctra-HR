@@ -9,7 +9,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import useBilling from '../hooks/useBilling';
-import { PaymentStatus } from '../types/billing.types';
+import type { PaymentStatus } from '../types/billing.types';
 import { useTheme } from '../context/ThemeContext';
 
 type VerifyState = 'processing' | 'success' | 'failed';

@@ -34,7 +34,7 @@ export const useAnomalyDetection = (autoFetch = true) => {
 
   useEffect(() => {
     if (autoFetch) {
-      fetchAetch();
+      void fetchAnomalies();
       const interval = setInterval(fetchAnomalies, 30000); // Refresh every 30s
       return () => clearInterval(interval);
     }

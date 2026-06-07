@@ -10,10 +10,10 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
-import { UserRole, SecurityEvent, EventSeverity } from '../../types/auth.types';
-import { MonetizationSettings, FeatureFlagConfig } from '../../types/billing.types';
+import type { UserRole } from '../../types/auth.types';
+import type { MonetizationSettings } from '../../types/billing.types';
 
 interface AdminMonetizationToggleProps {
   onClose?: () => void;
@@ -27,7 +27,6 @@ export const AdminMonetizationToggle: React.FC<AdminMonetizationToggleProps> = (
 }) => {
   const { user } = useAuth();
   const [settings, setSettings] = useState<MonetizationSettings | null>(null);
-  const [flags, setFlags] = useState<FeatureFlagConfig | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);

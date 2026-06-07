@@ -36,7 +36,11 @@ export const useApi = <T,>(
     setIsLoading(true);
     setError(null);
     try {
-      const response = await apiClient.get<T>(url, { params, headers });
+      const requestOptions: RequestOptions = {
+        ...(headers ? { headers } : {}),
+        ...(params !== undefined ? { params } : {}),
+      };
+      const response = await apiClient.get<T>(url, requestOptions);
       if (response.data !== undefined) {
         setData(response.data);
         onSuccess?.(response.data);
@@ -98,10 +102,14 @@ export const useMutation = <T,>(
       setIsLoading(true);
       setError(null);
       try {
-        const response =
+        const requestOptions: RequestOptions = {
+        ...(headers ? { headers } : {}),
+        ...(params !== undefined ? { params } : {}),
+      };
+      const response =
           method === 'delete'
-            ? await apiClient.delete<T>(url, { params, headers })
-            : await apiClient[method]<T>(url, payload, { params, headers });
+            ? await apiClient.delete<T>(url, requestOptions)
+            : await apiClient[method]<T>(url, payload, requestOptions);
         if (response.data !== undefined) {
           setData(response.data);
           onSuccess?.(response.data);

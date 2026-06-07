@@ -737,8 +737,8 @@ const RegisterPage: React.FC = () => {
             type="submit"
             disabled={isLoading}
             className="w-full py-3 px-6 rounded-lg font-semibold bg-gradient-to-r from-cyan-400 to-cyan-600 text-slate-900 hover:shadow-lg hover:shadow-cyan-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition"
-            whileHover={!isLoading ? { scale: 1.02 } : undefined}
-            whileTap={!isLoading ? { scale: 0.98 } : undefined}
+            whileHover={!isLoading  ? { scale: 1.02 } : {}}
+            whileTap={!isLoading  ? { scale: 0.98 } : {}}
           >
             {isLoading ? 'Creating Account…' : 'Create Account'}
           </motion.button>

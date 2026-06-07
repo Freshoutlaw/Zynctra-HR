@@ -19,12 +19,12 @@ export interface OrgNode {
 
 interface OrgChartProps {
   root: OrgNode;
-  onNodeClick?: (node: OrgNode) => void;
+  onNodeClick?: ((node: OrgNode) => void) | undefined;
 }
 
 interface NodeCardProps {
   node: OrgNode;
-  onNodeClick?: (node: OrgNode) => void;
+  onNodeClick?: ((node: OrgNode) => void) | undefined;
   depth: number;
 }
 

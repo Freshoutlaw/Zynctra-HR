@@ -11,7 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import useBilling from '../hooks/useBilling';
 import useBillingStore from '../stores/billingStore';
-import { SubscriptionPlan, BillingPeriod } from '../types/billing.types';
+import type { SubscriptionPlan, BillingPeriod } from '../types/billing.types';
 import { getFeatureFlagService } from '../services/billing/featureFlags';
 import { useTheme } from '../context/ThemeContext';
 import AppLayout from '../components/layout/AppLayout';

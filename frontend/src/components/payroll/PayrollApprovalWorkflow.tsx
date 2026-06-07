@@ -40,7 +40,6 @@ export const PayrollApprovalWorkflow: React.FC<PayrollApprovalWorkflowProps> = (
 }) => {
   const [selectedApproval, setSelectedApproval] = useState<PayrollApproval | null>(null);
   const [approvalComments, setApprovalComments] = useState('');
-  const [rejectionReason, setRejectionReason] = useState('');
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
@@ -165,7 +164,7 @@ export const PayrollApprovalWorkflow: React.FC<PayrollApprovalWorkflowProps> = (
                     Approve
                   </button>
                   <button
-                    onClick={() => onReject(selectedApproval.id, rejectionReason)}
+                    onClick={() => onReject(selectedApproval.id, approvalComments)}
                     className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium"
                   >
                     Reject

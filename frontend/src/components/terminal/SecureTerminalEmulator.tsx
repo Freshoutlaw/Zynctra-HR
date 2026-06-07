@@ -15,7 +15,7 @@
  */
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
 import { UserRole } from '../../types/auth.types';
 
@@ -318,23 +318,6 @@ export const SecureTerminalEmulator: React.FC<SecureTerminalProps> = ({
   /**
    * Handle special commands (client-side)
    */
-  const handleSpecialCommand = (cmd: string) => {
-    if (cmd === 'clear') {
-      setOutput([]);
-      return true;
-    }
-    if (cmd === 'help') {
-      addOutput({
-        type: 'output',
-        content: 'Available Commands:\n' +
-          COMMAND_WHITELIST.map(
-            (c) => `  ${c.command.padEnd(15)} - ${c.description} [${c.riskLevel}]`
-          ).join('\n'),
-      });
-      return true;
-    }
-    return false;
-  };
 
   /**
    * Handle keyboard shortcuts

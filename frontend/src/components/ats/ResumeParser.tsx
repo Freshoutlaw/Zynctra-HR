@@ -53,7 +53,7 @@ export const ResumeParser: React.FC<ResumeParserProps> = ({
     }
   };
 
-  const handleParse = async (file: File) => {
+  const handleParse = async (_file: File) => {
     setStep('parsing');
     // In real app, this would call AI parsing service
     setTimeout(() => {

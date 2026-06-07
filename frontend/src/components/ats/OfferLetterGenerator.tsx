@@ -252,7 +252,7 @@ Human Resources Department`;
                     onClick={() =>
                       setFormData((prev) => ({
                         ...prev,
-                        benefits: prev.benefits?.filter((_, i) => i !== idx),
+                        benefits: prev.benefits?.filter((_, i) => i !== idx) ?? [],
                       }))
                     }
                     className="text-red-500 font-bold"
@@ -294,7 +294,7 @@ Human Resources Department`;
                     onClick={() =>
                       setFormData((prev) => ({
                         ...prev,
-                        conditions: prev.conditions?.filter((_, i) => i !== idx),
+                        conditions: prev.conditions?.filter((_, i) => i !== idx) ?? [],
                       }))
                     }
                     className="text-red-500 font-bold"

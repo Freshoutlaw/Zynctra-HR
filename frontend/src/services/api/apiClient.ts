@@ -11,7 +11,7 @@
  * - Tenant isolation
  */
 
-import { ApiResponse, ApiError } from '../../types/auth.types';
+import type { ApiResponse, ApiError } from '../../types/auth.types';
 import {
   getCsrfToken,
   getStoredAccessToken,
@@ -184,7 +184,7 @@ class ApiClient {
         code: (data as { code?: string }).code ?? 'UNKNOWN_ERROR',
         message: (data as { message?: string }).message ?? response.statusText,
         statusCode: response.status,
-        details: (data as { details?: Record<string, unknown> }).details,
+        details: (data as { details?: Record<string, any> }).details,
       };
       throw new ApiClientError(err.message, err);
     }

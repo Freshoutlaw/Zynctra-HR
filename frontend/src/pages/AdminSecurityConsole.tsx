@@ -9,7 +9,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../hooks/useAuth';
-import { UserRole } from '../types/auth.types';
+import type { UserRole } from '../types/auth.types';
 import securityService from '../services/api/securityService';
 import { AnomalyDetectionDashboard, type DetectedAnomaly } from '../components/security/AnomalyDetectionDashboard';
 import { AuditLogViewer, type AuditLog } from '../components/security/AuditLogViewer';

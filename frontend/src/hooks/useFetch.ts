@@ -12,7 +12,7 @@ interface UseFetchOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   autoFetch?: boolean;
   body?: unknown;
-  params?: Record<string, string | number | boolean>;
+  params?: Record<string, string | number | boolean | null | undefined>;
 }
 
 export const useFetch = <T,>(url: string, options: UseFetchOptions = {}) => {
@@ -25,22 +25,25 @@ export const useFetch = <T,>(url: string, options: UseFetchOptions = {}) => {
     setIsLoading(true);
     setError(null);
     try {
+      const requestOptions = {
+        ...(params !== undefined ? { params } : {}),
+      };
       let response;
       switch (method) {
         case 'GET':
-          response = await apiClient.get<T>(url, { params });
+          response = await apiClient.get<T>(url, requestOptions);
           break;
         case 'POST':
-          response = await apiClient.post<T>(url, body, { params });
+          response = await apiClient.post<T>(url, body, requestOptions);
           break;
         case 'PUT':
-          response = await apiClient.put<T>(url, body, { params });
+          response = await apiClient.put<T>(url, body, requestOptions);
           break;
         case 'PATCH':
-          response = await apiClient.patch<T>(url, body, { params });
+          response = await apiClient.patch<T>(url, body, requestOptions);
           break;
         case 'DELETE':
-          response = await apiClient.delete<T>(url, { params });
+          response = await apiClient.delete<T>(url, requestOptions);
           break;
         default:
           throw new Error(`Unsupported method: ${method}`);

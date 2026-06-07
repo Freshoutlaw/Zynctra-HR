@@ -8,14 +8,14 @@ import apiClient from './apiClient';
 
 class SecurityService {
   async getAuditLogs(filters?: Record<string, string | number | boolean>) {
-    const res = await apiClient.get('/security/audit-logs', { params: filters });
+    const requestOptions = filters ? { params: filters } : {};
+    const res = await apiClient.get('/security/audit-logs', requestOptions);
     return res.data ?? [];
   }
 
   async getAnomalies(type?: string) {
-    const res = await apiClient.get('/security/anomalies', {
-      params: type ? { type } : undefined,
-    });
+    const requestOptions = type ? { params: { type } } : {};
+    const res = await apiClient.get('/security/anomalies', requestOptions);
     return res.data ?? [];
   }
 
@@ -50,9 +50,8 @@ class SecurityService {
   }
 
   async getAccessLogs(userId?: string) {
-    const res = await apiClient.get('/security/access-logs', {
-      params: userId ? { userId } : undefined,
-    });
+    const requestOptions = userId ? { params: { userId } } : {};
+    const res = await apiClient.get('/security/access-logs', requestOptions);
     return res.data ?? [];
   }
 
