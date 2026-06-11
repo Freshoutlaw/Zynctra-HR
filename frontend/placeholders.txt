@@ -94,3 +94,13 @@ frontend/src/styles/variables.css
 frontend/src/pages/ATSModule.tsx
 frontend/src/pages/AdminSecurityConsole.tsx
 frontend/src/pages/EmployeeDirectory.tsx
+
+
+
+import Spline from '@splinetool/react-spline';
+
+export default function App() {
+  return (
+    <Spline scene="https://prod.spline.design/0IT8L8nKVI9pNYHm/scene.splinecode" />
+  );
+}

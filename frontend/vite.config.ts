@@ -52,7 +52,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: process.env.NODE_ENV === 'development',
-    minify: 'terser',
+    minify: false,
     target: 'es2020',
     terserOptions: {
       compress: {
@@ -62,11 +62,22 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Split vendor chunks for better caching
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'ui-vendor': ['framer-motion', '@supabase/supabase-js'],
-          'utils': ['zustand', 'date-fns', 'axios'],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (
+              id.includes('react') ||
+              id.includes('react-dom') ||
+              id.includes('react-router-dom')
+            ) {
+              return 'react-vendor';
+            }
+            if (id.includes('framer-motion') || id.includes('@supabase/supabase-js')) {
+              return 'ui-vendor';
+            }
+            if (id.includes('zustand') || id.includes('date-fns') || id.includes('axios')) {
+              return 'utils';
+            }
+          }
         },
         // Brotli compression (higher ratio than gzip)
         format: 'es',
