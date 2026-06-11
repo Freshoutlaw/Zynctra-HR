@@ -12,10 +12,8 @@ import {
   SubscriptionPlan,
   BillingPeriod,
   PaymentStatus,
-  Subscription,
-  Invoice,
-  PlanConfig,
 } from '../types/billing.types';
+import type { Subscription, Invoice, PlanConfig } from '../types/billing.types';
 import { getPaymentGateway } from '../services/payment/paymentGateway';
 import {
   getFeatureFlagService,

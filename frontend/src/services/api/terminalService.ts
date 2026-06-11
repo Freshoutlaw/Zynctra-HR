@@ -32,8 +32,13 @@ class TerminalService {
     return res.data as { valid: boolean; reason?: string };
   }
 
-  async getCommandLogs(filter?: Record<string, string | number | boolean>) {
-    const res = await apiClient.get('/terminal/logs', { params: filter });
+  async getCommandLogs(
+    filter?: Record<string, string | number | boolean | null | undefined>
+  ) {
+    const res = await apiClient.get(
+      '/terminal/logs',
+      filter ? { params: filter } : {}
+    );
     return res.data ?? [];
   }
 }

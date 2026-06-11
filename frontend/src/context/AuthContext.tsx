@@ -1,8 +1,8 @@
 /**
  * /frontend/src/context/AuthContext.tsx
  *
- * Authentication context provider — centralises auth state so that
- * the useAuth hook works throughout the app.
+ * Authentication context provider — centralises auth state.
+ * Now with MFA verification flow and registration support.
  */
 
 import React, {
@@ -13,21 +13,25 @@ import React, {
   useState,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, UserRole, AuthContext as AuthContextType } from '../types/auth.types';
+import { User, UserRole, AuthContext as AuthContextType, RegisterData } from '../types/auth.types';
 
 // ---------------------------------------------------------------------------
-// Helpers (pure functions — safe to use outside React)
+// Helpers
 // ---------------------------------------------------------------------------
 
 const STORAGE_PREFIX = '__zynctra__';
 const TOKEN_KEY = `${STORAGE_PREFIX}token`;
 const REFRESH_TOKEN_KEY = `${STORAGE_PREFIX}refresh`;
+const MFA_KEY = `${STORAGE_PREFIX}mfa_verified`;
 
 export const getStoredAccessToken = (): string | null =>
   sessionStorage.getItem(TOKEN_KEY);
 
 export const getStoredRefreshToken = (): string | null =>
   sessionStorage.getItem(REFRESH_TOKEN_KEY);
+
+export const getMfaVerified = (): boolean =>
+  sessionStorage.getItem(MFA_KEY) === 'true';
 
 export const storeTokenSecurely = (
   accessToken: string,
@@ -46,6 +50,15 @@ export const clearStoredTokens = (): void => {
   sessionStorage.removeItem(TOKEN_KEY);
   sessionStorage.removeItem(REFRESH_TOKEN_KEY);
   sessionStorage.removeItem(`${STORAGE_PREFIX}expires_at`);
+  sessionStorage.removeItem(MFA_KEY);
+};
+
+export const setMfaVerified = (verified: boolean): void => {
+  if (verified) {
+    sessionStorage.setItem(MFA_KEY, 'true');
+  } else {
+    sessionStorage.removeItem(MFA_KEY);
+  }
 };
 
 export const getCsrfToken = (): string => {
@@ -59,11 +72,11 @@ export const getCsrfToken = (): string => {
   return '';
 };
 
-export const decodeJWT = (token: string): Record<string, unknown> => {
+export const decodeJWT = (token: string): Record<string, any> => {
   try {
     const parts = token.split('.');
     if (parts.length !== 3) return {};
-    return JSON.parse(atob(parts[1]!)) as Record<string, unknown>;
+    return JSON.parse(atob(parts[1]!)) as Record<string, any>;
   } catch {
     return {};
   }
@@ -106,10 +119,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [mfaVerified, setMfaVerifiedState] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Attempt to restore session from stored token on mount
+  // Restore session on mount
   useEffect(() => {
     const restore = async () => {
       const token = getStoredAccessToken();
@@ -120,7 +134,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const decoded = decodeJWT(token);
       const exp = decoded['exp'] as number | undefined;
       if (exp && Date.now() / 1000 > exp) {
-        // Token expired — attempt refresh
         const success = await refreshToken();
         if (!success) {
           clearStoredTokens();
@@ -128,7 +141,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           return;
         }
       }
-      // Fetch current user profile
       try {
         const res = await fetch(
           `${import.meta.env.VITE_API_URL ?? ''}/auth/me`,
@@ -144,6 +156,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           const data = (await res.json()) as { user: User };
           setUser(data.user);
           setIsAuthenticated(true);
+          setMfaVerifiedState(getMfaVerified());
         } else {
           clearStoredTokens();
         }
@@ -182,12 +195,62 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           accessToken: string;
           refreshToken: string;
           expiresIn: number;
+          mfaRequired: boolean;
         };
         storeTokenSecurely(data.accessToken, data.refreshToken, data.expiresIn);
         setUser(data.user);
         setIsAuthenticated(true);
+        // If MFA is not required, mark as verified
+        if (!data.mfaRequired) {
+          setMfaVerified(true);
+          setMfaVerifiedState(true);
+        }
       } catch (err) {
         const msg = err instanceof Error ? err.message : 'Login failed';
+        setError(msg);
+        throw err;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    []
+  );
+
+  const register = useCallback(
+    async (data: RegisterData): Promise<void> => {
+      setError(null);
+      setIsLoading(true);
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL ?? ''}/auth/register`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': getCsrfToken(),
+            },
+            credentials: 'include',
+            body: JSON.stringify(data),
+          }
+        );
+        if (!res.ok) {
+          const errData = (await res.json()) as { message?: string };
+          throw new Error(errData.message ?? 'Registration failed');
+        }
+        const result = (await res.json()) as {
+          user: User;
+          accessToken: string;
+          refreshToken: string;
+          expiresIn: number;
+        };
+        storeTokenSecurely(result.accessToken, result.refreshToken, result.expiresIn);
+        setUser(result.user);
+        setIsAuthenticated(true);
+        // New users always need MFA setup
+        setMfaVerified(false);
+        setMfaVerifiedState(false);
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : 'Registration failed';
         setError(msg);
         throw err;
       } finally {
@@ -208,6 +271,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       clearStoredTokens();
       setUser(null);
       setIsAuthenticated(false);
+      setMfaVerifiedState(false);
     }
   }, []);
 
@@ -221,6 +285,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           headers: {
             'Content-Type': 'application/json',
             'X-CSRF-Token': getCsrfToken(),
+            Authorization: `Bearer ${getStoredAccessToken()}`,
           },
           credentials: 'include',
           body: JSON.stringify({ mfaCode: code }),
@@ -230,6 +295,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         const data = (await res.json()) as { message?: string };
         throw new Error(data.message ?? 'MFA verification failed');
       }
+      // MFA verified — persist and update state
+      setMfaVerified(true);
+      setMfaVerifiedState(true);
     },
     []
   );
@@ -268,9 +336,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     isAuthenticated,
     isLoading,
     error,
+    mfaVerified,
     login,
     logout,
     verifyMFA,
+    register,
     refreshToken,
   };
 

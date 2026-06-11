@@ -23,7 +23,7 @@ interface DataGridProps<T> {
 }
 
 export const DataGrid = React.forwardRef<HTMLDivElement, DataGridProps<any>>(
-  ({ data, columns, pageSize = 10, onRowClick, selectedRowId }, ref) => {
+  ({ data, columns, pageSize = 10, onRowClick }, ref) => {
     const [sortConfig, setSortConfig] = useState<{
       key: string;
       direction: 'asc' | 'desc';

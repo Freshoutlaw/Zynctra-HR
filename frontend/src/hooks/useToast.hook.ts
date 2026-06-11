@@ -32,7 +32,16 @@ export const useToast = () => {
       action?: Toast['action']
     ): string => {
       const id = `toast-${counter.current++}`;
-      setToasts((prev) => [...prev, { id, message, type, duration, action }]);
+      setToasts((prev) => [
+        ...prev,
+        {
+          id,
+          message,
+          type,
+          duration,
+          ...(action ? { action } : {}),
+        },
+      ]);
       if (duration > 0) {
         setTimeout(() => removeToast(id), duration);
       }

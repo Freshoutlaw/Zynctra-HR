@@ -22,9 +22,13 @@ export const parseError = (err: unknown): AppError => {
     const e = err as Record<string, unknown>;
     return {
       message: (e['message'] as string) ?? 'An error occurred',
-      code: e['code'] as string | undefined,
-      statusCode: e['statusCode'] as number | undefined,
-      details: e['details'] as Record<string, unknown> | undefined,
+      ...(typeof e['code'] === 'string' ? { code: e['code'] as string } : {}),
+      ...(typeof e['statusCode'] === 'number'
+        ? { statusCode: e['statusCode'] as number }
+        : {}),
+      ...(typeof e['details'] === 'object' && e['details'] !== null
+        ? { details: e['details'] as Record<string, unknown> }
+        : {}),
     };
   }
   return { message: 'An unexpected error occurred' };

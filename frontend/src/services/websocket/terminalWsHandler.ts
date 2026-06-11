@@ -63,7 +63,7 @@ class TerminalWebSocketHandler {
       id: data['id'] as string,
       command: data['command'] as string,
       output: (data['output'] as string | undefined) ?? '',
-      error: data['error'] as string | undefined,
+      ...(typeof data['error'] === 'string' && data['error'] ? { error: data['error'] as string } : {}),
       timestamp: new Date(),
       executionTime: (data['executionTime'] as number | undefined) ?? 0,
     };

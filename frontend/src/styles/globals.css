@@ -1,77 +1,34 @@
-/* Placeholder: globals.css */
-/**
- * /frontend/src/styles/globals.css
- * 
- * Global CSS imports - Import all CSS files in correct order
- * This is the single entry point for all global styles
- */
-
-/* ============================================================================
-   1. RESET & BASE STYLES
-   ============================================================================ */
+/* Global CSS entrypoint for Zynctra UI */
 
 @import './reset.css';
-
-/* ============================================================================
-   2. TAILWIND CSS (if using)
-   ============================================================================ */
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ============================================================================
-   3. THEME VARIABLES
-   ============================================================================ */
-
 @import './themes.css';
-
-/* ============================================================================
-   4. FORM STYLES
-   ============================================================================ */
-
 @import './forms.css';
-
-/* ============================================================================
-   5. ANIMATIONS
-   ============================================================================ */
-
 @import './animations.css';
-
-/* ============================================================================
-   6. UTILITY CLASSES
-   ============================================================================ */
-
 @import './utilities.css';
 
-/* ============================================================================
-   ADDITIONAL GLOBAL STYLES (Non-imported)
-   ============================================================================ */
-
-/* Smooth scrolling for anchor links */
 html {
   scroll-behavior: smooth;
 }
 
-/* Focus visible for keyboard navigation */
 :focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
-/* Selection color */
 ::selection {
   background-color: var(--color-primary);
   color: var(--color-bg-primary);
 }
 
-/* Transitions for theme switching */
 body {
-  transition: background-color var(--transition-smooth),
-              color var(--transition-smooth);
+  transition: background-color var(--transition-smooth), color var(--transition-smooth);
 }
 
-/* Ensure consistent link colors */
 a {
   color: var(--color-primary);
   text-decoration: none;
@@ -83,7 +40,6 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Code blocks styling */
 code {
   background-color: var(--color-bg-secondary);
   color: var(--color-primary);
@@ -101,24 +57,14 @@ pre {
   overflow-x: auto;
   font-size: 0.875em;
   line-height: 1.5;
-  border: 1px solid var(--color-border-primary);
+  border: 1px solid var(--color-border);
 }
 
-pre code {
-  background-color: transparent;
-  color: inherit;
-  padding: 0;
-  border-radius: 0;
-  font-size: inherit;
-}
-
-/* Main content area */
 main {
   flex: 1;
   width: 100%;
 }
 
-/* Container max width */
 .container {
   width: 100%;
   max-width: 1280px;
@@ -133,7 +79,6 @@ main {
   }
 }
 
-/* Keyboard focus visible state */
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
@@ -144,13 +89,11 @@ select:focus-visible {
   box-shadow: 0 0 0 3px rgba(0, 217, 255, 0.2);
 }
 
-/* Disabled state opacity */
 :disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-/* Print styles */
 @media print {
   body {
     background-color: white;
@@ -167,7 +110,6 @@ select:focus-visible {
   }
 }
 
-/* Reduce motion preferences */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -179,7 +121,6 @@ select:focus-visible {
   }
 }
 
-/* High contrast mode */
 @media (prefers-contrast: more) {
   :root {
     --color-primary: rgb(0, 100, 200);
@@ -190,7 +131,6 @@ select:focus-visible {
   }
 }
 
-/* Ensure content is readable with forced colors */
 @media (forced-colors: active) {
   a {
     text-decoration: underline;

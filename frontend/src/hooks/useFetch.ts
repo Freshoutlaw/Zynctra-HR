@@ -26,21 +26,23 @@ export const useFetch = <T,>(url: string, options: UseFetchOptions = {}) => {
     setError(null);
     try {
       let response;
+      const requestOptions = {} as any;
+      if (params) requestOptions.params = params;
       switch (method) {
         case 'GET':
-          response = await apiClient.get<T>(url, { params });
+          response = await apiClient.get<T>(url, requestOptions);
           break;
         case 'POST':
-          response = await apiClient.post<T>(url, body, { params });
+          response = await apiClient.post<T>(url, body, requestOptions);
           break;
         case 'PUT':
-          response = await apiClient.put<T>(url, body, { params });
+          response = await apiClient.put<T>(url, body, requestOptions);
           break;
         case 'PATCH':
-          response = await apiClient.patch<T>(url, body, { params });
+          response = await apiClient.patch<T>(url, body, requestOptions);
           break;
         case 'DELETE':
-          response = await apiClient.delete<T>(url, { params });
+          response = await apiClient.delete<T>(url, requestOptions);
           break;
         default:
           throw new Error(`Unsupported method: ${method}`);

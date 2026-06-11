@@ -34,7 +34,6 @@ const SubscriptionDashboard: React.FC = () => {
   useEffect(() => { void flags.initialize(); }, []);
 
   const nextBillingDate = billing.getNextBillingDate();
-  const nextAmount = billing.getNextBillingAmount();
 
   const handleCancel = async () => {
     if (!cancelReason.trim()) return;

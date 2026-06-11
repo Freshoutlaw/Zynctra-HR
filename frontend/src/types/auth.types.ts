@@ -59,7 +59,7 @@ export interface AuthContext {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   verifyMFA: (code: string) => Promise<void>;
-  refreshToken: () => Promise<void>;
+  refreshToken: () => Promise<boolean>;
 }
 
 export interface SessionToken {

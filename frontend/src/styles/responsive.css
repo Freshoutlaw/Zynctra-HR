@@ -1,1 +1,34 @@
-/* Placeholder: responsive.css */
+/* Responsive utilities for Zynctra */
+
+@media (max-width: 1200px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .grid-responsive {
+    gap: 1rem;
+  }
+
+  .hide-desktop {
+    display: none !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .grid-responsive {
+    grid-template-columns: 1fr;
+  }
+
+  .responsive-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .text-responsive {
+    font-size: 0.95rem;
+  }
+}

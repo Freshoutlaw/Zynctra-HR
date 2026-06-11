@@ -729,8 +729,8 @@ const ForgotPasswordPage: React.FC = () => {
                   type="submit"
                   disabled={isLoading}
                   className="flex-1 py-3 rounded-lg font-semibold bg-gradient-to-r from-cyan-400 to-cyan-600 text-slate-900 hover:shadow-lg hover:shadow-cyan-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                  whileHover={!isLoading ? { scale: 1.02 } : undefined}
-                  whileTap={!isLoading ? { scale: 0.98 } : undefined}
+                  whileHover={!isLoading ? { scale: 1.02 } : {}}
+                  whileTap={!isLoading ? { scale: 0.98 } : {}}
                 >
                   {isLoading
                     ? step === 'email' ? 'Sending…' : step === 'reset' ? 'Resetting…' : 'Continuing…'

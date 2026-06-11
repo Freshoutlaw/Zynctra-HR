@@ -30,7 +30,7 @@ export const useTerminal = () => {
         id: `cmd_${Date.now()}`,
         command,
         output: result.output ?? '',
-        error: result.error,
+        error: result.error ?? '',
         timestamp: new Date(),
       };
       setCommands((prev) => [...prev, record]);

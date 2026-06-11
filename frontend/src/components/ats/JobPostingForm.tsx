@@ -93,7 +93,7 @@ export const JobPostingForm: React.FC<JobPostingFormProps> = ({
     onSave?.({
       ...formData,
       status,
-      publishedAt: status === 'published' ? new Date() : undefined,
+      ...(status === 'published' ? { publishedAt: new Date() } : {}),
     });
   };
 

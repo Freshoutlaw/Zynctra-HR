@@ -4,7 +4,7 @@
  * Hook for managing form state and validation.
  */
 
-import { useState, useCallback, ChangeEvent, FormEvent } from 'react';
+import { useState, useCallback, type ChangeEvent, type FormEvent } from 'react';
 
 interface FormErrors {
   [key: string]: string;

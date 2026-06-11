@@ -13,12 +13,18 @@ class ATSService {
   }
 
   async getJobs(filters?: Record<string, string | number | boolean>) {
-    const res = await apiClient.get('/ats/jobs', { params: filters });
+    const res = await apiClient.get(
+      '/ats/jobs',
+      filters ? { params: filters } : undefined
+    );
     return res.data ?? [];
   }
 
   async getCandidates(filters?: Record<string, string | number | boolean>) {
-    const res = await apiClient.get('/ats/candidates', { params: filters });
+    const res = await apiClient.get(
+      '/ats/candidates',
+      filters ? { params: filters } : undefined
+    );
     return res.data ?? [];
   }
 

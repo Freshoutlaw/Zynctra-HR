@@ -25,11 +25,9 @@ interface MFASettingsProps {
 export const MFASettings: React.FC<MFASettingsProps> = ({
   config,
   onUpdate,
-  isLoading = false,
 }) => {
   const [step, setStep] = useState<'select' | 'setup' | 'verify' | 'complete'>('select');
   const [selectedMethod, setSelectedMethod] = useState<'sms' | 'authenticator' | 'email' | null>(null);
-  const [verificationCode, setVerificationCode] = useState('');
   const [backupCodes, setBackupCodes] = useState<string[]>([]);
 
   const handleMethodSelect = (method: 'sms' | 'authenticator' | 'email') => {

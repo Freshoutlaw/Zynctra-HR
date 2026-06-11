@@ -23,15 +23,15 @@ const format = (entry: LogEntry): string =>
   } ${entry.message}`;
 
 const log = (level: LogLevel, message: string, data?: unknown, context?: string): void => {
+  if (!isDev && level === 'debug') return;
+
   const entry: LogEntry = {
     level,
     message,
-    context,
-    data,
     timestamp: new Date().toISOString(),
+    ...(typeof context === 'string' ? { context } : {}),
+    ...(typeof data !== 'undefined' ? { data } : {}),
   };
-
-  if (!isDev && level === 'debug') return; // silence debug in prod
 
   const formatted = format(entry);
 

@@ -4,7 +4,7 @@
  * Real-time headcount and workforce analytics dashboard
  */
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 
 interface HeadcountData {
@@ -80,7 +80,6 @@ export const HeadcountDashboard: React.FC<HeadcountDashboardProps> = ({
   data = defaultData,
   isLoading = false,
 }) => {
-  const [selectedDept, setSelectedDept] = useState<string | null>(null);
 
   if (isLoading) {
     return (
@@ -151,7 +150,6 @@ export const HeadcountDashboard: React.FC<HeadcountDashboardProps> = ({
           {deptEntries.map(([dept, count]) => (
             <motion.div
               key={dept}
-              onHover={() => setSelectedDept(dept)}
               className="group cursor-pointer"
             >
               <div className="flex items-center justify-between mb-1">

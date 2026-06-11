@@ -4,7 +4,6 @@
  * Hook for checking feature accessibility based on subscription plan.
  */
 
-import { useCallback } from 'react';
 import useBilling from './useBilling';
 import { SubscriptionPlan } from '../types/billing.types';
 import { FeatureAccessManager } from '../services/billing/featureFlags';

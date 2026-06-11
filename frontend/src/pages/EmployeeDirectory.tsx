@@ -36,7 +36,7 @@ const EmployeeDirectory: React.FC = () => {
     setError(null);
     try {
       const data = await employeeService.getEmployees(
-        filterDept !== 'All' ? { department: filterDept } : undefined
+        filterDept !== 'All' ? { department: filterDept } : {}
       );
       setEmployees(Array.isArray(data) ? (data as EmployeeCardData[]) : []);
     } catch (err) {

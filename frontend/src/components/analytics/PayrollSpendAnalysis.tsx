@@ -90,8 +90,9 @@ export const PayrollSpendAnalysis: React.FC<PayrollSpendAnalysisProps> = ({
       : data.benefits;
 
   const entries = Object.entries(displayData).sort((a, b) => b[1] - a[1]);
-  const maxValue = Math.max(...entries.map(([, v]) => v));
-  const totalValue = entries.reduce((sum, [, v]) => sum + v, 0);
+  const maxValue = entries.length > 0 ? Math.max(...entries.map(([, v]) => v)) : 1;
+  const totalValue = entries.reduce((sum, [, v]) => sum + v, 0) || 1;
+  const topEntry = entries[0] ?? ['', 0];
 
   return (
     <motion.div
@@ -220,10 +221,9 @@ export const PayrollSpendAnalysis: React.FC<PayrollSpendAnalysisProps> = ({
           <div className="space-y-4">
             <div className="p-4 bg-slate-50 dark:bg-slate-700 rounded-lg">
               <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Top {viewType}</p>
-              <p className="text-lg font-bold">{entries[0][0]}</p>
+              <p className="text-lg font-bold">{topEntry[0]}</p>
               <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                ${(entries[0][1] / 1000).toFixed(0)}k (
-                {((entries[0][1] / totalValue) * 100).toFixed(1)}%)
+                ${(Number(topEntry[1]) / 1000).toFixed(0)}k ({((Number(topEntry[1]) / totalValue) * 100).toFixed(1)}%)
               </p>
             </div>
 

@@ -5,12 +5,11 @@
  * Fixed: uses import.meta.env instead of process.env; no circular imports.
  */
 
-import {
+import type {
   FeatureFlagConfig,
-  SubscriptionPlan,
-  PaymentProvider,
   MonetizationSettings,
 } from '../../types/billing.types';
+import { SubscriptionPlan, PaymentProvider } from '../../types/billing.types';
 
 const DEFAULT_FLAGS: FeatureFlagConfig = {
   monetizationEnabled:

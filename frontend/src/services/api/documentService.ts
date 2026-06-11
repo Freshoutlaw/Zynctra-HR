@@ -8,7 +8,10 @@ import apiClient from './apiClient';
 
 class DocumentService {
   async getDocuments(filters?: Record<string, string | number | boolean>) {
-    const res = await apiClient.get('/documents', { params: filters });
+    const res = await apiClient.get(
+      '/documents',
+      filters ? { params: filters } : undefined
+    );
     return res.data ?? [];
   }
 

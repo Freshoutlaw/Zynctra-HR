@@ -143,8 +143,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onMFARequired: _onMFAR
         type="submit"
         disabled={isLoading}
         className="w-full py-3 px-6 rounded-lg font-semibold transition bg-gradient-to-r from-cyan-400 to-cyan-600 text-slate-900 hover:shadow-lg hover:shadow-cyan-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
-        whileHover={!isLoading ? { scale: 1.02 } : undefined}
-        whileTap={!isLoading ? { scale: 0.98 } : undefined}
+        whileHover={!isLoading ? { scale: 1.02 } : {}}
+        whileTap={!isLoading ? { scale: 0.98 } : {}}
       >
         {isLoading ? 'Signing in…' : 'Sign In'}
       </motion.button>

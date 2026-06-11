@@ -72,7 +72,7 @@ export const CustomReportBuilder: React.FC<CustomReportBuilderProps> = ({
       name: reportName,
       description: reportDesc,
       metrics: selectedMetrics,
-      groupBy: groupBy || undefined,
+      ...(groupBy ? { groupBy } : {}),
       filters: {},
       schedule,
     };

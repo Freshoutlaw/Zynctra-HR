@@ -55,6 +55,7 @@ export const ResumeParser: React.FC<ResumeParserProps> = ({
 
   const handleParse = async (file: File) => {
     setStep('parsing');
+    console.debug('Parsing resume file', file.name);
     // In real app, this would call AI parsing service
     setTimeout(() => {
       // Simulate parsed data structure

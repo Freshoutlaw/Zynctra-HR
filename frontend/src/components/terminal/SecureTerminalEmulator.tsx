@@ -15,7 +15,7 @@
  */
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
 import { UserRole } from '../../types/auth.types';
 
@@ -207,11 +207,12 @@ export const SecureTerminalEmulator: React.FC<SecureTerminalProps> = ({
   /**
    * Validate command against whitelist
    */
-  const validateCommand = (command: string): {
+  const validateCommand = (command?: string): {
     valid: boolean;
     reason?: string;
   } => {
-    const baseCommand = command.split(' ')[0].toLowerCase();
+    const normalizedCommand = (command?.trim() ?? '').split(' ');
+    const baseCommand = normalizedCommand[0]?.toLowerCase() ?? '';
 
     if (!baseCommand) {
       return { valid: false, reason: 'Empty command' };
@@ -229,10 +230,10 @@ export const SecureTerminalEmulator: React.FC<SecureTerminalProps> = ({
     if (baseCommand === 'psql' || baseCommand === 'mysql') {
       // Only allow read operations
       if (
-        command.toLowerCase().includes('drop') ||
-        command.toLowerCase().includes('delete') ||
-        command.toLowerCase().includes('update') ||
-        command.toLowerCase().includes('insert')
+        (command ?? '').toLowerCase().includes('drop') ||
+        (command ?? '').toLowerCase().includes('delete') ||
+        (command ?? '').toLowerCase().includes('update') ||
+        (command ?? '').toLowerCase().includes('insert')
       ) {
         return {
           valid: false,
@@ -318,23 +319,6 @@ export const SecureTerminalEmulator: React.FC<SecureTerminalProps> = ({
   /**
    * Handle special commands (client-side)
    */
-  const handleSpecialCommand = (cmd: string) => {
-    if (cmd === 'clear') {
-      setOutput([]);
-      return true;
-    }
-    if (cmd === 'help') {
-      addOutput({
-        type: 'output',
-        content: 'Available Commands:\n' +
-          COMMAND_WHITELIST.map(
-            (c) => `  ${c.command.padEnd(15)} - ${c.description} [${c.riskLevel}]`
-          ).join('\n'),
-      });
-      return true;
-    }
-    return false;
-  };
 
   /**
    * Handle keyboard shortcuts
@@ -346,12 +330,12 @@ export const SecureTerminalEmulator: React.FC<SecureTerminalProps> = ({
       e.preventDefault();
       const newIndex = Math.min(historyIndex + 1, commandHistory.length - 1);
       setHistoryIndex(newIndex);
-      setInput(commandHistory[newIndex] || '');
+      setInput(commandHistory[newIndex] ?? '');
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
       const newIndex = Math.max(historyIndex - 1, -1);
       setHistoryIndex(newIndex);
-      setInput(newIndex === -1 ? '' : commandHistory[newIndex]);
+      setInput(newIndex === -1 ? '' : commandHistory[newIndex] ?? '');
     } else if (e.key === 'l' && e.ctrlKey) {
       e.preventDefault();
       setOutput([]);
@@ -497,7 +481,7 @@ function escapeHtml(text: string): string {
     '"': '&quot;',
     "'": '&#039;',
   };
-  return text.replace(/[&<>"']/g, (m) => map[m]);
+  return text.replace(/[&<>"']/g, (m) => map[m] ?? '');
 }
 
 export default SecureTerminalEmulator;

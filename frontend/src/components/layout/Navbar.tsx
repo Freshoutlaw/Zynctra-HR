@@ -56,13 +56,10 @@ const Navbar: React.FC = () => {
         : 'bg-slate-500/20 text-slate-300 border-slate-400/50';
 
   const userInitial =
-    user?.fullName?.charAt(0) ??
-    user?.firstName?.charAt(0) ??
-    user?.email?.charAt(0) ??
+    (user?.firstName?.charAt(0) ?? user?.lastName?.charAt(0) ?? user?.email?.charAt(0)) ??
     'U';
 
-  const displayName =
-    user?.fullName?.split(' ')[0] ?? user?.firstName ?? user?.email ?? '';
+  const displayName = (user?.firstName ?? user?.lastName ?? user?.email) ?? '';
 
   return (
     <nav

@@ -52,7 +52,7 @@ class AIAssistantService {
 
   async detectAnomalies(type?: string): Promise<unknown[]> {
     const res = await apiClient.get('/ai/anomalies', {
-      params: type ? { type } : undefined,
+      params: type ? { type } : {},
     });
     return (res.data as unknown[]) ?? [];
   }

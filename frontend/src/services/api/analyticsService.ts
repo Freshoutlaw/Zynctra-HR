@@ -81,28 +81,28 @@ export default new AnalyticsService();
 // class AnalyticsService {
 //   async getHeadcountData(period?: string) {
 //     const res = await apiClient.get('/analytics/headcount', {
-//       params: period ? { period } : undefined,
+//       params: period ? { period } : {},
 //     });
 //     return res.data;
 //   }
 
 //   async getTurnoverData(period?: string) {
 //     const res = await apiClient.get('/analytics/turnover', {
-//       params: period ? { period } : undefined,
+//       params: period ? { period } : {},
 //     });
 //     return res.data;
 //   }
 
 //   async getPayrollAnalysis(period?: string) {
 //     const res = await apiClient.get('/analytics/payroll', {
-//       params: period ? { period } : undefined,
+//       params: period ? { period } : {},
 //     });
 //     return res.data;
 //   }
 
 //   async getPerformanceMetrics(department?: string) {
 //     const res = await apiClient.get('/analytics/performance', {
-//       params: department ? { department } : undefined,
+//       params: department ? { department } : {},
 //     });
 //     return res.data;
 //   }
@@ -131,7 +131,7 @@ export default new AnalyticsService();
 
 //   async getComparisonData(metric: string, compareBy?: string) {
 //     const res = await apiClient.get(`/analytics/compare/${metric}`, {
-//       params: compareBy ? { compareBy } : undefined,
+//       params: compareBy ? { compareBy } : {},
 //     });
 //     return res.data;
 //   }

@@ -23,7 +23,7 @@ export const useAnomalyDetection = (autoFetch = true) => {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await securityService.getAnomalies();
+      const data = (await securityService.getAnomalies()) as Anomaly[];
       setAnomalies(data);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to fetch anomalies'));
@@ -34,10 +34,11 @@ export const useAnomalyDetection = (autoFetch = true) => {
 
   useEffect(() => {
     if (autoFetch) {
-      fetchAetch();
+      fetchAnomalies();
       const interval = setInterval(fetchAnomalies, 30000); // Refresh every 30s
       return () => clearInterval(interval);
     }
+    return undefined;
   }, [autoFetch, fetchAnomalies]);
 
   const acknowledgeAnomaly = useCallback(

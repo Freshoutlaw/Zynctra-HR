@@ -61,7 +61,7 @@ const ATSModule: React.FC = () => {
             position: c.position,
             stage: c.stage,
             appliedDate: new Date(c.appliedDate),
-            score: c.score,
+            score: c.score ?? 0,
             tags: c.tags ?? [],
           })),
       }));

@@ -102,7 +102,7 @@ const NodeCard: React.FC<NodeCardProps> = ({ node, onNodeClick, depth }) => {
               />
               <NodeCard
                 node={child}
-                onNodeClick={onNodeClick}
+                onNodeClick={onNodeClick ?? (() => {})}
                 depth={depth + 1}
               />
             </div>
@@ -116,7 +116,7 @@ const NodeCard: React.FC<NodeCardProps> = ({ node, onNodeClick, depth }) => {
 const OrgChart: React.FC<OrgChartProps> = ({ root, onNodeClick }) => {
   return (
     <div className="overflow-auto p-8 flex justify-center">
-      <NodeCard node={root} onNodeClick={onNodeClick} depth={0} />
+      <NodeCard node={root} onNodeClick={onNodeClick ?? (() => {})} depth={0} />
     </div>
   );
 };

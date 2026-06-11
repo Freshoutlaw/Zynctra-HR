@@ -20,6 +20,7 @@ import LoadingPage from './pages/LoadingPage';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import MFASetupPage from './pages/MFASetupPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import PricingPage from './pages/PricingPage';
 import SubscriptionDashboard from './pages/SubscriptionDashboard';
@@ -30,7 +31,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import { UserRole } from './types/auth.types';
 
 // ---------------------------------------------------------------------------
-// Route guard
+// Route guards
 // ---------------------------------------------------------------------------
 
 interface ProtectedRouteProps {
@@ -42,12 +43,35 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   element,
   requiredRole,
 }) => {
-  const { isAuthenticated, user, isLoading } = useAuth();
+  const { isAuthenticated, mfaVerified, user, isLoading } = useAuth();
 
   if (isLoading) return <LoadingPage />;
   if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (!mfaVerified) return <Navigate to="/mfa-setup" replace />;
   if (requiredRole && user?.role !== requiredRole)
     return <Navigate to="/dashboard" replace />;
+
+  return <>{element}</>;
+};
+
+// MFA Setup — must be authenticated but MFA not yet complete
+const MFASetupRoute: React.FC = () => {
+  const { isAuthenticated, mfaVerified, isLoading } = useAuth();
+
+  if (isLoading) return <LoadingPage />;
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (mfaVerified) return <Navigate to="/dashboard" replace />;
+
+  return <MFASetupPage />;
+};
+
+// Auth redirect — if already fully authenticated, go to dashboard
+const AuthRoute: React.FC<{ element: React.ReactNode }> = ({ element }) => {
+  const { isAuthenticated, mfaVerified, isLoading } = useAuth();
+
+  if (isLoading) return <LoadingPage />;
+  if (isAuthenticated && mfaVerified) return <Navigate to="/dashboard" replace />;
+  if (isAuthenticated && !mfaVerified) return <Navigate to="/mfa-setup" replace />;
 
   return <>{element}</>;
 };
@@ -71,16 +95,21 @@ const App: React.FC = () => {
       <Routes>
         {/* Public */}
         <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+
+        {/* Auth pages — redirect to dashboard if already logged in + MFA */}
+        <Route path="/login" element={<AuthRoute element={<LoginPage />} />} />
+        <Route path="/register" element={<AuthRoute element={<RegisterPage />} />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+
+        {/* MFA Setup — authenticated but MFA not yet complete */}
+        <Route path="/mfa-setup" element={<MFASetupRoute />} />
 
         {/* Pricing — only shown when monetisation is on */}
         {!flags.isFreeModeActive() && (
           <Route path="/pricing" element={<PricingPage />} />
         )}
 
-        {/* Protected */}
+        {/* Protected — require auth + MFA */}
         <Route
           path="/dashboard"
           element={<ProtectedRoute element={<DashboardPage />} />}

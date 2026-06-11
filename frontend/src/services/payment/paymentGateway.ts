@@ -5,12 +5,11 @@
  * Fixed: uses import.meta.env; getCsrfToken imported from AuthContext.
  */
 
-import {
-  PaymentProvider,
+import type {
   PaystackInitializePaymentRequest,
   PaystackVerifyPaymentResponse,
-  PaymentStatus,
 } from '../../types/billing.types';
+import { PaymentProvider, PaymentStatus } from '../../types/billing.types';
 import { getCsrfToken } from '../../context/AuthContext';
 
 const API_BASE =

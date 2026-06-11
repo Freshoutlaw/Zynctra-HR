@@ -78,8 +78,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           sizeClasses[size]
         } ${variantClasses[variant]} ${fullWidth ? 'w-full' : ''} ${className}`}
         disabled={isDisabled}
-        whileHover={!isDisabled ? { scale: 1.05 } : undefined}
-        whileTap={!isDisabled ? { scale: 0.95 } : undefined}
+        whileHover={!isDisabled ? { scale: 1.05 } : {}}
+        whileTap={!isDisabled ? { scale: 0.95 } : {}}
         {...(props as Record<string, unknown>)}
       >
         {icon && iconPosition === 'left' && !isLoading && (

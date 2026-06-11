@@ -7,17 +7,15 @@
 
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import {
+import type {
   BillingState,
   Subscription,
   PlanConfig,
   PaymentMethod,
   Invoice,
-  SubscriptionPlan,
-  BillingPeriod,
-  PaymentStatus,
   BillingContact,
 } from '../types/billing.types';
+import { SubscriptionPlan, BillingPeriod, PaymentStatus } from '../types/billing.types';
 
 // ---------------------------------------------------------------------------
 // Default plan configurations

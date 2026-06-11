@@ -10,22 +10,11 @@
  * - CSRF prevention
  */
 
-import { useContext, useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext as AuthContextType, User, SessionToken } from '../types/auth.types';
-
-// Auth context (created separately in AuthProvider)
-const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  
-  if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
-  }
-  
-  return context;
-};
+// Import the actual useAuth hook from AuthContext
+export { useAuth } from '../context/AuthContext';
+export { useAuth as default } from '../context/AuthContext';
 
 /**
  * Hook for secure session management
@@ -33,9 +22,9 @@ export const useAuth = () => {
  */
 export const useSecureSession = () => {
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useAuth();
   const [sessionValid, setSessionValid] = useState(true);
   const [timeUntilExpire, setTimeUntilExpire] = useState<number | null>(null);
+  const isAuthenticated = !!getStoredAccessToken();
 
   /**
    * Check session validity and token expiration
@@ -290,7 +279,9 @@ export const decodeJWT = (token: string): Record<string, any> => {
       throw new Error('Invalid token format');
     }
 
-    const decoded = JSON.parse(atob(parts[1]));
+    const payload = parts[1] ?? '';
+    if (!payload) return {};
+    const decoded = JSON.parse(atob(payload));
     return decoded;
   } catch (error) {
     console.error('Token decode error:', error);
@@ -326,7 +317,7 @@ export const getCsrfToken = (): string => {
   for (const cookie of cookies) {
     const [name, value] = cookie.trim().split('=');
     if (name === 'XSRF-TOKEN') {
-      return decodeURIComponent(value);
+      return decodeURIComponent(value ?? '');
     }
   }
 
@@ -372,8 +363,6 @@ export const validatePassword = (password: string): { valid: boolean; errors: st
     errors,
   };
 };
-
-export default useAuth;
 
 
 

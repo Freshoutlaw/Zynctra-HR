@@ -16,9 +16,8 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
-import { UserRole, SecurityEvent, EventSeverity } from '../types/auth.types';
+import { UserRole } from '../types/auth.types';
 import { orgBillingService, auditLogService } from '../services/supabase/supabaseClient';
-import { getFeatureFlagService } from '../services/billing/featureFlags';
 import { useTheme } from '../context/ThemeContext';
 
 type AdminTab = 
@@ -44,7 +43,6 @@ const AdminPanel: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const flags = getFeatureFlagService();
 
   /**
    * Check permissions
@@ -277,8 +275,10 @@ const AdminPanel: React.FC = () => {
               onClick={() => setTheme('system')}
               className={`px-3 py-1 rounded transition ${
                 theme === 'system'
-                  ? theme === 'dark' ? 'bg-slate-600 text-white font-semibold' : 'bg-slate-200 text-slate-900 font-semibold'
-                  : theme === 'dark' ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-slate-600 text-white font-semibold'
+                  : theme === 'dark'
+                  ? 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               🔄
