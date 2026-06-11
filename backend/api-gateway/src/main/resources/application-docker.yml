@@ -1,0 +1,156 @@
+# Docker Profile Configuration
+# Used when running inside Docker Compose
+
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false  # Static routes in Docker Compose
+      
+      routes:
+        - id: identity-service
+          uri: http://identity-service:8081
+          predicates:
+            - Path=/api/auth/**, /api/users/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                key-resolver: "#{@userKeyResolver}"
+
+        - id: hr-service
+          uri: http://hr-service:8082
+          predicates:
+            - Path=/api/employees/**, /api/departments/**, /api/org-chart/**, /api/documents/**
+          filters:
+            - name: JwtAuthenticationFilter
+            - name: TenantContextFilter
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 100
+                redis-rate-limiter.burstCapacity: 200
+                key-resolver: "#{@tenantKeyResolver}"
+
+        - id: ats-service
+          uri: http://ats-service:8083
+          predicates:
+            - Path=/api/jobs/**, /api/candidates/**, /api/applications/**, /api/interviews/**, /api/offers/**
+          filters:
+            - name: JwtAuthenticationFilter
+            - name: TenantContextFilter
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 50
+                redis-rate-limiter.burstCapacity: 100
+                key-resolver: "#{@tenantKeyResolver}"
+
+        - id: payroll-service
+          uri: http://payroll-service:8084
+          predicates:
+            - Path=/api/payroll/**, /api/payslips/**, /api/deductions/**
+          filters:
+            - name: JwtAuthenticationFilter
+            - name: TenantContextFilter
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 30
+                redis-rate-limiter.burstCapacity: 60
+                key-resolver: "#{@tenantKeyResolver}"
+
+        - id: time-service
+          uri: http://time-service:8085
+          predicates:
+            - Path=/api/attendance/**, /api/leaves/**, /api/shifts/**, /api/time-punches/**
+          filters:
+            - name: JwtAuthenticationFilter
+            - name: TenantContextFilter
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 50
+                redis-rate-limiter.burstCapacity: 100
+                key-resolver: "#{@tenantKeyResolver}"
+
+        - id: billing-service
+          uri: http://billing-service:8086
+          predicates:
+            - Path=/api/billing/**, /api/plans/**, /api/invoices/**, /api/payment-methods/**
+          filters:
+            - name: JwtAuthenticationFilter
+            - name: TenantContextFilter
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 20
+                redis-rate-limiter.burstCapacity: 40
+                key-resolver: "#{@tenantKeyResolver}"
+
+        - id: admin-service
+          uri: http://admin-service:8087
+          predicates:
+            - Path=/api/admin/**, /api/audit/**, /api/security/**
+          filters:
+            - name: JwtAuthenticationFilter
+            - name: TenantContextFilter
+            - name: AdminRoleFilter
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                key-resolver: "#{@userKeyResolver}"
+
+        - id: ai-gateway
+          uri: http://ai-gateway:8088
+          predicates:
+            - Path=/api/ai/**
+          filters:
+            - name: JwtAuthenticationFilter
+            - name: TenantContextFilter
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 20
+                redis-rate-limiter.burstCapacity: 40
+                key-resolver: "#{@userKeyResolver}"
+
+        - id: billing-public
+          uri: http://billing-service:8086
+          predicates:
+            - Path=/api/billing/webhooks/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 5
+                redis-rate-limiter.burstCapacity: 10
+                key-resolver: "#{@ipKeyResolver}"
+
+  data:
+    redis:
+      host: redis
+      port: 6379
+      password: ${REDIS_PASSWORD:}
+      ssl:
+        enabled: false
+
+jwt:
+  secret: ${JWT_SECRET:development-jwt-secret-key-do-not-use-in-production}
+  access-token-expiration: 900000
+  refresh-token-expiration: 604800000
+
+logging:
+  level:
+    com.zynctra.gateway: DEBUG
+    org.springframework.cloud.gateway: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, gateway

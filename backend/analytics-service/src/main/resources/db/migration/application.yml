@@ -1,0 +1,97 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: analytics-service
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/zynctra}
+    username: ${DB_USERNAME:zynctra}
+    password: ${DB_PASSWORD:}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000
+      max-lifetime: 1200000
+      connection-timeout: 20000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+        default_schema: analytics
+    show-sql: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    schemas: analytics
+    baseline-on-migrate: true
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 20
+          max-idle: 10
+          min-idle: 2
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+
+# JWT Configuration (must match identity service)
+jwt:
+  secret: ${JWT_SECRET:}
+  access-token-expiration: 900000
+
+# Analytics Configuration
+analytics:
+  # Cache TTL for dashboard metrics (seconds)
+  cache:
+    ttl-seconds: 300
+    max-size: 1000
+  
+  # Export settings
+  export:
+    max-rows: 100000
+    temp-dir: ${java.io.tmpdir}/zynctra-exports
+    cleanup-age-hours: 24
+  
+  # Scheduled reports
+  scheduled-reports:
+    enabled: true
+    thread-pool-size: 5
+    max-concurrent: 3
+
+# Logging
+logging:
+  level:
+    com.zynctra.analytics: INFO
+    org.springframework.security: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics
+  endpoint:
+    health:
+      show-details: when_authorized

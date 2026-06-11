@@ -1,0 +1,224 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Databases
+  postgres-auth:
+    image: postgres:15-alpine
+    container_name: zynctra-postgres-auth
+    environment:
+      POSTGRES_DB: zynctra_auth
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_auth_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres-hr:
+    image: postgres:15-alpine
+    container_name: zynctra-postgres-hr
+    environment:
+      POSTGRES_DB: zynctra_hr
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_hr_data:/var/lib/postgresql/data
+    depends_on:
+      postgres-auth:
+        condition: service_healthy
+
+  postgres-payroll:
+    image: postgres:15-alpine
+    container_name: zynctra-postgres-payroll
+    environment:
+      POSTGRES_DB: zynctra_payroll
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_payroll_data:/var/lib/postgresql/data
+    depends_on:
+      postgres-auth:
+        condition: service_healthy
+
+  postgres-ats:
+    image: postgres:15-alpine
+    container_name: zynctra-postgres-ats
+    environment:
+      POSTGRES_DB: zynctra_ats
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_ats_data:/var/lib/postgresql/data
+    depends_on:
+      postgres-auth:
+        condition: service_healthy
+
+  postgres-attendance:
+    image: postgres:15-alpine
+    container_name: zynctra-postgres-attendance
+    environment:
+      POSTGRES_DB: zynctra_attendance
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5436:5432"
+    volumes:
+      - postgres_attendance_data:/var/lib/postgresql/data
+    depends_on:
+      postgres-auth:
+        condition: service_healthy
+
+  # API Gateway
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: zynctra-api-gateway
+    environment:
+      JWT_SECRET: ${JWT_SECRET:-mysupersecretsecurekey123456789012345678901234567890}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-3600000}
+      REFRESH_TOKEN_EXPIRATION_MS: ${REFRESH_TOKEN_EXPIRATION_MS:-604800000}
+    ports:
+      - "8000:8000"
+    depends_on:
+      - auth-service
+      - core-hr-service
+      - payroll-service
+      - ats-service
+      - time-attendance-service
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  # Auth Service
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    container_name: zynctra-auth-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-auth:5432/zynctra_auth
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      JWT_SECRET: ${JWT_SECRET:-mysupersecretsecurekey123456789012345678901234567890}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-3600000}
+      REFRESH_TOKEN_EXPIRATION_MS: ${REFRESH_TOKEN_EXPIRATION_MS:-604800000}
+    ports:
+      - "8001:8001"
+    depends_on:
+      postgres-auth:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/auth/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Core HR Service
+  core-hr-service:
+    build:
+      context: ./core-hr
+      dockerfile: Dockerfile
+    container_name: zynctra-core-hr-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-hr:5432/zynctra_hr
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    ports:
+      - "8002:8002"
+    depends_on:
+      postgres-hr:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/hr/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Payroll Service
+  payroll-service:
+    build:
+      context: ./payroll
+      dockerfile: Dockerfile
+    container_name: zynctra-payroll-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-payroll:5432/zynctra_payroll
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    ports:
+      - "8003:8003"
+    depends_on:
+      postgres-payroll:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/payroll/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ATS Service
+  ats-service:
+    build:
+      context: ./ats
+      dockerfile: Dockerfile
+    container_name: zynctra-ats-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-ats:5432/zynctra_ats
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    ports:
+      - "8004:8004"
+    depends_on:
+      postgres-ats:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8004/ats/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Time & Attendance Service
+  time-attendance-service:
+    build:
+      context: ./time-attendance
+      dockerfile: Dockerfile
+    container_name: zynctra-time-attendance-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-attendance:5432/zynctra_attendance
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    ports:
+      - "8005:8005"
+    depends_on:
+      postgres-attendance:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8005/time-attendance/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  postgres_auth_data:
+  postgres_hr_data:
+  postgres_payroll_data:
+  postgres_ats_data:
+  postgres_attendance_data:
+
+networks:
+  default:
+    name: zynctra-network

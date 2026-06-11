@@ -1,0 +1,236 @@
+# Production Profile Configuration
+# Override values from application.yml for production deployment
+
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      
+      # Production CORS - restrict to known origins
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "${CORS_ALLOWED_ORIGINS}"
+            allowedMethods: [GET, POST, PUT, PATCH, DELETE, OPTIONS]
+            allowedHeaders:
+              - Authorization
+              - Content-Type
+              - X-CSRF-Token
+              - X-Request-ID
+              - X-Tenant-ID
+              - X-User-ID
+              - X-User-Role
+            exposedHeaders:
+              - X-RateLimit-Limit
+              - X-RateLimit-Remaining
+              - X-RateLimit-Reset
+              - X-Request-ID
+            allowCredentials: true
+            maxAge: 3600
+
+      # Production routes with load balancer
+      routes:
+        - id: identity-service
+          uri: lb://identity-service
+          predicates:
+            - Path=/api/auth/**, /api/users/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                key-resolver: "#{@userKeyResolver}"
+
+        - id: hr-service
+          uri: lb://hr-service
+          predicates:
+            - Path=/api/employees/**, /api/departments/**, /api/org-chart/**, /api/documents/**
+          filters:
+            - name: JwtAuthenticationFilter
+            - name: TenantContextFilter
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 200
+                redis-rate-limiter.burstCapacity: 400
+                key-resolver: "#{@tenantKeyResolver}"
+
+        - id: ats-service
+          uri: lb://ats-service
+          predicates:
+            - Path=/api/jobs/**, /api/candidates/**, /api/applications/**, /api/interviews/**, /api/offers/**
+          filters:
+            - name: JwtAuthenticationFilter
+            - name: TenantContextFilter
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 100
+                redis-rate-limiter.burstCapacity: 200
+                key-resolver: "#{@tenantKeyResolver}"
+
+        - id: payroll-service
+          uri: lb://payroll-service
+          predicates:
+            - Path=/api/payroll/**, /api/payslips/**, /api/deductions/**
+          filters:
+            - name: JwtAuthenticationFilter
+            - name: TenantContextFilter
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 50
+                redis-rate-limiter.burstCapacity: 100
+                key-resolver: "#{@tenantKeyResolver}"
+
+        - id: time-service
+          uri: lb://time-service
+          predicates:
+            - Path=/api/attendance/**, /api/leaves/**, /api/shifts/**, /api/time-punches/**
+          filters:
+            - name: JwtAuthenticationFilter
+            - name: TenantContextFilter
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 100
+                redis-rate-limiter.burstCapacity: 200
+                key-resolver: "#{@tenantKeyResolver}"
+
+        - id: billing-service
+          uri: lb://billing-service
+          predicates:
+            - Path=/api/billing/**, /api/plans/**, /api/invoices/**, /api/payment-methods/**
+          filters:
+            - name: JwtAuthenticationFilter
+            - name: TenantContextFilter
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 30
+                redis-rate-limiter.burstCapacity: 60
+                key-resolver: "#{@tenantKeyResolver}"
+
+        - id: admin-service
+          uri: lb://admin-service
+          predicates:
+            - Path=/api/admin/**, /api/audit/**, /api/security/**
+          filters:
+            - name: JwtAuthenticationFilter
+            - name: TenantContextFilter
+            - name: AdminRoleFilter
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 20
+                redis-rate-limiter.burstCapacity: 40
+                key-resolver: "#{@userKeyResolver}"
+
+        - id: ai-gateway
+          uri: lb://ai-gateway
+          predicates:
+            - Path=/api/ai/**
+          filters:
+            - name: JwtAuthenticationFilter
+            - name: TenantContextFilter
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 30
+                redis-rate-limiter.burstCapacity: 60
+                key-resolver: "#{@userKeyResolver}"
+
+        # Public routes
+        - id: billing-public
+          uri: lb://billing-service
+          predicates:
+            - Path=/api/billing/webhooks/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                key-resolver: "#{@ipKeyResolver}"
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD}
+      ssl:
+        enabled: ${REDIS_SSL:true}
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 50
+          max-idle: 20
+          min-idle: 5
+          max-wait: 3000ms
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET}
+  access-token-expiration: 900000    # 15 minutes
+  refresh-token-expiration: 604800000 # 7 days
+
+# Rate Limiting
+rate-limiting:
+  login-attempts: 5
+  login-window-seconds: 900
+  lockout-duration-minutes: 30
+
+# Logging
+logging:
+  level:
+    com.zynctra.gateway: WARN
+    org.springframework.cloud.gateway: ERROR
+    org.springframework.security: WARN
+  pattern:
+    console: "{\"timestamp\":\"%d{yyyy-MM-dd HH:mm:ss.SSS}\",\"level\":\"%p\",\"traceId\":\"%X{traceId}\",\"logger\":\"%logger{36}\",\"message\":\"%enc{%m}{JSON}\"}%n"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus, gateway
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when_authorized
+      probes:
+        enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+
+# Circuit Breaker configuration
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 100
+        permittedNumberOfCallsInHalfOpenState: 10
+        waitDurationInOpenState: 10000
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+    instances:
+      identity-service:
+        baseConfig: default
+      hr-service:
+        baseConfig: default
+      billing-service:
+        baseConfig: default
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 5s
+        cancelRunningFuture: true
