@@ -1,4 +1,11 @@
-package com.zynctra.ats.service;
+package com.zynctra.ats.servic
+
+import java.util.List;
+
+import com.zynctra.ats.dto.CandidateRequest;
+import com.zynctra.ats.entity.Candidate;
+import com.zynctra.ats.security.TenantAuthenticationToken;
+
 
 import java.time.Instant;
 import java.util.List;
@@ -156,3 +163,4 @@ public class CandidateService {
         return (TenantAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
     }
 }
+

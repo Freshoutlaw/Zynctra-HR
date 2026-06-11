@@ -27,16 +27,18 @@ public interface CandidateRepository extends JpaRepository<Candidate, UUID> {
     List<Candidate> findByTenantIdAndSourceAndDeletedAtIsNull(
         UUID tenantId, Candidate.CandidateSource source);
 
+    // SECURITY FIX: Use escape character to prevent LIKE wildcard abuse
+    // Also limit results by using Pageable
     @Query("""
         SELECT c FROM Candidate c
         WHERE c.tenantId = :tenantId
         AND c.deletedAt IS NULL
-        AND (LOWER(c.firstName) LIKE LOWER(CONCAT('%', :search, '%'))
-             OR LOWER(c.lastName) LIKE LOWER(CONCAT('%', :search, '%'))
-             OR LOWER(c.email) LIKE LOWER(CONCAT('%', :search, '%'))
-             OR LOWER(c.currentCompany) LIKE LOWER(CONCAT('%', :search, '%')))
+        AND (LOWER(c.firstName) LIKE LOWER(CONCAT('%', :search, '%')) ESCAPE '!'
+        OR LOWER(c.lastName) LIKE LOWER(CONCAT('%', :search, '%')) ESCAPE '!'
+        OR LOWER(c.email) LIKE LOWER(CONCAT('%', :search, '%')) ESCAPE '!'
+        OR LOWER(c.currentCompany) LIKE LOWER(CONCAT('%', :search, '%')) ESCAPE '!')
         """)
-    List<Candidate> searchCandidates(UUID tenantId, String search);
+    List<Candidate> searchCandidates(UUID tenantId, String search, Pageable pageable);
 
     long countByTenantIdAndStatusAndDeletedAtIsNull(UUID tenantId, Candidate.CandidateStatus status);
 

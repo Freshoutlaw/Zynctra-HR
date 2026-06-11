@@ -1,0 +1,30 @@
+# Build stage
+FROM eclipse-temurin:17-jdk-alpine AS builder
+WORKDIR /app
+COPY . .
+RUN ./mvnw clean package -DskipTests
+
+# Runtime stage — minimal attack surface
+FROM eclipse-temurin:17-jre-alpine
+RUN addgroup -S zynctra && adduser -S zynctra -G zynctra
+WORKDIR /app
+
+# Copy only the built artifact
+COPY --from=builder /app/target/*.jar app.jar
+
+# Non-root execution
+USER zynctra:zynctra
+
+# Read-only filesystem where possible
+RUN chmod 444 /app/app.jar
+
+# JVM security flags
+ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 \
+    -Djava.security.egd=file:/dev/./urandom \
+    -Dspring.backgroundpreinitializer.ignore=true"
+
+EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1
+
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]
