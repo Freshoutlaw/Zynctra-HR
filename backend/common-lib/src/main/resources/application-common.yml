@@ -1,0 +1,94 @@
+# DO NOT commit secrets here - use environment variables
+spring:
+  datasource:
+    # Use environment variables for connection
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/zynctra}
+    username: ${DB_USERNAME:zynctra_app}
+    password: ${DB_PASSWORD:}
+    driver-class-name: org.postgresql.Driver
+    
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      # Least privilege enforcement
+      connection-init-sql: "SET ROLE zynctra_app_role;"
+      
+  jpa:
+    hibernate:
+      ddl-auto: validate  # NEVER use create/update in production
+    show-sql: false       # NEVER expose SQL in production
+    properties:
+      hibernate:
+        format_sql: false
+        use_sql_comments: false
+        # Enable tenant filter globally
+        session_factory:
+          interceptor: com.zynctra.common.tenant.TenantHibernateInterceptor
+        # Second-level cache
+        cache:
+          use_second_level_cache: true
+          region:
+            factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
+
+  # Disable unnecessary features
+  jackson:
+    default-property-inclusion: non_null
+    deserialization:
+      fail-on-unknown-properties: true  # Reject unknown fields
+    parser:
+      max-string-length: 4096
+      max-nesting-depth: 50
+
+# Logging - structured, security-focused
+logging:
+  level:
+    root: WARN
+    com.zynctra: INFO
+    SECURITY_AUDIT: INFO
+    AI_INTERACTION: INFO
+  pattern:
+    console: "%d{ISO8601} [%thread] %-5level [%X{tenantId}] [%X{requestId}] %logger{36} - %msg%n"
+  file:
+    name: /var/log/zynctra/application.log
+    max-size: 100MB
+    max-history: 30
+
+# Security headers
+server:
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        secure: true
+        same-site: strict
+  error:
+    include-message: never
+    include-binding-errors: never
+    include-stacktrace: never
+    include-exception: false
+
+# Custom security properties
+zynctra:
+  security:
+    jwt:
+      issuer: ${JWT_ISSUER:Zynctra-HR}
+      audience: ${JWT_AUDIENCE:Zynctra-API}
+      expiration-ms: ${JWT_EXPIRATION_MS:900000}  # 15 minutes
+      refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000}  # 7 days
+    rate-limit:
+      requests-per-minute: ${RATE_LIMIT_RPM:60}
+      burst-capacity: ${RATE_LIMIT_BURST:10}
+    ai:
+      max-query-length: 4000
+      allowed-models:
+        - mixtral-8x7b-32768
+        - llama3-70b-8192
+      blocked-commands:
+        - eval
+        - exec
+        - system
+        - subprocess
+        - os.system

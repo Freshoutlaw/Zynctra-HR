@@ -1,0 +1,41 @@
+# Multi-stage build for connector-service
+FROM eclipse-temurin:17-jre-alpine AS builder
+WORKDIR /app
+COPY target/connector-service-*.jar app.jar
+RUN java -Djarmode=layertools -jar app.jar extract
+
+# Runtime stage - minimal attack surface
+FROM eclipse-temurin:17-jre-alpine
+RUN addgroup -S zynctra -g 1000 && \
+    adduser -S zynctra -u 1000 -G zynctra
+
+WORKDIR /app
+
+# Copy layers
+COPY --from=builder /app/dependencies/ ./
+COPY --from=builder /app/spring-boot-loader/ ./
+COPY --from=builder /app/snapshot-dependencies/ ./
+COPY --from=builder /app/application/ ./
+
+# Security hardening
+RUN chown -R zynctra:zynctra /app && \
+    chmod -R 500 /app && \
+    chmod -R u+rw /tmp  # Only writable dir needed
+
+USER zynctra:zynctra
+
+# JVM security flags
+ENV JAVA_OPTS="-XX:+UseContainerSupport \
+    -XX:MaxRAMPercentage=75.0 \
+    -Djava.security.egd=file:/dev/./urandom \
+    -Dspring.backgroundpreinitializer.ignore=true"
+
+# Read-only filesystem where possible
+# Mount /tmp as tmpfs if needed for temporary files
+
+EXPOSE 8083
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:8083/api/connectors/health || exit 1
+
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS org.springframework.boot.loader.launch.JarLauncher"]

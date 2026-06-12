@@ -1,0 +1,75 @@
+server:
+  port: 8083
+  tomcat:
+    max-threads: 50
+    min-spare-threads: 5
+    connection-timeout: 5000
+
+spring:
+  application:
+    name: connector-service
+  
+  datasource:
+    url: ${CONNECTOR_DB_URL:jdbc:postgresql://localhost:5432/zynctra_connectors}
+    username: ${CONNECTOR_DB_USER:zynctra_connector}
+    password: ${CONNECTOR_DB_PASSWORD:}
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 30000
+      
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+# Resilience4j Configuration
+resilience4j:
+  circuitbreaker:
+    instances:
+      webhookProcessing:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+      outboundApi:
+        slidingWindowSize: 20
+        failureRateThreshold: 60
+        waitDurationInOpenState: 60s
+  retry:
+    instances:
+      webhookRetry:
+        maxAttempts: 3
+        waitDuration: 2s
+        exponentialBackoffMultiplier: 2
+  ratelimiter:
+    instances:
+      webhookRateLimiter:
+        limitForPeriod: 10
+        limitRefreshPeriod: 1m
+        timeoutDuration: 0
+
+# Connector-specific secrets (ALL from environment)
+zynctra:
+  connectors:
+    signing:
+      secret-prefix: CONNECTOR_SIGNING_SECRET_
+    webhooks:
+      slack:
+        secret: ${WEBHOOK_SECRET_SLACK:}
+      workday:
+        secret: ${WEBHOOK_SECRET_WORKDAY:}
+      salesforce:
+        secret: ${WEBHOOK_SECRET_SALESFORCE:}
+    oauth:
+      state-expiry-minutes: 10
+      allowed-redirect-prefixes:
+        - https://app.zynctra.com
+        - https://admin.zynctra.com
+
+# Logging
+logging:
+  level:
+    SECURITY_AUDIT: INFO
+    CONNECTOR_AUDIT: INFO
+  pattern:
+    console: "%d{ISO8601} [%thread] %-5level [%X{tenantId}] [%X{requestId}] %logger{36} - %msg%n"

@@ -1,12 +1,14 @@
 package com.zynctra.benefits.service;
 
-import com.zynctra.benefits.model.AuditAction;
-import com.zynctra.benefits.model.AuditLogEntry;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
 import java.time.Instant;
 import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+
+import com.zynctra.benefits.model.AuditAction;
+import com.zynctra.benefits.model.AuditLogEntry;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
