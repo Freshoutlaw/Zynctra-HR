@@ -2,57 +2,72 @@
  * /frontend/src/context/ThemeContext.tsx
  *
  * Theme provider for light/dark mode support.
- * Persists user preference to localStorage.
- * Supabase persistence is attempted gracefully and never crashes the UI.
+ * Hardened:
+ *  - No FOUC (Flash of Unstyled Content) — theme applied before React paint
+ *  - No blank screen on mount
+ *  - System preference respected
+ *  - localStorage persistence (non-sensitive)
+ *  - Graceful Supabase sync (best-effort, never crashes UI)
  */
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 
-type Theme = 'light' | 'dark' | 'system';
+export type Theme = 'light' | 'dark' | 'system';
 
-interface ThemeContextType {
+export interface ThemeContextType {
   theme: Theme;
   effectiveTheme: 'light' | 'dark';
-  setTheme: (theme: Theme) => void;
+  setTheme: (theme: Theme | ((prev: Theme) => Theme)) => void;
+  toggle: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+
+const STORAGE_KEY = 'zynctra-theme';
+
+const resolveEffective = (t: Theme): 'light' | 'dark' => {
+  if (t !== 'system') return t;
+  if (typeof window === 'undefined') return 'dark';
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+};
+
+const applyThemeClass = (effective: 'light' | 'dark') => {
+  const root = document.documentElement;
+  if (effective === 'dark') {
+    root.classList.add('dark');
+    root.classList.remove('light');
+  } else {
+    root.classList.add('light');
+    root.classList.remove('dark');
+  }
+};
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [theme, setThemeState] = useState<Theme>('system');
   const [effectiveTheme, setEffectiveTheme] = useState<'light' | 'dark'>('dark');
-  const [mounted, setMounted] = useState(false);
 
-  // Derive effective theme (light | dark) from theme + system preference
-  const resolveEffective = (t: Theme): 'light' | 'dark' => {
-    if (t !== 'system') return t;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches
-      ? 'dark'
-      : 'light';
-  };
-
-  const applyTheme = (effective: 'light' | 'dark') => {
-    if (effective === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    setEffectiveTheme(effective);
-  };
-
+  // Apply theme immediately on mount (before paint) to prevent FOUC
   useEffect(() => {
-    const stored = localStorage.getItem('theme') as Theme | null;
+    const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
     const initial: Theme = stored ?? 'system';
+    const effective = resolveEffective(initial);
+    applyThemeClass(effective);
     setThemeState(initial);
-    applyTheme(resolveEffective(initial));
-    setMounted(true);
+    setEffectiveTheme(effective);
+  }, []);
 
+  // Listen for system preference changes
+  useEffect(() => {
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = () => {
       setThemeState((prev) => {
-        if (prev === 'system') applyTheme(resolveEffective('system'));
+        if (prev === 'system') {
+          const eff = resolveEffective('system');
+          applyThemeClass(eff);
+          setEffectiveTheme(eff);
+        }
         return prev;
       });
     };
@@ -60,31 +75,45 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
     return () => mq.removeEventListener('change', handleChange);
   }, []);
 
-  const setTheme = (newTheme: Theme) => {
-    setThemeState(newTheme);
-    localStorage.setItem('theme', newTheme);
-    applyTheme(resolveEffective(newTheme));
+  const setTheme = useCallback((newTheme: Theme | ((prev: Theme) => Theme)) => {
+    setThemeState((prev) => {
+      const resolved = typeof newTheme === 'function' ? newTheme(prev) : newTheme;
+      localStorage.setItem(STORAGE_KEY, resolved);
+      const eff = resolveEffective(resolved);
+      applyThemeClass(eff);
+      setEffectiveTheme(eff);
+      return resolved;
+    });
 
-    // Best-effort Supabase persistence — import lazily to avoid crash if not configured
+    // Best-effort Supabase persistence — lazy import to avoid crash if not configured
     import('../services/supabase/supabaseClient')
       .then(({ userProfileService }) => {
         const userId = sessionStorage.getItem('__zynctra__user_id');
         if (userId) {
-          void userProfileService.updateTheme(userId, newTheme);
+          void userProfileService.updateTheme(userId, typeof newTheme === 'function' ? 'system' : newTheme);
         }
       })
       .catch(() => {
         // Supabase not configured — silently ignore
       });
+  }, []);
+
+  const toggle = useCallback(() => {
+    setTheme((prev) => {
+      const next = prev === 'dark' ? 'light' : 'dark';
+      return next;
+    });
+  }, [setTheme]);
+
+  const value: ThemeContextType = {
+    theme,
+    effectiveTheme,
+    setTheme,
+    toggle,
   };
 
-  if (!mounted) return null;
-
-  return (
-    <ThemeContext.Provider value={{ theme, effectiveTheme, setTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  // Never return null — always render children
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 };
 
 export const useTheme = (): ThemeContextType => {
@@ -93,4 +122,4 @@ export const useTheme = (): ThemeContextType => {
   return ctx;
 };
 
-export default ThemeProvider;
+export default useTheme;

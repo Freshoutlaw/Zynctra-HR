@@ -8,6 +8,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../hooks/useTheme';
+import { AnimatedLogo } from '../components/logo';
 
 // ═══════════════════════════════════════════════════════════════════════════════
 //  ICONS
@@ -397,7 +398,7 @@ const Navbar: React.FC = () => {
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           className="flex items-center gap-2.5 group"
         >
-          <ZynctraLogo className="w-8 h-8" />
+          <img src="/assets/logos/logo.png" alt="Zynctra" className="object-contain w-8 h-8" />
           <span className="text-lg font-semibold tracking-tight text-neutral-900 dark:text-white">
             Zynctra
           </span>
@@ -561,20 +562,11 @@ const Hero: React.FC = () => {
               {/* Subtle glow behind image */}
               <div className="absolute -inset-4 bg-gradient-to-br from-cyan-500/10 via-transparent to-violet-500/10 rounded-3xl blur-2xl" />
               
-              <div className="relative overflow-hidden border shadow-2xl rounded-2xl border-neutral-200 dark:border-neutral-800">
-                {/* Replace this src with your own hero image */}
-                <img
-                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=600&fit=crop"
-                  alt="Team collaborating in a modern office"
-                  className="object-cover w-full h-auto"
-                  loading="eager"
-                />
-                {/* Subtle overlay gradient for text readability if needed */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
-                
-                {/* Floating badge */}
-                <div className="absolute bottom-6 left-6 right-6">
-                  <div className="inline-flex items-center gap-2 px-4 py-2 border shadow-lg rounded-xl bg-white/90 dark:bg-neutral-900/90 backdrop-blur-sm border-neutral-200 dark:border-neutral-700">
+              <div className="relative flex items-center justify-center min-h-[500px]">
+                <div className="absolute rounded-full -inset-12 bg-gradient-to-br from-cyan-500/5 via-transparent to-violet-500/5 blur-3xl" />
+                <AnimatedLogo size={480} />
+                <div className="absolute -translate-x-1/2 -bottom-4 left-1/2">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 border shadow-lg rounded-xl bg-white/90 dark:bg-neutral-900/90 backdrop-blur-sm border-neutral-200 dark:border-neutral-700 whitespace-nowrap">
                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                     <span className="text-xs font-medium text-neutral-700 dark:text-neutral-300">
                       2,847 teams onboarded this month
@@ -1088,7 +1080,7 @@ const Footer: React.FC = () => (
       <div className="grid grid-cols-2 gap-8 mb-12 md:grid-cols-5">
         <div className="col-span-2">
           <div className="flex items-center gap-2.5 mb-4">
-            <ZynctraLogo className="w-7 h-7" />
+            <img src="/assets/logos/logo.png" alt="Zynctra" className="object-contain w-7 h-7" />
             <span className="text-lg font-semibold text-neutral-900 dark:text-white">Zynctra</span>
           </div>
           <p className="max-w-xs mb-4 text-sm leading-relaxed text-neutral-500 dark:text-neutral-500">

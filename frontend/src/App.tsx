@@ -3,11 +3,16 @@
  *
  * Root application component — handles routing and route guards.
  * AuthProvider is mounted in main.tsx; useAuth() is safe here.
+ *
+ * Security:
+ *  - Route guards enforce auth + MFA + RBAC
+ *  - Protected routes redirect unauthenticated users
+ *  - Auth routes redirect already-logged-in users to dashboard
+ *  - Feature flags gate monetisation pages
  */
 
 import React, { useEffect } from 'react';
 import {
-  BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
@@ -86,58 +91,56 @@ const App: React.FC = () => {
 
   useEffect(() => {
     void flags.initialize();
-  }, []);
+  }, [flags]);
 
   if (isLoading) return <LoadingPage />;
 
   return (
-    <Router>
-      <Routes>
-        {/* Public */}
-        <Route path="/" element={<LandingPage />} />
+    <Routes>
+      {/* Public */}
+      <Route path="/" element={<LandingPage />} />
 
-        {/* Auth pages — redirect to dashboard if already logged in + MFA */}
-        <Route path="/login" element={<AuthRoute element={<LoginPage />} />} />
-        <Route path="/register" element={<AuthRoute element={<RegisterPage />} />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      {/* Auth pages — redirect to dashboard if already logged in + MFA */}
+      <Route path="/login" element={<AuthRoute element={<LoginPage />} />} />
+      <Route path="/register" element={<AuthRoute element={<RegisterPage />} />} />
+      <Route path="/forgot-password" element={<AuthRoute element={<ForgotPasswordPage />} />} />
 
-        {/* MFA Setup — authenticated but MFA not yet complete */}
-        <Route path="/mfa-setup" element={<MFASetupRoute />} />
+      {/* MFA Setup — authenticated but MFA not yet complete */}
+      <Route path="/mfa-setup" element={<MFASetupRoute />} />
 
-        {/* Pricing — only shown when monetisation is on */}
-        {!flags.isFreeModeActive() && (
-          <Route path="/pricing" element={<PricingPage />} />
-        )}
+      {/* Pricing — only shown when monetisation is on */}
+      {!flags.isFreeModeActive() && (
+        <Route path="/pricing" element={<PricingPage />} />
+      )}
 
-        {/* Protected — require auth + MFA */}
-        <Route
-          path="/dashboard"
-          element={<ProtectedRoute element={<DashboardPage />} />}
-        />
-        <Route
-          path="/dashboard/subscription"
-          element={<ProtectedRoute element={<SubscriptionDashboard />} />}
-        />
-        <Route
-          path="/payment-verification"
-          element={<ProtectedRoute element={<PaymentVerification />} />}
-        />
+      {/* Protected — require auth + MFA */}
+      <Route
+        path="/dashboard"
+        element={<ProtectedRoute element={<DashboardPage />} />}
+      />
+      <Route
+        path="/subscription"
+        element={<ProtectedRoute element={<SubscriptionDashboard />} />}
+      />
+      <Route
+        path="/payment/verify"
+        element={<ProtectedRoute element={<PaymentVerification />} />}
+      />
 
-        {/* Admin */}
-        <Route
-          path="/admin/*"
-          element={
-            <ProtectedRoute
-              element={<AdminPanel />}
-              requiredRole={UserRole.SUPER_ADMIN}
-            />
-          }
-        />
+      {/* Admin */}
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute
+            element={<AdminPanel />}
+            requiredRole={UserRole.SUPER_ADMIN}
+          />
+        }
+      />
 
-        {/* 404 */}
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </Router>
+      {/* 404 */}
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
   );
 };
 

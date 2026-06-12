@@ -1,19 +1,20 @@
 /**
  * /src/types/auth.types.ts
  * Type definitions for authentication, authorization, and security contexts
+ * Hardened: strict null checks, immutable interfaces, audit-ready types.
  */
 
 export interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  tenantId: string;
-  role: UserRole;
-  permissions: Permission[];
-  mfaEnabled: boolean;
-  lastLogin: Date;
-  isActive: boolean;
+  readonly id: string;
+  readonly email: string;
+  readonly firstName: string;
+  readonly lastName: string;
+  readonly tenantId: string;
+  readonly role: UserRole;
+  readonly permissions: readonly Permission[];
+  readonly mfaEnabled: boolean;
+  readonly lastLogin: Date;
+  readonly isActive: boolean;
 }
 
 export enum UserRole {
@@ -27,12 +28,12 @@ export enum UserRole {
 }
 
 export interface Permission {
-  id: string;
-  name: string;
-  description: string;
-  resource: string;
-  action: PermissionAction;
-  conditions?: PermissionCondition[];
+  readonly id: string;
+  readonly name: string;
+  readonly description: string;
+  readonly resource: string;
+  readonly action: PermissionAction;
+  readonly conditions?: readonly PermissionCondition[];
 }
 
 export enum PermissionAction {
@@ -46,53 +47,67 @@ export enum PermissionAction {
 }
 
 export interface PermissionCondition {
-  field: string;
-  operator: 'eq' | 'neq' | 'in' | 'nin' | 'gt' | 'gte' | 'lt' | 'lte';
-  value: any;
+  readonly field: string;
+  readonly operator: 'eq' | 'neq' | 'in' | 'nin' | 'gt' | 'gte' | 'lt' | 'lte';
+  readonly value: unknown;
 }
 
-export interface AuthContext {
-  user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  error: string | null;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
-  verifyMFA: (code: string) => Promise<void>;
-  refreshToken: () => Promise<boolean>;
+/** Registration payload — validated server-side before storage */
+export interface RegisterData {
+  readonly email: string;
+  readonly password: string;
+  readonly firstName: string;
+  readonly lastName: string;
+  readonly company?: string;
+  readonly tenantId?: string;
+  readonly role?: UserRole;
+}
+
+/** Auth context contract — all methods return Promises for async safety */
+export interface AuthContextType {
+  readonly user: User | null;
+  readonly isAuthenticated: boolean;
+  readonly isLoading: boolean;
+  readonly error: string | null;
+  readonly mfaVerified: boolean;
+  readonly login: (email: string, password: string) => Promise<void>;
+  readonly logout: () => Promise<void>;
+  readonly verifyMFA: (code: string) => Promise<void>;
+  readonly refreshToken: () => Promise<boolean>;
+  readonly register: (data: RegisterData) => Promise<void>;
 }
 
 export interface SessionToken {
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
-  tokenType: 'Bearer';
-  issuedAt: Date;
+  readonly accessToken: string;
+  readonly refreshToken: string;
+  readonly expiresIn: number;
+  readonly tokenType: 'Bearer';
+  readonly issuedAt: Date;
 }
 
 export interface MFASetup {
-  secret: string;
-  qrCode: string;
-  backupCodes: string[];
+  readonly secret: string;
+  readonly qrCode: string;
+  readonly backupCodes: readonly string[];
 }
 
 export interface SecurityContext {
-  sessionId: string;
-  ipAddress: string;
-  userAgent: string;
-  deviceId: string;
-  issuedAt: Date;
-  expiresAt: Date;
-  mfaVerified: boolean;
+  readonly sessionId: string;
+  readonly ipAddress: string;
+  readonly userAgent: string;
+  readonly deviceId: string;
+  readonly issuedAt: Date;
+  readonly expiresAt: Date;
+  readonly mfaVerified: boolean;
 }
 
 export interface TenantContext {
-  tenantId: string;
-  tenantName: string;
-  subscriptionTier: SubscriptionTier;
-  features: FeatureFlag[];
-  encryptionKey: string;
-  dataResidency: DataResidency;
+  readonly tenantId: string;
+  readonly tenantName: string;
+  readonly subscriptionTier: SubscriptionTier;
+  readonly features: readonly FeatureFlag[];
+  readonly encryptionKey: string;
+  readonly dataResidency: DataResidency;
 }
 
 export enum SubscriptionTier {
@@ -109,64 +124,64 @@ export enum DataResidency {
 }
 
 export interface FeatureFlag {
-  name: string;
-  enabled: boolean;
-  rolloutPercentage?: number;
-  config?: Record<string, any>;
+  readonly name: string;
+  readonly enabled: boolean;
+  readonly rolloutPercentage?: number;
+  readonly config?: Readonly<Record<string, unknown>>;
 }
 
-export interface ApiResponse<T = any> {
-  success: boolean;
-  data?: T;
-  error?: ApiError;
-  timestamp: Date;
-  traceId: string;
+export interface ApiResponse<T = unknown> {
+  readonly success: boolean;
+  readonly data?: T;
+  readonly error?: ApiError;
+  readonly timestamp: Date;
+  readonly traceId: string;
 }
 
 export interface ApiError {
-  code: string;
-  message: string;
-  details?: Record<string, any>;
-  statusCode: number;
+  readonly code: string;
+  readonly message: string;
+  readonly details?: Readonly<Record<string, unknown>>;
+  readonly statusCode: number;
 }
 
 export interface ValidationError {
-  field: string;
-  message: string;
-  value?: any;
+  readonly field: string;
+  readonly message: string;
+  readonly value?: unknown;
 }
 
 export interface AuditLog {
-  id: string;
-  userId: string;
-  action: string;
-  resource: string;
-  resourceId: string;
-  changes: Record<string, AuditChange>;
-  ipAddress: string;
-  userAgent: string;
-  timestamp: Date;
-  status: 'SUCCESS' | 'FAILURE';
-  errorMessage?: string;
+  readonly id: string;
+  readonly userId: string;
+  readonly action: string;
+  readonly resource: string;
+  readonly resourceId: string;
+  readonly changes: Readonly<Record<string, unknown>>;
+  readonly ipAddress: string;
+  readonly userAgent: string;
+  readonly timestamp: Date;
+  readonly status: 'SUCCESS' | 'FAILURE';
+  readonly errorMessage?: string;
 }
 
 export interface AuditChange {
-  oldValue: any;
-  newValue: any;
-  fieldName: string;
+  readonly oldValue: unknown;
+  readonly newValue: unknown;
+  readonly fieldName: string;
 }
 
 export interface SecurityEvent {
-  id: string;
-  eventType: SecurityEventType;
-  severity: EventSeverity;
-  userId?: string;
-  description: string;
-  details: Record<string, any>;
-  ipAddress: string;
-  timestamp: Date;
-  resolved: boolean;
-  resolvedAt?: Date;
+  readonly id: string;
+  readonly eventType: SecurityEventType;
+  readonly severity: EventSeverity;
+  readonly userId?: string;
+  readonly description: string;
+  readonly details: Readonly<Record<string, unknown>>;
+  readonly ipAddress: string;
+  readonly timestamp: Date;
+  readonly resolved: boolean;
+  readonly resolvedAt?: Date;
 }
 
 export enum SecurityEventType {
@@ -189,38 +204,38 @@ export enum EventSeverity {
 }
 
 export interface TerminalCommand {
-  id: string;
-  command: string;
-  args: string[];
-  executedBy: string;
-  executedAt: Date;
-  duration: number;
-  status: 'SUCCESS' | 'FAILURE';
-  output: string;
-  error?: string;
+  readonly id: string;
+  readonly command: string;
+  readonly args: readonly string[];
+  readonly executedBy: string;
+  readonly executedAt: Date;
+  readonly duration: number;
+  readonly status: 'SUCCESS' | 'FAILURE';
+  readonly output: string;
+  readonly error?: string;
 }
 
 export interface CommandWhitelistEntry {
-  command: string;
-  description: string;
-  requiredRole: UserRole;
-  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH';
-  allowedArguments?: string[];
+  readonly command: string;
+  readonly description: string;
+  readonly requiredRole: UserRole;
+  readonly riskLevel: 'LOW' | 'MEDIUM' | 'HIGH';
+  readonly allowedArguments?: readonly string[];
 }
 
-export interface WebSocketMessage<T = any> {
-  type: string;
-  payload: T;
-  timestamp: Date;
-  requestId?: string;
-  sessionId: string;
+export interface WebSocketMessage<T = unknown> {
+  readonly type: string;
+  readonly payload: T;
+  readonly timestamp: Date;
+  readonly requestId?: string;
+  readonly sessionId: string;
 }
 
 export interface TerminalSession {
-  sessionId: string;
-  userId: string;
-  startedAt: Date;
-  lastActivityAt: Date;
-  isActive: boolean;
-  commandHistory: TerminalCommand[];
+  readonly sessionId: string;
+  readonly userId: string;
+  readonly startedAt: Date;
+  readonly lastActivityAt: Date;
+  readonly isActive: boolean;
+  readonly commandHistory: readonly TerminalCommand[];
 }

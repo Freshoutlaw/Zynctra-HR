@@ -74,19 +74,11 @@ const IconGoogle = ({ className }: { className?: string }) => (
 // ─── Zynctra Logo ──────────────────────────────────────────────────────────
 
 const ZynctraLogo = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="32" height="32" rx="8" fill="currentColor" className="text-neutral-900 dark:text-white" />
-    <path
-      d="M10 10h12l-8 12h8"
-      stroke="currentColor"
-      className="text-white dark:text-neutral-900"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      fill="none"
-    />
-    <circle cx="22" cy="22" r="2.5" fill="currentColor" className="text-cyan-500" />
-  </svg>
+  <img
+    src="./assets/logos/logo.png"
+    alt="Zynctra"
+    className={className}
+  />
 );
 
 // ─── Main Component ────────────────────────────────────────────────────────

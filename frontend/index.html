@@ -3,15 +3,50 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Zynctra — All-in-One HR Platform" />
-    <meta name="theme-color" content="#00d9ff" />
-    <!-- CSRF token populated by server -->
+    <meta name="description" content="Zynctra HR — Enterprise AI-Powered HR Platform" />
+
+    <!-- Security: Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" 
+      content="default-src 'self'; 
+               script-src 'self' 'unsafe-inline' 'unsafe-eval'; 
+               style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; 
+               font-src 'self' https://fonts.gstatic.com; 
+               img-src 'self' data: https:; 
+               connect-src 'self' ws: wss: http: https:; 
+               frame-ancestors 'none'; 
+               base-uri 'self'; 
+               form-action 'self';" />
+
+    <!-- Security: Prevent MIME-type sniffing -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+
+    <!-- Security: XSS Protection -->
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+
+    <!-- Security: Referrer Policy -->
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+    <!-- Security: CSRF Token (injected by server or set at runtime) -->
     <meta name="csrf-token" content="" />
-    <title>Zynctra HR Platform</title>
-    <link rel="icon" type="image/svg+xml" href="/assets/logos/zynctra-icon.svg" />
-    <link rel="manifest" href="/manifest.json" />
-  </head>
+
+    <!-- Security: Permissions Policy -->
+    <meta http-equiv="Permissions-Policy" 
+      content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=()" />
+
+    <!-- Preconnect for performance (no sensitive data leaked) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="anonymous" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Zynctra HR</title>
+  <base target="_blank">
+</head>
   <body>
+    <noscript>
+      <div style="padding:2rem;text-align:center;font-family:sans-serif;">
+        <strong>JavaScript is required</strong> to run Zynctra HR. Please enable it in your browser settings.
+      </div>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
