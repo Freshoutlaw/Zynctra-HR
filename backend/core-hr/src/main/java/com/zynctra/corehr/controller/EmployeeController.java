@@ -1,87 +1,113 @@
 package com.zynctra.corehr.controller;
 
-import com.zynctra.corehr.dto.EmployeeDto;
+import com.zynctra.corehr.dto.CreateEmployeeRequest;
+import com.zynctra.corehr.dto.EmployeeResponse;
+import com.zynctra.corehr.dto.UpdateEmployeeRequest;
+import com.zynctra.corehr.entity.Employee;
+import com.zynctra.corehr.security.SecureFileUploadService;
 import com.zynctra.corehr.service.EmployeeService;
-import com.zynctra.common.constant.ApiConstants;
-import com.zynctra.common.dto.ApiResponse;
-import com.zynctra.common.dto.PageResponse;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
+import com.zynctra.corehr.service.SalaryChangeApprovalService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.math.BigDecimal;
 
 @RestController
-@RequestMapping(ApiConstants.API_PREFIX + "/employees")
-@RequiredArgsConstructor
+@RequestMapping("/api/hr/employees")
+@Validated
 public class EmployeeController {
+
     private final EmployeeService employeeService;
+    private final SalaryChangeApprovalService salaryApprovalService;
+    private final SecureFileUploadService fileUploadService;
 
-    @GetMapping
-    public ResponseEntity<ApiResponse<PageResponse<EmployeeDto>>> listEmployees(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
-            @RequestParam(required = false) String status) {
-
-        Pageable pageable = PageRequest.of(page, Math.min(size, ApiConstants.MAX_PAGE_SIZE));
-        PageResponse<EmployeeDto> response = employeeService.listEmployees(status, pageable);
-        return ResponseEntity.ok(ApiResponse.ok(response));
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<EmployeeDto>> getEmployee(@PathVariable String id) {
-        EmployeeDto employee = employeeService.getEmployee(id);
-        return ResponseEntity.ok(ApiResponse.ok(employee));
+    public EmployeeController(EmployeeService employeeService,
+                            SalaryChangeApprovalService salaryApprovalService,
+                            SecureFileUploadService fileUploadService) {
+        this.employeeService = employeeService;
+        this.salaryApprovalService = salaryApprovalService;
+        this.fileUploadService = fileUploadService;
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<EmployeeDto>> createEmployee(@RequestBody EmployeeDto dto) {
-        EmployeeDto created = employeeService.createEmployee(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(created, "Employee created successfully"));
+    @PreAuthorize("hasAnyRole('HR', 'ADMIN')")
+    public ResponseEntity<EmployeeResponse> create(@RequestBody @Valid CreateEmployeeRequest request) {
+        return ResponseEntity.ok(employeeService.createEmployee(request));
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<ApiResponse<EmployeeDto>> updateEmployee(
-            @PathVariable String id,
-            @RequestBody EmployeeDto dto) {
-        EmployeeDto updated = employeeService.updateEmployee(id, dto);
-        return ResponseEntity.ok(ApiResponse.ok(updated, "Employee updated successfully"));
+    @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<EmployeeResponse> get(
+            @PathVariable @Pattern(regexp = "^[a-f0-9-]{36}$") String id) {
+        return ResponseEntity.ok(employeeService.getEmployee(id));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteEmployee(@PathVariable String id) {
-        employeeService.deleteEmployee(id);
-        return ResponseEntity.ok(ApiResponse.ok(null, "Employee deleted successfully"));
+    @GetMapping
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Page<EmployeeResponse>> search(
+            @RequestParam(required = false) @Size(max = 100) String search,
+            @RequestParam(required = false) @Pattern(regexp = "^[a-f0-9-]{36}$") String departmentId,
+            @RequestParam(required = false) Employee.EmploymentStatus status,
+            Pageable pageable) { // Secured by SecurePageableResolver
+        return ResponseEntity.ok(employeeService.searchEmployees(search, departmentId, status, pageable));
     }
 
-    @GetMapping("/{id}/documents")
-    public ResponseEntity<ApiResponse<Object>> getEmployeeDocuments(@PathVariable String id) {
-        // TODO: Implement document retrieval
-        return ResponseEntity.ok(ApiResponse.ok(null));
+    @PutMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<EmployeeResponse> update(
+            @PathVariable @Pattern(regexp = "^[a-f0-9-]{36}$") String id,
+            @RequestBody @Valid UpdateEmployeeRequest request) {
+        return ResponseEntity.ok(employeeService.updateEmployee(id, request));
     }
 
-    @PostMapping("/{id}/documents")
-    public ResponseEntity<ApiResponse<Object>> uploadEmployeeDocument(@PathVariable String id) {
-        // TODO: Implement document upload
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(null, "Document uploaded successfully"));
+    @PostMapping("/{id}/terminate")
+    @PreAuthorize("hasAnyRole('HR', 'ADMIN')")
+    public ResponseEntity<Void> terminate(
+            @PathVariable @Pattern(regexp = "^[a-f0-9-]{36}$") String id,
+            @RequestParam @Size(max = 500) String reason) {
+        employeeService.terminateEmployee(id, reason);
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{id}/attendance")
-    public ResponseEntity<ApiResponse<Object>> getEmployeeAttendance(@PathVariable String id) {
-        // TODO: Implement attendance retrieval
-        return ResponseEntity.ok(ApiResponse.ok(null));
+    // Salary change with approval workflow
+    @PostMapping("/{id}/salary-request")
+    @PreAuthorize("hasAnyRole('HR', 'ADMIN')")
+    public ResponseEntity<String> requestSalaryChange(
+            @PathVariable @Pattern(regexp = "^[a-f0-9-]{36}$") String id,
+            @RequestParam @Positive @Digits(integer = 10, fraction = 2) BigDecimal newSalary,
+            @RequestParam @Size(max = 500) String reason) {
+        String requester = getCurrentUser();
+        String requestId = salaryApprovalService.requestSalaryChange(id, newSalary, reason, requester);
+        return ResponseEntity.ok(requestId);
     }
 
-    @GetMapping("/{id}/performance")
-    public ResponseEntity<ApiResponse<Object>> getEmployeePerformance(@PathVariable String id) {
-        // TODO: Implement performance retrieval
-        return ResponseEntity.ok(ApiResponse.ok(null));
+    @PostMapping("/salary-approve/{requestId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> approveSalaryChange(
+            @PathVariable @Pattern(regexp = "^[a-f0-9-]{36}$") String requestId) {
+        salaryApprovalService.approveSalaryChange(requestId, getCurrentUser());
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{id}/benefits")
-    public ResponseEntity<ApiResponse<Object>> getEmployeeBenefits(@PathVariable String id) {
-        // TODO: Implement benefits retrieval
-        return ResponseEntity.ok(ApiResponse.ok(null));
+    // Secure file upload
+    @PostMapping("/{id}/profile-photo")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<String> uploadProfilePhoto(
+            @PathVariable @Pattern(regexp = "^[a-f0-9-]{36}$") String id,
+            @RequestParam("file") MultipartFile file) {
+        String path = fileUploadService.storeProfilePhoto(file, id);
+        return ResponseEntity.ok(path);
+    }
+
+    private String getCurrentUser() {
+        return org.springframework.security.core.context.SecurityContextHolder
+            .getContext().getAuthentication().getName();
     }
 }

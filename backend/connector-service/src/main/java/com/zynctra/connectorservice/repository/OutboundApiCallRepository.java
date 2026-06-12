@@ -1,7 +1,8 @@
 package com.zynctra.connector.repository;
 
-import com.zynctra.connector.entity.OutboundApiCall;
-import com.zynctra.connector.entity.ConnectorType;
+import java.time.Instant;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,8 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.Instant;
-import java.util.List;
+import com.zynctra.connectorservice.entity.ConnectorType;
+import com.zynctra.connectorservice.entity.OutboundApiCall;
 
 /**
  * Secure repository for outbound API call audit log.
