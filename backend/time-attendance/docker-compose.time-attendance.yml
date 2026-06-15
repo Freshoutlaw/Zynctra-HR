@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  time-attendance-service:
+    build:
+      context: ./backend/time-attendance
+      dockerfile: Dockerfile
+    container_name: zynctra-time-attendance
+    user: "1001:1001"
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid,size=100m
+      - /var/log/zynctra:noexec,nosuid,size=50m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+    networks:
+      - zynctra-backend
+    secrets:
+      - db_password
+      - jwt_secret
+      - redis_password
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - DB_URL=jdbc:postgresql://postgres:5432/zynctra_timeattendance
+      - DB_USER=timeattendance_app
+      - DB_PASSWORD_FILE=/run/secrets/db_password
+      - JWT_SECRET_FILE=/run/secrets/jwt_secret
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD_FILE=/run/secrets/redis_password
+      - SERVER_PORT=8084
+
+secrets:
+  db_password:
+    file: ./secrets/timeattendance_db_password.txt
+  jwt_secret:
+    file: ./secrets/jwt_secret.txt
+  redis_password:
+    file: ./secrets/redis_password.txt
+
+networks:
+  zynctra-backend:
+    external: true

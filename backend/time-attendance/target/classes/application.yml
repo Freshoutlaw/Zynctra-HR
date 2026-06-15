@@ -1,5 +1,105 @@
+server:
+  port: 8084
+  servlet:
+    context-path: /api/time-attendance
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/plain
+  # Security: Limit request size to prevent DoS
+  tomcat:
+    max-swallow-size: 2MB
+    max-http-form-post-size: 2MB
+
 spring:
   application:
-    name: time-attendance
-server:
-  port: 8080
+    name: time-attendance-service
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/zynctra_timeattendance}
+    username: ${DB_USER:timeattendance_app}
+    password: ${DB_PASSWORD:}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 15
+      minimum-idle: 3
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: false
+    show-sql: false
+
+  # Redis for session state and rate limiting counters
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 5
+
+  devtools:
+    restart:
+      enabled: false
+
+# Security
+security:
+  jwt:
+    secret: ${JWT_SECRET:}
+    expiration: 900000
+
+  # Geofencing: allowed office locations (lat, lng, radius in meters)
+  geofence:
+    enabled: ${GEOFENCE_ENABLED:true}
+    locations: ${GEOFENCE_LOCATIONS:}
+    max-distance-meters: ${GEOFENCE_MAX_DISTANCE:500}
+
+  # Clock-in security
+  clockin:
+    max-clock-in-per-day: ${MAX_CLOCK_IN_PER_DAY:5}
+    min-time-between-clocks: ${MIN_TIME_BETWEEN_CLOCKS:300}  # seconds
+    ip-binding-enabled: ${IP_BINDING_ENABLED:true}
+    device-fingerprint-required: ${DEVICE_FP_REQUIRED:true}
+
+# Rate Limiting
+resilience4j:
+  ratelimiter:
+    instances:
+      clockin-strict:
+        limitForPeriod: 30
+        limitRefreshPeriod: 1m
+        timeoutDuration: 100ms
+      attendance-standard:
+        limitForPeriod: 200
+        limitRefreshPeriod: 1m
+        timeoutDuration: 200ms
+
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# Logging
+logging:
+  level:
+    com.zynctra.timeattendance: INFO
+    com.zynctra.timeattendance.security: DEBUG
+    org.springframework.security: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

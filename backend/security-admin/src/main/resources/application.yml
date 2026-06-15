@@ -1,5 +1,130 @@
+server:
+  port: 8085
+  servlet:
+    context-path: /api/security-admin
+  compression:
+    enabled: true
+  # ULTRA-RESTRICTIVE: Security admin is the highest-value target
+  tomcat:
+    max-swallow-size: 1MB
+    max-http-form-post-size: 1MB
+    max-connections: 100
+    accept-count: 50
+
 spring:
   application:
-    name: security-admin
-server:
-  port: 8080
+    name: security-admin-service
+  
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/zynctra_securityadmin}
+    username: ${DB_USER:securityadmin_app}
+    password: ${DB_PASSWORD:}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+  
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: false
+    show-sql: false
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 4
+
+  devtools:
+    restart:
+      enabled: false
+
+# SECURITY ADMIN-SPECIFIC CONFIGURATION
+security:
+  jwt:
+    secret: ${JWT_SECRET:}
+    expiration: 900000  # 15 minutes
+    # CRITICAL: Admin tokens require MFA
+    require-mfa-for-admin: ${REQUIRE_MFA_ADMIN:true}
+  
+  # Privilege Escalation Prevention
+  privilege-guard:
+    enabled: true
+    # Roles that CANNOT be self-assigned or assigned by non-super-admins
+    protected-roles: SUPER_ADMIN,SECURITY_ADMIN
+    # Max role level a user can assign (prevents junior admin assigning senior roles)
+    max-assignable-level: ${MAX_ASSIGNABLE_LEVEL:3}
+    # Require approval for role changes above this level
+    approval-required-above-level: ${APPROVAL_REQUIRED_LEVEL:2}
+  
+  # Audit immutability
+  audit:
+    retention-days: ${AUDIT_RETENTION_DAYS:2555}  # 7 years
+    immutable: true  # Audit logs can NEVER be modified or deleted
+    encryption-at-rest: ${AUDIT_ENCRYPT:true}
+
+# AGGRESSIVE Rate Limiting for Security Admin
+resilience4j:
+  ratelimiter:
+    instances:
+      # Role changes are EXTREMELY sensitive
+      role-admin:
+        limitForPeriod: 10
+        limitRefreshPeriod: 5m
+        timeoutDuration: 200ms
+      # Permission changes are EXTREMELY sensitive
+      permission-admin:
+        limitForPeriod: 10
+        limitRefreshPeriod: 5m
+        timeoutDuration: 200ms
+      # Policy changes
+      policy-admin:
+        limitForPeriod: 20
+        limitRefreshPeriod: 5m
+        timeoutDuration: 200ms
+      # Audit reads (can be high volume for investigation)
+      audit-read:
+        limitForPeriod: 100
+        limitRefreshPeriod: 1m
+        timeoutDuration: 500ms
+      # Threat incident management
+      threat-admin:
+        limitForPeriod: 50
+        limitRefreshPeriod: 1m
+        timeoutDuration: 300ms
+
+# Actuator - MINIMAL exposure
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: never  # Never expose details on security admin
+
+# Logging - EVERYTHING logged for forensics
+logging:
+  level:
+    com.zynctra.securityadmin: DEBUG
+    com.zynctra.securityadmin.security: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: /var/log/zynctra/security-admin-audit.log
