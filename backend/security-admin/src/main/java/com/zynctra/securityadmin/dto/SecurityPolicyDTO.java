@@ -4,25 +4,25 @@ import com.zynctra.securityadmin.entity.SecurityPolicy;
 import jakarta.validation.constraints.*;
 
 public class SecurityPolicyDTO {
-
     private String id;
 
-    @NotBlank
-    @Size(min = 2, max = 64)
-    @Pattern(regexp = "^[a-z][a-z0-9_]*$")
+    @NotBlank(message = "Policy name is required")
+    @Size(min = 2, max = 64, message = "Policy name must be between 2 and 64 characters")
+    @Pattern(regexp = "^[a-z][a-z0-9_]*$", message = "Policy name must start with lowercase letter, contain only lowercase letters, numbers, and underscores")
     private String policyName;
 
-    @Size(max = 500)
-    @Pattern(regexp = "^[\\p{L}\\p{N}\\s\\-_:,.()!?'\"\\n\\r]*$")
+    @Size(max = 500, message = "Description cannot exceed 500 characters")
+    @Pattern(regexp = "^[\\p{L}\\p{N}\\s\\-_:,.()!?'\"\\n\\r]*$", message = "Description contains invalid characters")
     private String description;
 
-    @NotBlank
-    @Size(max = 4000)
+    @NotBlank(message = "Policy value is required")
+    @Size(max = 4000, message = "Policy value cannot exceed 4000 characters")
     private String policyValue;
 
-    @NotNull
+    @NotNull(message = "Policy type is required")
     private SecurityPolicy.PolicyType policyType;
 
+    @NotNull(message = "Requires approval flag is required")
     private Boolean requiresApproval = false;
 
     // Getters/setters

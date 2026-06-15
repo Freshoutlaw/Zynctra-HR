@@ -3,19 +3,23 @@ package com.zynctra.auth.service;
 import com.zynctra.auth.dto.AuthResponse;
 import com.zynctra.auth.dto.LoginRequest;
 import com.zynctra.common.security.JwtTokenProvider;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
+
+    // Manual constructor for dependency injection
+    public AuthService(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
 
     public AuthResponse authenticate(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
@@ -46,5 +50,13 @@ public class AuthService {
                 .accessToken(jwtTokenProvider.generateAccessToken(userId, "email@placeholder.com", tenantId, "ROLE_USER"))
                 .refreshToken(jwtTokenProvider.generateRefreshToken(userId, tenantId))
                 .build();
+    }
+
+    public String getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            return authentication.getName();
+        }
+        return null;
     }
 }

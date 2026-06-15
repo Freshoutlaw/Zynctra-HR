@@ -1,12 +1,10 @@
 package com.zynctra.common.exception;
 
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 /**
  * Base application exception for all Zynctra exceptions
  */
-@Getter
 public class ApplicationException extends RuntimeException {
     private final String errorCode;
     private final HttpStatus status;
@@ -32,4 +30,18 @@ public class ApplicationException extends RuntimeException {
         this.status = status;
         this.details = null;
     }
+
+    // Getters
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public HttpStatus getStatus() {
+        return status;
+    }
+
+    public Object getDetails() {
+        return details;
+    }
 }
+

@@ -1,2 +1,0 @@
-class OpenAIProvider:
-    pass

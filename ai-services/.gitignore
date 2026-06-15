@@ -1,0 +1,7 @@
+# Security — never commit secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+secrets/

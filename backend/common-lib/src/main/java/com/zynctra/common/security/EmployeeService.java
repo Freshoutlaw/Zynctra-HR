@@ -4,7 +4,6 @@ import com.zynctra.hr.entity.Employee;
 import com.zynctra.hr.repository.EmployeeRepository;
 import com.zynctra.common.security.TenantContext;
 import com.zynctra.common.exception.ResourceNotFoundException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,10 +11,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
+
+    public EmployeeService(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
+    }
 
     public List<Employee> getAllEmployees() {
         return employeeRepository.findAll(); // Filter is applied automatically by TenantAspect

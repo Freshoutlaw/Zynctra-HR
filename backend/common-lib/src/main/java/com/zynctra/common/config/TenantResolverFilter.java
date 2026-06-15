@@ -1,7 +1,8 @@
 package com.zynctra.common.config;
 
 import com.zynctra.common.security.TenantContext;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import jakarta.servlet.FilterChain;
@@ -15,9 +16,9 @@ import static com.zynctra.common.constant.ApiConstants.X_REQUEST_ID;
 import static com.zynctra.common.constant.ApiConstants.X_TENANT_ID;
 import static com.zynctra.common.constant.ApiConstants.X_USER_ID;
 
-@Slf4j
 @Component
 public class TenantResolverFilter extends OncePerRequestFilter {
+    private static final Logger log = LoggerFactory.getLogger(TenantResolverFilter.class);
     private final TenantContext tenantContext;
 
     public TenantResolverFilter(TenantContext tenantContext) {
@@ -47,3 +48,4 @@ public class TenantResolverFilter extends OncePerRequestFilter {
         }
     }
 }
+
