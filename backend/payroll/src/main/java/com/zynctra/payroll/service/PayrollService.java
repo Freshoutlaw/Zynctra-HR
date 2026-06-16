@@ -6,7 +6,8 @@ import com.zynctra.hr.entity.EmploymentStatus;
 import com.zynctra.hr.repository.EmployeeRepository;
 import com.zynctra.payroll.entity.PayrollStatus;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,11 +17,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PayrollService {
 
+    private static final Logger log = LoggerFactory.getLogger(PayrollService.class);
     private final EmployeeRepository employeeRepository;
     private final PayrollCalculationService calculationService;
 

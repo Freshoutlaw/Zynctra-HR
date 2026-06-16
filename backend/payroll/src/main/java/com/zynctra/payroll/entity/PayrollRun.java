@@ -114,8 +114,7 @@ public class PayrollRun extends SecureBaseEntity {
         run.runType = runType;
         run.idempotencyKey = idempotencyKey;
         run.status = PayrollStatus.DRAFT;
-        run.createdBy = createdBy;
-        run.updatedBy = createdBy;
+        run.setUpdatedBy(createdBy);
         return run;
     }
 
@@ -138,7 +137,7 @@ public class PayrollRun extends SecureBaseEntity {
         }
 
         this.status = newStatus;
-        this.updatedBy = actor;
+        this.setUpdatedBy(actor);
 
         switch (newStatus) {
             case APPROVED -> {

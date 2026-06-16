@@ -1,0 +1,469 @@
+﻿[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] Zynctra Common Library                                             [jar]
+[INFO] Zynctra HR Backend                                                 [pom]
+[INFO] Zynctra Auth Service                                               [jar]
+[INFO] Zynctra Core HR Service                                            [jar]
+[INFO] Zynctra Payroll Service                                            [jar]
+[INFO] Zynctra ATS Service                                                [jar]
+[INFO] Zynctra t i m e a t t e n d a n c e Service                        [jar]
+[INFO] Zynctra Performance Service                                        [jar]
+[INFO] Zynctra b e n e f i t s Service                                    [jar]
+[INFO] Zynctra Learning Service                                           [jar]
+[INFO] Zynctra Security Admin Service                                     [jar]
+[INFO] Zynctra Analytics Service                                          [jar]
+[INFO] Zynctra Connector Service                                          [jar]
+[INFO] Zynctra API Gateway                                                [jar]
+[INFO] 
+[INFO] -----------------------< com.zynctra:common-lib >-----------------------
+[INFO] Building Zynctra Common Library 1.0.0                             [1/14]
+[INFO]   from common-lib\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ common-lib ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ common-lib ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 55 source files with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] --------------------< com.zynctra:zynctra-backend >---------------------
+[INFO] Building Zynctra HR Backend 1.0.0                                 [2/14]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] ----------------------< com.zynctra:auth-service >----------------------
+[INFO] Building Zynctra Auth Service 1.0.0                               [3/14]
+[INFO]   from auth-service\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ auth-service ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ auth-service ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 14 source files with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] ------------------------< com.zynctra:core-hr >-------------------------
+[INFO] Building Zynctra Core HR Service 1.0.0                            [4/14]
+[INFO]   from core-hr\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ core-hr ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ core-hr ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 29 source files with javac [debug release 17] to target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/CorehrApplication.java:[9,8] class CoreHrApplication is public, should be declared in a file named CoreHrApplication.java
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[8,29] package org.junit.jupiter.api does not exist
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[10,45] package org.springframework.boot.test.context does not exist
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[12,57] package org.springframework.security.test.context.support does not exist
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[17,36] package org.junit.jupiter.api does not exist
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[19,2] cannot find symbol
+  symbol: class SpringBootTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[29,6] cannot find symbol
+  symbol:   class Test
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[30,6] cannot find symbol
+  symbol:   class WithMockUser
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[40,6] cannot find symbol
+  symbol:   class Test
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[41,6] cannot find symbol
+  symbol:   class WithMockUser
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[57,6] cannot find symbol
+  symbol:   class Test
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[70,6] cannot find symbol
+  symbol:   class Test
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[80,6] cannot find symbol
+  symbol:   class Test
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[81,6] cannot find symbol
+  symbol:   class WithMockUser
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[89,6] cannot find symbol
+  symbol:   class Test
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[90,6] cannot find symbol
+  symbol:   class WithMockUser
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[99,6] cannot find symbol
+  symbol:   class Test
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[100,6] cannot find symbol
+  symbol:   class WithMockUser
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[112,6] cannot find symbol
+  symbol:   class Test
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[113,6] cannot find symbol
+  symbol:   class WithMockUser
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[127,6] cannot find symbol
+  symbol:   class Test
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[128,6] cannot find symbol
+  symbol:   class WithMockUser
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[143,6] cannot find symbol
+  symbol:   class Test
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[144,6] cannot find symbol
+  symbol:   class WithMockUser
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/service/EmployeeService.java:[81,12] cannot find symbol
+  symbol:   method setDateOfBirth(java.time.LocalDate)
+  location: variable emp of type com.zynctra.corehr.entity.Employee
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[54,24] cannot find symbol
+  symbol:   method isHr()
+  location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[54,43] cannot find symbol
+  symbol:   method isAdmin()
+  location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[58,24] cannot find symbol
+  symbol:   method isSelf()
+  location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[58,45] cannot find symbol
+  symbol:   method isManager()
+  location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[58,69] cannot find symbol
+  symbol:   method isHr()
+  location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[58,88] cannot find symbol
+  symbol:   method isAdmin()
+  location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[58,110] cannot find symbol
+  symbol:   method isFinance()
+  location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[62,24] cannot find symbol
+  symbol:   method isSelf()
+  location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[62,45] cannot find symbol
+  symbol:   method isHr()
+  location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[62,64] cannot find symbol
+  symbol:   method isAdmin()
+  location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[62,86] cannot find symbol
+  symbol:   method isFinance()
+  location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[66,24] cannot find symbol
+  symbol:   method isSelf()
+  location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[66,45] cannot find symbol
+  symbol:   method isManager()
+  location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[66,69] cannot find symbol
+  symbol:   method isHr()
+  location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[66,88] cannot find symbol
+  symbol:   method isAdmin()
+  location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[70,24] cannot find symbol
+  symbol:   method isHr()
+  location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[70,43] cannot find symbol
+  symbol:   method isAdmin()
+  location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[74,24] cannot find symbol
+  symbol:   method isAdmin()
+  location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[74,47] cannot find symbol
+  symbol:   method isHr()
+  location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[74,66] cannot find symbol
+  symbol:   method isDirectorPlus()
+  location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[78,24] cannot find symbol
+  symbol:   method isManager()
+  location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[78,48] cannot find symbol
+  symbol:   method isHr()
+  location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[78,67] cannot find symbol
+  symbol:   method isAdmin()
+  location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[82,24] cannot find symbol
+  symbol:   method isHr()
+  location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[82,43] cannot find symbol
+  symbol:   method isAdmin()
+  location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/service/HrAnomalyDetectionService.java:[53,40] cannot find symbol
+  symbol:   method findActorsWithHighEventCount(java.lang.String,java.time.Instant,int)
+  location: variable auditLogRepository of type com.zynctra.corehr.repository.EmployeeAuditLogRepository
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/service/HrAnomalyDetectionService.java:[76,46] cannot find symbol
+  symbol:   method countFailedAuthEvents(java.lang.String,java.time.Instant)
+  location: variable auditLogRepository of type com.zynctra.corehr.repository.EmployeeAuditLogRepository
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/service/HrAnomalyDetectionService.java:[86,43] cannot find symbol
+  symbol:   method findAnomalies(java.lang.String,java.time.Instant)
+  location: variable auditLogRepository of type com.zynctra.corehr.repository.EmployeeAuditLogRepository
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[33,9] cannot find symbol
+  symbol:   method assertThrows(java.lang.Class<org.springframework.security.access.AccessDeniedException>,()->{ empl[...]"); })
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[51,9] cannot find symbol
+  symbol:   method assertNotNull(com.zynctra.corehr.dto.EmployeeResponse)
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[63,9] cannot find symbol
+  symbol:   method assertNotNull(java.lang.String)
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[64,9] cannot find symbol
+  symbol:   method assertNotEquals(java.lang.String,java.lang.String)
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[67,9] cannot find symbol
+  symbol:   method assertEquals(java.lang.String,java.lang.String)
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[73,9] cannot find symbol
+  symbol:   method assertThrows(java.lang.Class<java.lang.SecurityException>,()->{ encr[...]"); })
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[96,9] cannot find symbol
+  symbol:   method assertNotNull(org.springframework.data.domain.Page<com.zynctra.corehr.dto.EmployeeResponse>)
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[105,9] cannot find symbol
+  symbol:   method assertThrows(java.lang.Class<java.lang.IllegalArgumentException>,()->{ empl[...]q); })
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[120,9] cannot find symbol
+  symbol:   method assertNotNull(com.zynctra.corehr.dto.EmployeeResponse)
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[136,9] cannot find symbol
+  symbol:   method assertTrue(boolean)
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[137,9] cannot find symbol
+  symbol:   method assertTrue(java.lang.Boolean)
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[138,9] cannot find symbol
+  symbol:   method assertEquals(com.zynctra.corehr.entity.Employee.EmploymentStatus,com.zynctra.corehr.entity.Employee.EmploymentStatus)
+  location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[INFO] 65 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for Zynctra HR Backend 1.0.0:
+[INFO] 
+[INFO] Zynctra Common Library ............................. SUCCESS [ 25.651 s]
+[INFO] Zynctra HR Backend ................................. SUCCESS [  0.033 s]
+[INFO] Zynctra Auth Service ............................... SUCCESS [ 15.249 s]
+[INFO] Zynctra Core HR Service ............................ FAILURE [  7.506 s]
+[INFO] Zynctra Payroll Service ............................ SKIPPED
+[INFO] Zynctra ATS Service ................................ SKIPPED
+[INFO] Zynctra t i m e a t t e n d a n c e Service ........ SKIPPED
+[INFO] Zynctra Performance Service ........................ SKIPPED
+[INFO] Zynctra b e n e f i t s Service .................... SKIPPED
+[INFO] Zynctra Learning Service ........................... SKIPPED
+[INFO] Zynctra Security Admin Service ..................... SKIPPED
+[INFO] Zynctra Analytics Service .......................... SKIPPED
+[INFO] Zynctra Connector Service .......................... SKIPPED
+[INFO] Zynctra API Gateway ................................ SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  54.027 s
+[INFO] Finished at: 2026-06-16T07:33:26-06:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project core-hr: Compilation failure: Compilation failure: 
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/CorehrApplication.java:[9,8] class CoreHrApplication is public, should be declared in a file named CoreHrApplication.java
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[8,29] package org.junit.jupiter.api does not exist
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[10,45] package org.springframework.boot.test.context does not exist
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[12,57] package org.springframework.security.test.context.support does not exist
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[17,36] package org.junit.jupiter.api does not exist
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[19,2] cannot find symbol
+[ERROR]   symbol: class SpringBootTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[29,6] cannot find symbol
+[ERROR]   symbol:   class Test
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[30,6] cannot find symbol
+[ERROR]   symbol:   class WithMockUser
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[40,6] cannot find symbol
+[ERROR]   symbol:   class Test
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[41,6] cannot find symbol
+[ERROR]   symbol:   class WithMockUser
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[57,6] cannot find symbol
+[ERROR]   symbol:   class Test
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[70,6] cannot find symbol
+[ERROR]   symbol:   class Test
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[80,6] cannot find symbol
+[ERROR]   symbol:   class Test
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[81,6] cannot find symbol
+[ERROR]   symbol:   class WithMockUser
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[89,6] cannot find symbol
+[ERROR]   symbol:   class Test
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[90,6] cannot find symbol
+[ERROR]   symbol:   class WithMockUser
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[99,6] cannot find symbol
+[ERROR]   symbol:   class Test
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[100,6] cannot find symbol
+[ERROR]   symbol:   class WithMockUser
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[112,6] cannot find symbol
+[ERROR]   symbol:   class Test
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[113,6] cannot find symbol
+[ERROR]   symbol:   class WithMockUser
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[127,6] cannot find symbol
+[ERROR]   symbol:   class Test
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[128,6] cannot find symbol
+[ERROR]   symbol:   class WithMockUser
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[143,6] cannot find symbol
+[ERROR]   symbol:   class Test
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[144,6] cannot find symbol
+[ERROR]   symbol:   class WithMockUser
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/service/EmployeeService.java:[81,12] cannot find symbol
+[ERROR]   symbol:   method setDateOfBirth(java.time.LocalDate)
+[ERROR]   location: variable emp of type com.zynctra.corehr.entity.Employee
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[54,24] cannot find symbol
+[ERROR]   symbol:   method isHr()
+[ERROR]   location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[54,43] cannot find symbol
+[ERROR]   symbol:   method isAdmin()
+[ERROR]   location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[58,24] cannot find symbol
+[ERROR]   symbol:   method isSelf()
+[ERROR]   location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[58,45] cannot find symbol
+[ERROR]   symbol:   method isManager()
+[ERROR]   location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[58,69] cannot find symbol
+[ERROR]   symbol:   method isHr()
+[ERROR]   location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[58,88] cannot find symbol
+[ERROR]   symbol:   method isAdmin()
+[ERROR]   location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[58,110] cannot find symbol
+[ERROR]   symbol:   method isFinance()
+[ERROR]   location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[62,24] cannot find symbol
+[ERROR]   symbol:   method isSelf()
+[ERROR]   location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[62,45] cannot find symbol
+[ERROR]   symbol:   method isHr()
+[ERROR]   location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[62,64] cannot find symbol
+[ERROR]   symbol:   method isAdmin()
+[ERROR]   location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[62,86] cannot find symbol
+[ERROR]   symbol:   method isFinance()
+[ERROR]   location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[66,24] cannot find symbol
+[ERROR]   symbol:   method isSelf()
+[ERROR]   location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[66,45] cannot find symbol
+[ERROR]   symbol:   method isManager()
+[ERROR]   location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[66,69] cannot find symbol
+[ERROR]   symbol:   method isHr()
+[ERROR]   location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[66,88] cannot find symbol
+[ERROR]   symbol:   method isAdmin()
+[ERROR]   location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[70,24] cannot find symbol
+[ERROR]   symbol:   method isHr()
+[ERROR]   location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[70,43] cannot find symbol
+[ERROR]   symbol:   method isAdmin()
+[ERROR]   location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[74,24] cannot find symbol
+[ERROR]   symbol:   method isAdmin()
+[ERROR]   location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[74,47] cannot find symbol
+[ERROR]   symbol:   method isHr()
+[ERROR]   location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[74,66] cannot find symbol
+[ERROR]   symbol:   method isDirectorPlus()
+[ERROR]   location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[78,24] cannot find symbol
+[ERROR]   symbol:   method isManager()
+[ERROR]   location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[78,48] cannot find symbol
+[ERROR]   symbol:   method isHr()
+[ERROR]   location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[78,67] cannot find symbol
+[ERROR]   symbol:   method isAdmin()
+[ERROR]   location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[82,24] cannot find symbol
+[ERROR]   symbol:   method isHr()
+[ERROR]   location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/FieldAccessControl.java:[82,43] cannot find symbol
+[ERROR]   symbol:   method isAdmin()
+[ERROR]   location: variable decision of type com.zynctra.corehr.security.AccessDecision
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/service/HrAnomalyDetectionService.java:[53,40] cannot find symbol
+[ERROR]   symbol:   method findActorsWithHighEventCount(java.lang.String,java.time.Instant,int)
+[ERROR]   location: variable auditLogRepository of type com.zynctra.corehr.repository.EmployeeAuditLogRepository
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/service/HrAnomalyDetectionService.java:[76,46] cannot find symbol
+[ERROR]   symbol:   method countFailedAuthEvents(java.lang.String,java.time.Instant)
+[ERROR]   location: variable auditLogRepository of type com.zynctra.corehr.repository.EmployeeAuditLogRepository
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/service/HrAnomalyDetectionService.java:[86,43] cannot find symbol
+[ERROR]   symbol:   method findAnomalies(java.lang.String,java.time.Instant)
+[ERROR]   location: variable auditLogRepository of type com.zynctra.corehr.repository.EmployeeAuditLogRepository
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[33,9] cannot find symbol
+[ERROR]   symbol:   method assertThrows(java.lang.Class<org.springframework.security.access.AccessDeniedException>,()->{ empl[...]"); })
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[51,9] cannot find symbol
+[ERROR]   symbol:   method assertNotNull(com.zynctra.corehr.dto.EmployeeResponse)
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[63,9] cannot find symbol
+[ERROR]   symbol:   method assertNotNull(java.lang.String)
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[64,9] cannot find symbol
+[ERROR]   symbol:   method assertNotEquals(java.lang.String,java.lang.String)
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[67,9] cannot find symbol
+[ERROR]   symbol:   method assertEquals(java.lang.String,java.lang.String)
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[73,9] cannot find symbol
+[ERROR]   symbol:   method assertThrows(java.lang.Class<java.lang.SecurityException>,()->{ encr[...]"); })
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[96,9] cannot find symbol
+[ERROR]   symbol:   method assertNotNull(org.springframework.data.domain.Page<com.zynctra.corehr.dto.EmployeeResponse>)
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[105,9] cannot find symbol
+[ERROR]   symbol:   method assertThrows(java.lang.Class<java.lang.IllegalArgumentException>,()->{ empl[...]q); })
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[120,9] cannot find symbol
+[ERROR]   symbol:   method assertNotNull(com.zynctra.corehr.dto.EmployeeResponse)
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[136,9] cannot find symbol
+[ERROR]   symbol:   method assertTrue(boolean)
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[137,9] cannot find symbol
+[ERROR]   symbol:   method assertTrue(java.lang.Boolean)
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] /C:/Users/ADMIN/OneDrive/Desktop/Zynctra/backend/core-hr/src/main/java/com/zynctra/corehr/security/EmployeeSecurityTest.java:[138,9] cannot find symbol
+[ERROR]   symbol:   method assertEquals(com.zynctra.corehr.entity.Employee.EmploymentStatus,com.zynctra.corehr.entity.Employee.EmploymentStatus)
+[ERROR]   location: class com.zynctra.corehr.security.EmployeeSecurityTest
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :core-hr

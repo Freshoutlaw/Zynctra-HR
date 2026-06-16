@@ -445,6 +445,27 @@ services:
       postgres-auth:
         condition: service_healthy
 
+  # Connector Service
+  connector-service:
+    build:
+      context: ./connector-service
+      dockerfile: Dockerfile
+    container_name: zynctra-connector-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-securityadmin:5432/zynctra_connectors
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    ports:
+      - "8010:8010"
+    depends_on:
+      postgres-securityadmin:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8010/connectors/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
 volumes:
   postgres_auth_data:
   postgres_hr_data:
@@ -462,36 +483,3 @@ volumes:
 networks:
   default:
     name: zynctra-network
-
-version: '3.8'
-services:
-  postgres:
-    image: postgres:15-alpine  # Use minimal Alpine image
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - "127.0.0.1:5432:5432"  # Bind to localhost only
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    security_opt:
-      - no-new-privileges:true
-    read_only: true
-    tmpfs:
-      - /tmp
-      - /var/run/postgresql
-    user: "999:999"  # postgres user
-
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "127.0.0.1:6379:6379"
-    command: redis-server --requirepass ${REDIS_PASSWORD}
-    security_opt:
-      - no-new-privileges:true
-    read_only: true
-    user: "999:999"
-
-volumes:
-  postgres_data:

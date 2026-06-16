@@ -56,8 +56,7 @@ public class TaxRecord extends SecureBaseEntity {
         TaxRecord tax = new TaxRecord();
         tax.payrollRunId = payrollRunId;
         tax.employeeId = employeeId;
-        tax.createdBy = createdBy;
-        tax.updatedBy = createdBy;
+        tax.setUpdatedBy(createdBy);
         return tax;
     }
 

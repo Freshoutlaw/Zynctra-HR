@@ -51,11 +51,9 @@ public class HrAnomalyDetectionService {
     private void detectBulkExports(String tenantId, Instant since) {
         // Check for > 50 EXPORTED events in 1 hour by same actor
         var actors = auditLogRepository.findActorsWithHighEventCount(tenantId, since, 50);
-        for (Object[] result : actors) {
-            String actor = (String) result[0];
-            Long count = (Long) result[1];
-            SEC_LOG.warn("SECURITY_EVENT: anomaly_bulk_export actor={} count={} window=1h", actor, count);
-            triggerAlert("BULK_EXPORT", actor, count);
+        for (String actor : actors) {
+            SEC_LOG.warn("SECURITY_EVENT: anomaly_bulk_export actor={} window=1h", actor);
+            triggerAlert("BULK_EXPORT", actor, 1);
         }
     }
 
@@ -86,7 +84,7 @@ public class HrAnomalyDetectionService {
         var anomalies = auditLogRepository.findAnomalies(tenantId, since);
         for (var log : anomalies) {
             SEC_LOG.warn("SECURITY_EVENT: anomaly_detected type={} actor={}", 
-                log.getEventType(), log.getActor());
+                log.getAction(), log.getActor());
         }
     }
 

@@ -74,7 +74,7 @@ public class BankAccountService {
 
         // If primary, deactivate other accounts
         if (Boolean.TRUE.equals(request.getIsPrimary())) {
-            List<<BankAccount> existing = bankAccountRepository.findActiveByEmployee(employeeId, tenantId);
+            List<BankAccount> existing = bankAccountRepository.findActiveByEmployee(employeeId, tenantId);
             for (BankAccount existingAcct : existing) {
                 existingAcct.setIsPrimary(false);
                 existingAcct.setUpdatedBy(actor);
@@ -133,7 +133,7 @@ public class BankAccountService {
             oldAccountId, newAccount.getId(), null, null, actor, getClientIp(), getCurrentRole());
     }
 
-    public List<<BankAccount> getEmployeeBankAccounts(String employeeId) {
+    public List<BankAccount> getEmployeeBankAccounts(String employeeId) {
         String tenantId = TenantContext.getCurrentTenant();
         return bankAccountRepository.findActiveByEmployee(employeeId, tenantId);
     }

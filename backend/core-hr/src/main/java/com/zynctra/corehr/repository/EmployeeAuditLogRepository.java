@@ -41,5 +41,31 @@ public interface EmployeeAuditLogRepository extends JpaRepository<EmployeeAuditL
             @Param("tenantId") String tenantId,
             @Param("since") Instant since);
 
+    @Query(value = "SELECT actor_id FROM employee_audit_logs " +
+           "WHERE tenant_id = :tenantId AND timestamp >= :since " +
+           "GROUP BY actor_id HAVING COUNT(*) > :threshold",
+           nativeQuery = true)
+    List<String> findActorsWithHighEventCount(
+            @Param("tenantId") String tenantId,
+            @Param("since") Instant since,
+            @Param("threshold") int threshold);
+
+    @Query("SELECT COUNT(l) FROM EmployeeAuditLog l " +
+           "WHERE l.tenantId = :tenantId " +
+           "AND l.action = 'FAILED_AUTH' " +
+           "AND l.timestamp >= :since")
+    long countFailedAuthEvents(
+            @Param("tenantId") String tenantId,
+            @Param("since") Instant since);
+
+    @Query("SELECT l FROM EmployeeAuditLog l " +
+           "WHERE l.tenantId = :tenantId " +
+           "AND l.timestamp >= :since " +
+           "AND (l.action = 'FAILED_AUTH' OR l.action = 'SUSPICIOUS_ACCESS') " +
+           "ORDER BY l.timestamp DESC")
+    List<EmployeeAuditLog> findAnomalies(
+            @Param("tenantId") String tenantId,
+            @Param("since") Instant since);
+
     // NO delete operations — 7-year retention
 }

@@ -43,8 +43,7 @@ public class Deduction extends SecureBaseEntity {
         d.employeeId = employeeId;
         d.deductionType = type;
         d.amount = amount;
-        d.createdBy = createdBy;
-        d.updatedBy = createdBy;
+        d.setUpdatedBy(createdBy);
         return d;
     }
 

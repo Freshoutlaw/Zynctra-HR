@@ -169,6 +169,7 @@ public class Employee extends SecureBaseEntity {
     public void setFirstName(String firstName) { this.firstName = firstName; }
     public void setLastName(String lastName) { this.lastName = lastName; }
     public void setPhone(String phone) { this.phone = phone; }
+    public void setDateOfBirth(LocalDate dateOfBirth) { this.dateOfBirth = dateOfBirth; }
     public void setDepartmentId(String departmentId) { this.departmentId = departmentId; }
     public void setManagerId(String managerId) { this.managerId = managerId; }
     public void setJobTitle(String jobTitle) { this.jobTitle = jobTitle; }

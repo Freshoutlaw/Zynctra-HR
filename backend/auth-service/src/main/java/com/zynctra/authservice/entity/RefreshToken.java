@@ -63,6 +63,8 @@ public class RefreshToken extends BaseEntity {
     }
 
     public static class RefreshTokenBuilder {
+        private String id;
+        private String tenantId;
         private String userId;
         private String token;
         private LocalDateTime expiresAt;
@@ -71,6 +73,8 @@ public class RefreshToken extends BaseEntity {
         private String ipAddress;
         private String userAgent;
 
+        public RefreshTokenBuilder id(String id) { this.id = id; return this; }
+        public RefreshTokenBuilder tenantId(String tenantId) { this.tenantId = tenantId; return this; }
         public RefreshTokenBuilder userId(String userId) { this.userId = userId; return this; }
         public RefreshTokenBuilder token(String token) { this.token = token; return this; }
         public RefreshTokenBuilder expiresAt(LocalDateTime expiresAt) { this.expiresAt = expiresAt; return this; }
@@ -81,6 +85,8 @@ public class RefreshToken extends BaseEntity {
 
         public RefreshToken build() {
             RefreshToken rt = new RefreshToken(userId, token, expiresAt);
+            rt.setId(this.id);
+            rt.setTenantId(this.tenantId);
             rt.setRevoked(revoked);
             rt.setRevokedAt(revokedAt);
             rt.setIpAddress(ipAddress);

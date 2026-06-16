@@ -1,32 +1,64 @@
 server:
   port: 8086
+  servlet:
+    context-path: /benefits
 
 spring:
   application:
     name: benefits-service
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:zynctra}
-    username: ${DB_USER:zynctra_app}
-    password: ${DB_PASSWORD}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5437/zynctra_benefits}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
     hikari:
-      maximum-pool-size: 10
-      minimum-idle: 2
-      connection-timeout: 30000
-      idle-timeout: 600000
-      max-lifetime: 1800000
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 20000
+      idle-timeout: 300000
+      max-lifetime: 1200000
   jpa:
     hibernate:
       ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: false
+        format_sql: true
+        default_schema: benefits
         jdbc:
           batch_size: 20
         order_inserts: true
         order_updates: true
     show-sql: false
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+management:
+  server:
+    port: 9090
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,info,prometheus
+      base-path: /benefits/actuator
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    root: ${LOGGING_LEVEL_ROOT:INFO}
+    com.zynctra: ${LOGGING_LEVEL_COM_ZYNCTRA:DEBUG}
+
+zynctra:
+  benefits:
+    enrollment:
+      window-days: ${BENEFITS_PLAN_ENROLLMENT_WINDOW_DAYS:30}
+    claims:
+      approval-workflow-enabled: ${CLAIM_APPROVAL_WORKFLOW_ENABLED:true}
 
 security:
   rate-limit:

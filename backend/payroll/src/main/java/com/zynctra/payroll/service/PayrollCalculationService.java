@@ -2,6 +2,7 @@ package com.zynctra.payroll.service;
 
 import com.zynctra.hr.entity.Employee;
 import com.zynctra.payroll.entity.DeductionType;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
@@ -13,6 +14,23 @@ import java.util.Map;
 public class PayrollCalculationService {
 
     private final TaxService taxService;
+package com.zynctra.payroll.service;
+
+import com.zynctra.hr.entity.Employee;
+import com.zynctra.payroll.entity.DeductionType;
+import org.springframework.stereotype.Service;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Map;
+
+@Service
+public class PayrollCalculationService {
+
+    private final TaxService taxService;
+
+    public PayrollCalculationService(TaxService taxService) {
+        this.taxService = taxService;
+    }
 
     /**
      * Performs the Core Gross-to-Net Calculation
@@ -67,8 +85,7 @@ public class PayrollCalculationService {
         return overtimeRate.multiply(hours).setScale(2, RoundingMode.HALF_UP);
     }
 
-    @lombok.Builder
-    @lombok.Getter
+    @Builder
     public static class PayrollCalculationResult {
         private final BigDecimal grossPay;
         private final BigDecimal taxableIncome;
@@ -76,5 +93,86 @@ public class PayrollCalculationService {
         private final BigDecimal totalDeductions;
         private final BigDecimal netPay;
         private final Map<String, BigDecimal> taxBreakdown;
+
+        public PayrollCalculationResult(BigDecimal grossPay, BigDecimal taxableIncome, BigDecimal totalTaxes,
+                                       BigDecimal totalDeductions, BigDecimal netPay, Map<String, BigDecimal> taxBreakdown) {
+            this.grossPay = grossPay;
+            this.taxableIncome = taxableIncome;
+            this.totalTaxes = totalTaxes;
+            this.totalDeductions = totalDeductions;
+            this.netPay = netPay;
+            this.taxBreakdown = taxBreakdown;
+        }
+
+        public BigDecimal getGrossPay() {
+            return grossPay;
+        }
+
+        public BigDecimal getTaxableIncome() {
+            return taxableIncome;
+        }
+
+        public BigDecimal getTotalTaxes() {
+            return totalTaxes;
+        }
+
+        public BigDecimal getTotalDeductions() {
+            return totalDeductions;
+        }
+
+        public BigDecimal getNetPay() {
+            return netPay;
+        }
+
+        public Map<String, BigDecimal> getTaxBreakdown() {
+            return taxBreakdown;
+        }
+
+        public static PayrollCalculationResultBuilder builder() {
+            return new PayrollCalculationResultBuilder();
+        }
+
+        public static class PayrollCalculationResultBuilder {
+            private BigDecimal grossPay;
+            private BigDecimal taxableIncome;
+            private BigDecimal totalTaxes;
+            private BigDecimal totalDeductions;
+            private BigDecimal netPay;
+            private Map<String, BigDecimal> taxBreakdown;
+
+            public PayrollCalculationResultBuilder grossPay(BigDecimal grossPay) {
+                this.grossPay = grossPay;
+                return this;
+            }
+
+            public PayrollCalculationResultBuilder taxableIncome(BigDecimal taxableIncome) {
+                this.taxableIncome = taxableIncome;
+                return this;
+            }
+
+            public PayrollCalculationResultBuilder totalTaxes(BigDecimal totalTaxes) {
+                this.totalTaxes = totalTaxes;
+                return this;
+            }
+
+            public PayrollCalculationResultBuilder totalDeductions(BigDecimal totalDeductions) {
+                this.totalDeductions = totalDeductions;
+                return this;
+            }
+
+            public PayrollCalculationResultBuilder netPay(BigDecimal netPay) {
+                this.netPay = netPay;
+                return this;
+            }
+
+            public PayrollCalculationResultBuilder taxBreakdown(Map<String, BigDecimal> taxBreakdown) {
+                this.taxBreakdown = taxBreakdown;
+                return this;
+            }
+
+            public PayrollCalculationResult build() {
+                return new PayrollCalculationResult(grossPay, taxableIncome, totalTaxes, totalDeductions, netPay, taxBreakdown);
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.zynctra.payroll.security;
 
 import com.zynctra.payroll.entity.PayRecord;
+import com.zynctra.payroll.entity.PayrollAuditLog;
 import com.zynctra.payroll.entity.PayrollRun;
 import com.zynctra.payroll.repository.PayRecordRepository;
 import org.slf4j.Logger;
@@ -37,7 +38,7 @@ public class PayrollAnomalyDetectionService {
     }
 
     public void analyzePayrollRun(PayrollRun run) {
-        List<<PayRecord> records = payRecordRepository.findByPayrollRun(run.getId(), run.getTenantId());
+        List<PayRecord> records = payRecordRepository.findByPayrollRun(run.getId(), run.getTenantId());
         
         for (PayRecord record : records) {
             checkAmountAnomaly(record);
@@ -51,7 +52,7 @@ public class PayrollAnomalyDetectionService {
 
     private void checkAmountAnomaly(PayRecord record) {
         // Historical average comparison
-        List<<PayRecord> history = payRecordRepository.findByEmployee(record.getEmployeeId(), record.getTenantId());
+        List<PayRecord> history = payRecordRepository.findByEmployee(record.getEmployeeId(), record.getTenantId());
         if (history.size() < 2) return;
 
         BigDecimal avg = history.stream()

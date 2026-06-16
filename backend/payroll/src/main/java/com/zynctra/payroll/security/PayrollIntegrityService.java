@@ -24,7 +24,7 @@ public class PayrollIntegrityService {
     }
 
     public String computeRunHash(PayrollRun run) {
-        List<<PayRecord> records = payRecordRepository.findByPayrollRun(run.getId(), run.getTenantId());
+        List<PayRecord> records = payRecordRepository.findByPayrollRun(run.getId(), run.getTenantId());
         
         StringBuilder data = new StringBuilder();
         data.append(run.getId()).append("|");

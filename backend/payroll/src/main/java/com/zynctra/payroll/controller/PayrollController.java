@@ -42,7 +42,7 @@ public class PayrollController {
 
     @PostMapping("/runs")
     @PreAuthorize("hasAnyRole('PAYROLL_ADMIN', 'PAYROLL_PROCESSOR')")
-    public ResponseEntity<<PayrollRun> createRun(@RequestBody @Valid CreatePayrollRunRequest request) {
+    public ResponseEntity<PayrollRun> createRun(@RequestBody @Valid CreatePayrollRunRequest request) {
         return ResponseEntity.ok(payrollRunService.createPayrollRun(request));
     }
 
@@ -90,14 +90,15 @@ public class PayrollController {
 
     @GetMapping("/runs/{runId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<<PayrollRun> getRun(
+    public ResponseEntity<PayrollRun> getRun(
             @PathVariable @Pattern(regexp = "^[a-f0-9-]{36}$") String runId) {
-        return ResponseEntity.ok(payrollRunService.getPayrollRun(runId));
+        return ResponseEntity.ok(payrollRunService.getPayrollRun(runId)
+            .orElseThrow(() -> new RuntimeException("Payroll run not found: " + runId)));
     }
 
     @GetMapping("/runs")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<<Page<<PayrollRun>> listRuns(Pageable pageable) {
+    public ResponseEntity<Page<PayrollRun>> listRuns(Pageable pageable) {
         return ResponseEntity.ok(payrollRunService.listPayrollRuns(pageable));
     }
 

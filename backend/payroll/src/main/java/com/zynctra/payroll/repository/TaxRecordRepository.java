@@ -1,5 +1,11 @@
 package com.zynctra.payroll.repository;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.zynctra.payroll.entity.TaxRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,3 +27,4 @@ public interface TaxRecordRepository extends JpaRepository<TaxRecord, String> {
     @Query("SELECT t FROM TaxRecord t WHERE t.employeeId = :empId AND t.tenantId = :tenantId ORDER BY t.createdAt DESC")
     List<TaxRecord> findByEmployee(@Param("empId") String empId, @Param("tenantId") String tenantId);
 }
+

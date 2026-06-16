@@ -679,7 +679,7 @@ public class MFAController {
     private void validateTenantId(String tenantId) {
         if (tenantId == null || tenantId.isBlank()) throw new SecurityPolicyException("Tenant ID is required.");
         if (tenantId.length() > 64) throw new SecurityPolicyException("Tenant ID exceeds maximum length.");
-        if (!tenantId.matches("^[a-zA-Z0-9\-]+$")) throw new SecurityPolicyException("Invalid tenant ID format.");
+        if (!tenantId.matches("^[a-zA-Z0-9\\-]+$")) throw new SecurityPolicyException("Invalid tenant ID format.");
     }
 
     private String maskTenant(String tenantId) {
@@ -734,7 +734,7 @@ public class MFAController {
     }
 
     public static class VerifyTOTPRequest {
-        @NotBlank @Pattern(regexp = "^[a-zA-Z0-9_\-\.]+$") private String username;
+        @NotBlank @Pattern(regexp = "^[a-zA-Z0-9_\\-\\.]+$") private String username;
         @NotBlank @Pattern(regexp = "^[0-9]{6}$") private String totpCode;
         @Pattern(regexp = "^[a-zA-Z0-9+/=]{32,128}$") private String deviceFingerprint;
         public String getUsername() { return username; } public void setUsername(String username) { this.username = username; }
@@ -743,7 +743,7 @@ public class MFAController {
     }
 
     public static class VerifyBackupRequest {
-        @NotBlank @Pattern(regexp = "^[a-zA-Z0-9_\-\.]+$") private String username;
+        @NotBlank @Pattern(regexp = "^[a-zA-Z0-9_\\-\\.]+$") private String username;
         @NotBlank @Pattern(regexp = "^[A-Z0-9]{8}$") private String backupCode;
         public String getUsername() { return username; } public void setUsername(String username) { this.username = username; }
         public String getBackupCode() { return backupCode; } public void setBackupCode(String backupCode) { this.backupCode = backupCode; }
@@ -776,7 +776,7 @@ public class MFAController {
     }
 
     public static class DisableMFARequest {
-        @NotBlank @Pattern(regexp = "^[a-zA-Z0-9_\-\.]+$") private String targetUsername;
+        @NotBlank @Pattern(regexp = "^[a-zA-Z0-9_\\-\\.]+$") private String targetUsername;
         @NotBlank private String confirmationCode;
         public String getTargetUsername() { return targetUsername; } public void setTargetUsername(String targetUsername) { this.targetUsername = targetUsername; }
         public String getConfirmationCode() { return confirmationCode; } public void setConfirmationCode(String confirmationCode) { this.confirmationCode = confirmationCode; }

@@ -87,8 +87,7 @@ public class BankAccount extends SecureBaseEntity {
         acct.verified = false;
         acct.isPrimary = false;
         acct.active = true;
-        acct.createdBy = createdBy;
-        acct.updatedBy = createdBy;
+        acct.setUpdatedBy(createdBy);
         return acct;
     }
 
@@ -96,7 +95,7 @@ public class BankAccount extends SecureBaseEntity {
         this.verified = true;
         this.verificationMethod = method;
         this.verifiedAt = java.time.Instant.now();
-        this.updatedBy = actor;
+        this.setUpdatedBy(actor);
     }
 
     // Getters
@@ -118,7 +117,6 @@ public class BankAccount extends SecureBaseEntity {
     public void setActive(Boolean v) { this.active = v; }
     public void setAccountHolderName(String v) { this.accountHolderName = v; }
     public void setBankName(String v) { this.bankName = v; }
-    public void setUpdatedBy(String v) { this.updatedBy = v; }
 
     // NO setters for: employeeId, routingNumberHash, accountNumberEncrypted (immutable)
 }

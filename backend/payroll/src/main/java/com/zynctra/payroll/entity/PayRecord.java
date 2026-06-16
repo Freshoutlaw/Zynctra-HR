@@ -84,8 +84,7 @@ public class PayRecord extends SecureBaseEntity {
         record.netPay = netPay;
         record.bankAccountId = bankAccountId;
         record.calculationFormula = calculationFormula;
-        record.createdBy = createdBy;
-        record.updatedBy = createdBy;
+        record.setUpdatedBy(createdBy);
         record.recordHash = computeHash(record);
         return record;
     }

@@ -113,5 +113,75 @@ public class User extends BaseEntity {
     public void setPasswordResetExpiresAt(LocalDateTime passwordResetExpiresAt) { this.passwordResetExpiresAt = passwordResetExpiresAt; }
     public void setFailedLoginAttempts(Integer failedLoginAttempts) { this.failedLoginAttempts = failedLoginAttempts; }
     public void setLockedUntil(LocalDateTime lockedUntil) { this.lockedUntil = lockedUntil; }
+
+    public static UserBuilder builder() {
+        return new UserBuilder();
+    }
+
+    public static class UserBuilder {
+        private String id;
+        private String tenantId;
+        private String email;
+        private String passwordHash;
+        private String firstName;
+        private String lastName;
+        private String phoneNumber;
+        private String role;
+        private Boolean isActive = true;
+        private Boolean emailVerified = false;
+        private LocalDateTime emailVerifiedAt;
+        private Boolean mfaEnabled = false;
+        private String mfaSecret;
+        private LocalDateTime lastLoginAt;
+        private LocalDateTime lastPasswordChangeAt;
+        private String passwordResetToken;
+        private LocalDateTime passwordResetExpiresAt;
+        private Integer failedLoginAttempts = 0;
+        private LocalDateTime lockedUntil;
+
+        public UserBuilder id(String id) { this.id = id; return this; }
+        public UserBuilder tenantId(String tenantId) { this.tenantId = tenantId; return this; }
+        public UserBuilder email(String email) { this.email = email; return this; }
+        public UserBuilder passwordHash(String passwordHash) { this.passwordHash = passwordHash; return this; }
+        public UserBuilder firstName(String firstName) { this.firstName = firstName; return this; }
+        public UserBuilder lastName(String lastName) { this.lastName = lastName; return this; }
+        public UserBuilder phoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; return this; }
+        public UserBuilder role(String role) { this.role = role; return this; }
+        public UserBuilder isActive(Boolean isActive) { this.isActive = isActive; return this; }
+        public UserBuilder emailVerified(Boolean emailVerified) { this.emailVerified = emailVerified; return this; }
+        public UserBuilder emailVerifiedAt(LocalDateTime emailVerifiedAt) { this.emailVerifiedAt = emailVerifiedAt; return this; }
+        public UserBuilder mfaEnabled(Boolean mfaEnabled) { this.mfaEnabled = mfaEnabled; return this; }
+        public UserBuilder mfaSecret(String mfaSecret) { this.mfaSecret = mfaSecret; return this; }
+        public UserBuilder lastLoginAt(LocalDateTime lastLoginAt) { this.lastLoginAt = lastLoginAt; return this; }
+        public UserBuilder lastPasswordChangeAt(LocalDateTime lastPasswordChangeAt) { this.lastPasswordChangeAt = lastPasswordChangeAt; return this; }
+        public UserBuilder passwordResetToken(String passwordResetToken) { this.passwordResetToken = passwordResetToken; return this; }
+        public UserBuilder passwordResetExpiresAt(LocalDateTime passwordResetExpiresAt) { this.passwordResetExpiresAt = passwordResetExpiresAt; return this; }
+        public UserBuilder failedLoginAttempts(Integer failedLoginAttempts) { this.failedLoginAttempts = failedLoginAttempts; return this; }
+        public UserBuilder lockedUntil(LocalDateTime lockedUntil) { this.lockedUntil = lockedUntil; return this; }
+
+        public User build() {
+            User user = new User();
+            user.setId(this.id);
+            user.setTenantId(this.tenantId);
+            user.setEmail(this.email);
+            user.setPasswordHash(this.passwordHash);
+            user.setFirstName(this.firstName);
+            user.setLastName(this.lastName);
+            user.setPhoneNumber(this.phoneNumber);
+            user.setRole(this.role);
+            user.setIsActive(this.isActive);
+            user.setEmailVerified(this.emailVerified);
+            user.setEmailVerifiedAt(this.emailVerifiedAt);
+            user.setMfaEnabled(this.mfaEnabled);
+            user.setMfaSecret(this.mfaSecret);
+            user.setLastLoginAt(this.lastLoginAt);
+            user.setLastPasswordChangeAt(this.lastPasswordChangeAt);
+            user.setPasswordResetToken(this.passwordResetToken);
+            user.setPasswordResetExpiresAt(this.passwordResetExpiresAt);
+            user.setFailedLoginAttempts(this.failedLoginAttempts);
+            user.setLockedUntil(this.lockedUntil);
+            return user;
+        }
+    }
 }
 

@@ -5,7 +5,6 @@ import com.zynctra.authservice.service.AuthService;
 import com.zynctra.common.constant.ApiConstants;
 import com.zynctra.common.dto.ApiResponse;
 import com.zynctra.common.security.TenantContext;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,10 +14,14 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping(ApiConstants.API_PREFIX + "/auth")
-@RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
     private final TenantContext tenantContext;
+
+    public AuthController(AuthService authService, TenantContext tenantContext) {
+        this.authService = authService;
+        this.tenantContext = tenantContext;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(
@@ -32,7 +35,7 @@ public class AuthController {
     public ResponseEntity<ApiResponse<LoginResponse>> register(
             @Valid @RequestBody RegisterRequest request) {
         LoginResponse response = authService.register(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(response, "User registered successfully"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("User registered successfully", response));
     }
 
     @PostMapping("/refresh")
@@ -53,20 +56,20 @@ public class AuthController {
     public ResponseEntity<ApiResponse<Void>> logout(
             @RequestHeader(name = ApiConstants.X_USER_ID) String userId) {
         authService.logout(userId);
-        return ResponseEntity.ok(ApiResponse.ok(null, "Logged out successfully"));
+        return ResponseEntity.ok(ApiResponse.success("Logged out successfully", null));
     }
 
     @PostMapping("/password-reset")
     public ResponseEntity<ApiResponse<Void>> requestPasswordReset(
             @Valid @RequestBody PasswordResetRequest request) {
         authService.requestPasswordReset(request.getEmail());
-        return ResponseEntity.ok(ApiResponse.ok(null, "Password reset link sent to email"));
+        return ResponseEntity.ok(ApiResponse.success("Password reset link sent to email", null));
     }
 
     @PostMapping("/verify")
     public ResponseEntity<ApiResponse<Void>> verifyOtp(
             @Valid @RequestBody OtpVerificationRequest request) {
         authService.verifyOtp(request.getEmail(), request.getOtp());
-        return ResponseEntity.ok(ApiResponse.ok(null, "OTP verified successfully"));
+        return ResponseEntity.ok(ApiResponse.success("OTP verified successfully", null));
     }
 }

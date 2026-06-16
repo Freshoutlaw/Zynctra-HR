@@ -2,7 +2,7 @@
 # Override values from application.yml for production deployment
 
 server:
-  port: 8080
+  port: 8000
 
 spring:
   application:
@@ -39,8 +39,8 @@ spring:
 
       # Production routes with load balancer
       routes:
-        - id: identity-service
-          uri: lb://identity-service
+        - id: auth-service
+          uri: lb://auth-service
           predicates:
             - Path=/api/auth/**, /api/users/**
           filters:
@@ -50,8 +50,8 @@ spring:
                 redis-rate-limiter.burstCapacity: 20
                 key-resolver: "#{@userKeyResolver}"
 
-        - id: hr-service
-          uri: lb://hr-service
+        - id: core-hr-service
+          uri: lb://core-hr-service
           predicates:
             - Path=/api/employees/**, /api/departments/**, /api/org-chart/**, /api/documents/**
           filters:
@@ -89,8 +89,8 @@ spring:
                 redis-rate-limiter.burstCapacity: 100
                 key-resolver: "#{@tenantKeyResolver}"
 
-        - id: time-service
-          uri: lb://time-service
+        - id: time-attendance-service
+          uri: lb://time-attendance-service
           predicates:
             - Path=/api/attendance/**, /api/leaves/**, /api/shifts/**, /api/time-punches/**
           filters:

@@ -1,5 +1,100 @@
+server:
+  port: 8008
+  servlet:
+    context-path: /learning
+
 spring:
   application:
-    name: learning
-server:
-  port: 8080
+    name: learning-service
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5440/zynctra_learning}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: ${HIKARI_MAXIMUM_POOL_SIZE:20}
+      minimum-idle: ${HIKARI_MINIMUM_IDLE:5}
+      connection-timeout: ${HIKARI_CONNECTION_TIMEOUT:20000}
+      idle-timeout: ${HIKARI_IDLE_TIMEOUT:300000}
+      max-lifetime: ${HIKARI_MAX_LIFETIME:1200000}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        default_schema: learning
+        jdbc:
+          batch_size: 20
+          fetch_size: 50
+    show-sql: false
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: ${LEARNING_CACHE_TTL:3600000}
+
+  redis:
+    host: ${SPRING_REDIS_HOST:localhost}
+    port: ${SPRING_REDIS_PORT:6379}
+    password: ${SPRING_REDIS_PASSWORD:}
+    timeout: 60000ms
+    jedis:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${JWT_ISSUER_URI:http://localhost:8001}
+          jwk-set-uri: ${JWT_JWK_SET_URI:http://localhost:8001/.well-known/jwks.json}
+
+management:
+  server:
+    port: 9090
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,info,prometheus
+      base-path: /learning/actuator
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+logging:
+  level:
+    root: ${LOGGING_LEVEL_ROOT:INFO}
+    com.zynctra: ${LOGGING_LEVEL_COM_ZYNCTRA:DEBUG}
+  pattern:
+    console: ${LOGGING_PATTERN_CONSOLE:%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg%n}
+
+zynctra:
+  learning:
+    ai-tutoring:
+      enabled: ${AI_TUTORING_ENABLED:true}
+      model: gpt-4
+      max-tokens: 2000
+    course-completion:
+      threshold-percent: ${COURSE_COMPLETION_THRESHOLD_PERCENT:80}
+      emit-certificate: true
+    cache:
+      enabled: true
+      ttl-seconds: ${LEARNING_CACHE_TTL:3600}
+
