@@ -52,7 +52,7 @@ public class InputSanitizer {
         if (input == null) return null;
         String trimmed = input.trim().toLowerCase();
         if (trimmed.length() > 254) {
-            throw new IllegalFreshArgumentException("Email too long");
+            throw new IllegalArgumentException("Email too long");
         }
         return Encode.forHtml(trimmed);
     }

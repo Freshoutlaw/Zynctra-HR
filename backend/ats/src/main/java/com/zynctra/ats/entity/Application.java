@@ -3,8 +3,6 @@ package com.zynctra.ats.entity;
 import java.time.Instant;
 import java.util.UUID;
 
-import com.zynctra.shared.entity.TenantBaseEntity;
-
 import jakarta.persistence.*;
 import lombok.*;
 

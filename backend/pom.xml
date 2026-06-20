@@ -43,7 +43,7 @@
         <commons-lang3.version>3.14.0</commons-lang3.version>
         <springdoc-openapi.version>2.2.0</springdoc-openapi.version>
         <jackson-datatype-jsr310.version>2.16.0</jackson-datatype-jsr310.version>
-        <lombok.version>1.18.28</lombok.version>
+        <lombok.version>1.18.38</lombok.version>
         <querydsl.version>5.0.0</querydsl.version>
         <flyway.version>9.22.3</flyway.version>
         <commons-csv.version>1.10.0</commons-csv.version>
@@ -254,7 +254,6 @@
                 <configuration>
                     <source>17</source>
                     <target>17</target>
-                    <proc>none</proc>
                 </configuration>
             </plugin>
         </plugins>

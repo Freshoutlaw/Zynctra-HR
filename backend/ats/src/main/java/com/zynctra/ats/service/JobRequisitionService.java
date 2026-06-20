@@ -35,7 +35,6 @@ public class JobRequisitionService {
         UUID userId = UUID.fromString(auth.getPrincipal().toString());
 
         JobRequisition job = JobRequisition.builder()
-            .tenantId(tenantId)
             .organizationId(auth.getTenantId())
             .title(request.getTitle())
             .description(request.getDescription())
@@ -56,6 +55,7 @@ public class JobRequisitionService {
             .filledCount(0)
             .createdBy(userId)
             .build();
+        job.setTenantId(tenantId);
 
         JobRequisition saved = jobRepository.save(job);
         log.info("Created job requisition: {} for tenant: {}", saved.getId(), tenantId);

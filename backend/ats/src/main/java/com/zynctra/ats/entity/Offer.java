@@ -5,8 +5,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import com.zynctra.shared.entity.TenantBaseEntity;
-
 import jakarta.persistence.*;
 import lombok.*;
 

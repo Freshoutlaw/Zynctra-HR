@@ -2,7 +2,6 @@ package com.zynctra.ats.security;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.security.SignatureException;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
@@ -117,7 +116,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             log.warn("Expired JWT token: {}", e.getMessage());
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "Token expired");
             return;
-        } catch (SignatureException | MalformedJwtException e) {
+        } catch (MalformedJwtException e) {
             log.warn("Invalid JWT token: {}", e.getMessage());
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid token");
             return;

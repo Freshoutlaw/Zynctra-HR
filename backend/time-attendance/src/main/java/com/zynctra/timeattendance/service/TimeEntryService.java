@@ -22,7 +22,6 @@ import com.zynctra.timeattendance.security.TenantContext;
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import jakarta.validation.Valid;
-import lombok.var;
 
 @Service
 @Validated
@@ -94,7 +93,7 @@ public class TimeEntryService {
             record.setClockInTime(LocalDateTime.now());
             record.setClockOutTime(null);
             record.setHoursWorked(null);
-            record.setStatus(AttendanceRecord.AttendanceStatus.PRESENT);
+            record.setStatus(AttendanceRecord.AttendanceStatus.PRESENT.name());
             record.setUpdatedBy(createdBy);
             attendanceRecordRepository.save(record);
         } else {

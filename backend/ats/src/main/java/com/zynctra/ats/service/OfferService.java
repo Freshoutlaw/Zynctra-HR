@@ -53,7 +53,6 @@ public class OfferService {
         validateOfferRequest(request);
 
         Offer offer = Offer.builder()
-            .tenantId(tenantId)
             .organizationId(tenantId)
             .applicationId(application.getId())
             .salary(request.getSalary())
@@ -67,6 +66,7 @@ public class OfferService {
             .status(Offer.OfferStatus.DRAFT)
             .proposedBy(userId)
             .build();
+        offer.setTenantId(tenantId);
 
         Offer saved = offerRepository.save(offer);
         log.info("Created offer: {} for application: {} by user: {}", 

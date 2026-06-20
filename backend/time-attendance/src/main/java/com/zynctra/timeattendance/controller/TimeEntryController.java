@@ -2,7 +2,6 @@ package com.zynctra.timeattendance.controller;
 
 import com.zynctra.timeattendance.dto.ClockInRequestDTO;
 import com.zynctra.timeattendance.entity.TimeEntry;
-import com.zynctra.timeattendance.security.TenantContext;
 import com.zynctra.timeattendance.service.TimeEntryService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

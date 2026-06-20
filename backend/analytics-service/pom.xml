@@ -50,7 +50,7 @@
         <!-- Shared Library -->
         <dependency>
             <groupId>com.zynctra</groupId>
-            <artifactId>shared</artifactId>
+            <artifactId>common-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
 

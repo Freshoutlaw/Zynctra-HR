@@ -47,7 +47,6 @@ public class InterviewService {
         }
 
         Interview interview = Interview.builder()
-            .tenantId(tenantId)
             .organizationId(tenantId)
             .applicationId(application.getId())
             .interviewerId(request.getInterviewerId())
@@ -59,6 +58,7 @@ public class InterviewService {
             .meetingLink(request.getMeetingLink())
             .createdBy(userId)
             .build();
+        interview.setTenantId(tenantId);
 
         Interview saved = interviewRepository.save(interview);
         log.info("Scheduled interview: {} for application: {}", saved.getId(), application.getId());

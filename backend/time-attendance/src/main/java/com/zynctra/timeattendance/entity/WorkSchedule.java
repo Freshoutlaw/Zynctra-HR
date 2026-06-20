@@ -1,5 +1,6 @@
 package com.zynctra.timeattendance.entity;
 
+import com.zynctra.common.entity.SecureBaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 

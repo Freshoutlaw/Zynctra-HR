@@ -52,17 +52,18 @@ public class ApplicationService {
             .filter(c -> c.getDeletedAt() == null)
             .orElseThrow(() -> new EntityNotFoundException("Candidate not found: " + request.getCandidateId()));
 
-        applicationRepository.findByTenantIdAndCandidateIdAndDeletedAtIsNull(tenantId, candidate.getId())
+        // Check for existing active application
+        boolean hasExisting = applicationRepository
+            .findByTenantIdAndCandidateIdAndDeletedAtIsNull(tenantId, candidate.getId(), Pageable.unpaged())
             .getContent()
             .stream()
-            .filter(a -> a.getJobRequisitionId().equals(job.getId()) && a.getStatus() == Application.ApplicationStatus.ACTIVE)
-            .findFirst()
-            .ifPresent(a -> {
-                throw new IllegalStateException("Candidate already has an active application for this job");
-            });
+            .anyMatch(a -> a.getJobRequisitionId().equals(job.getId()) && a.getStatus() == Application.ApplicationStatus.ACTIVE);
+
+        if (hasExisting) {
+            throw new IllegalStateException("Candidate already has an active application for this job");
+        }
 
         Application application = Application.builder()
-            .tenantId(tenantId)
             .organizationId(tenantId)
             .jobRequisitionId(job.getId())
             .candidateId(candidate.getId())
@@ -76,6 +77,7 @@ public class ApplicationService {
             .isInternal(request.getIsInternal() != null ? request.getIsInternal() : false)
             .previousApplicationId(request.getPreviousApplicationId())
             .build();
+        application.setTenantId(tenantId);
 
         Application saved = applicationRepository.save(application);
         log.info("Submitted application: {} for job: {}", saved.getId(), job.getId());

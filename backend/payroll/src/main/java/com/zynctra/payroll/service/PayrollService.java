@@ -5,7 +5,6 @@ import com.zynctra.hr.entity.Employee;
 import com.zynctra.hr.entity.EmploymentStatus;
 import com.zynctra.hr.repository.EmployeeRepository;
 import com.zynctra.payroll.entity.PayrollStatus;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -18,12 +17,16 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class PayrollService {
 
     private static final Logger log = LoggerFactory.getLogger(PayrollService.class);
     private final EmployeeRepository employeeRepository;
     private final PayrollCalculationService calculationService;
+
+    public PayrollService(EmployeeRepository employeeRepository, PayrollCalculationService calculationService) {
+        this.employeeRepository = employeeRepository;
+        this.calculationService = calculationService;
+    }
 
     /**
      * Processes a full payroll run for all active employees in the current tenant.
