@@ -143,7 +143,7 @@ public class AuditLogController {
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'SECURITY_ADMIN', 'AUDIT_READER')")
     public ResponseEntity<List<AuditLogDTO>> getAuditLogsByResource(
             @PathVariable @Pattern(regexp = "^[a-zA-Z0-9_]+$") String resourceType,
-            @PathVariable @Pattern(regexp = "^[a-zA-Z0-9\-]+$") String resourceId,
+            @PathVariable @Pattern(regexp = "^[a-zA-Z0-9-]+$") String resourceId,
             @RequestHeader("X-Tenant-ID") @NotBlank String tenantId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant endDate) {
@@ -166,7 +166,7 @@ public class AuditLogController {
     @GetMapping("/user/{username}")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'SECURITY_ADMIN')")
     public ResponseEntity<Page<AuditLogDTO>> getAuditLogsByUser(
-            @PathVariable @Pattern(regexp = "^[a-zA-Z0-9_\-\.]+$") String username,
+            @PathVariable @Pattern(regexp = "^[a-zA-Z0-9_\\-.]+$") String username,
             @RequestHeader("X-Tenant-ID") @NotBlank String tenantId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant endDate,

@@ -4,17 +4,18 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.zynctra.benefits.model.ThreatPattern;
 import com.zynctra.benefits.model.ThreatScanResult;
 import com.zynctra.benefits.model.ThreatSeverity;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Component
 public class InputScanner {
+
+    private static final Logger log = LoggerFactory.getLogger(InputScanner.class);
 
     private static final int MAX_INPUT_LENGTH = 50_000;
     private static final int MAX_SCAN_TIME_MS = 100;
@@ -29,12 +30,12 @@ public class InputScanner {
         if (input.length() > MAX_INPUT_LENGTH) {
             log.warn("SECURITY: Input exceeds max length | context={} | length={}", context, input.length());
             return ThreatScanResult.threatsDetected(
-                List.of(ThreatScanResult.Detection.builder()
-                    .pattern(null)
-                    .severity(ThreatSeverity.HIGH)
-                    .matchPreview("Input length=" + input.length())
-                    .matchPosition(0)
-                    .build()),
+                List.of(new ThreatScanResult.Detection(
+                    null,
+                    ThreatSeverity.HIGH,
+                    "Input length=" + input.length(),
+                    0
+                )),
                 input.length(), System.nanoTime() - startNanos
             );
         }
@@ -43,12 +44,12 @@ public class InputScanner {
         for (ThreatPattern pattern : ThreatPattern.values()) {
             if (pattern.matches(input)) {
                 String preview = pattern.getMatchPreview(input);
-                detections.add(ThreatScanResult.Detection.builder()
-                    .pattern(pattern)
-                    .severity(pattern.getDefaultSeverity())
-                    .matchPreview(preview != null ? sanitizePreview(preview) : "[hidden]")
-                    .matchPosition(0)
-                    .build());
+                detections.add(new ThreatScanResult.Detection(
+                    pattern,
+                    pattern.getDefaultSeverity(),
+                    preview != null ? sanitizePreview(preview) : "[hidden]",
+                    0
+                ));
             }
         }
 
@@ -56,12 +57,12 @@ public class InputScanner {
         long durationMs = durationNanos / 1_000_000;
 
         if (durationMs > MAX_SCAN_TIME_MS) {
-            detections.add(ThreatScanResult.Detection.builder()
-                .pattern(null)
-                .severity(ThreatSeverity.HIGH)
-                .matchPreview("Scan timeout - possible ReDoS")
-                .matchPosition(0)
-                .build());
+            detections.add(new ThreatScanResult.Detection(
+                null,
+                ThreatSeverity.HIGH,
+                "Scan timeout - possible ReDoS",
+                0
+            ));
         }
 
         detections.sort(Comparator.comparing(ThreatScanResult.Detection::getSeverity).reversed());

@@ -52,11 +52,6 @@ public class BenefitPlan extends BaseEntity {
     @Column(nullable = false, length = 20)
     private PlanStatus status = PlanStatus.DRAFT;
 
-    @Column(name = "updated_by")
-    private UUID updatedBy;
-
-    @Column(name = "deleted_at")
-    private Instant deletedAt;
 
     public enum PlanType {
         MEDICAL, DENTAL, VISION, LIFE, DISABILITY, RETIREMENT, HSA, FSA, WELLNESS, OTHER
@@ -94,10 +89,7 @@ public class BenefitPlan extends BaseEntity {
     public void setIsActive(Boolean isActive) { this.isActive = isActive; }
     public PlanStatus getStatus() { return status; }
     public void setStatus(PlanStatus status) { this.status = status; }
-    public UUID getUpdatedBy() { return updatedBy; }
-    public void setUpdatedBy(UUID updatedBy) { this.updatedBy = updatedBy; }
-    public Instant getDeletedAt() { return deletedAt; }
-    public void setDeletedAt(Instant deletedAt) { this.deletedAt = deletedAt; }
+
 
     public static Builder builder() { return new Builder(); }
 

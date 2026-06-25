@@ -30,7 +30,7 @@
         <owasp-encoder.version>1.2.3</owasp-encoder.version>
         <owasp-java-html-sanitizer.version>20240325.1</owasp-java-html-sanitizer.version>
         <resilience4j.version>2.1.0</resilience4j.version>
-        <bucket4j.version>8.10.1</bucket4j.version>
+        <bucket4j.version>7.6.0</bucket4j.version>
         <testcontainers.version>1.19.8</testcontainers.version>
     </properties>
 

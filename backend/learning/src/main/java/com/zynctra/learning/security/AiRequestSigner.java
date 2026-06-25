@@ -21,7 +21,7 @@ public class AiRequestSigner {
         }
     }
 
-    public String sign(AiTutoringService.AiPayload payload) {
+    public String sign(com.zynctra.learning.service.AiTutoringService.AiPayload payload) {
         try {
             String timestamp = String.valueOf(Instant.now().getEpochSecond());
             String nonce = UUID.randomUUID().toString();

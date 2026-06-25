@@ -362,7 +362,7 @@ public class IncidentResponseController {
     private void validateTenantId(String tenantId) {
         if (tenantId == null || tenantId.isBlank()) throw new SecurityPolicyException("Tenant ID is required.");
         if (tenantId.length() > 64) throw new SecurityPolicyException("Tenant ID exceeds maximum length.");
-        if (!tenantId.matches("^[a-zA-Z0-9\-]+$")) throw new SecurityPolicyException("Invalid tenant ID format.");
+        if (!tenantId.matches("^[a-zA-Z0-9-]+$")) throw new SecurityPolicyException("Invalid tenant ID format.");
     }
 
     private void validateIdFormat(String id) {

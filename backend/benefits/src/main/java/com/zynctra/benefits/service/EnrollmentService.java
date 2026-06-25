@@ -3,6 +3,8 @@ package com.zynctra.benefits.service;
 import java.util.List;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,21 +17,28 @@ import com.zynctra.benefits.model.AuditAction;
 import com.zynctra.benefits.repository.EnrollmentRepository;
 import com.zynctra.benefits.security.Audited;
 import com.zynctra.benefits.validation.InputSanitizer;
-import com.zynctra.common.security.TenantContext;
+import com.zynctra.benefits.security.TenantContext;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Service
-@RequiredArgsConstructor
 public class EnrollmentService {
+
+    private static final Logger log = LoggerFactory.getLogger(EnrollmentService.class);
 
     private final EnrollmentRepository enrollmentRepository;
     private final BenefitPlanService planService;
     private final InputSanitizer sanitizer;
     private final RateLimitService rateLimitService;
     private final AuditLogService auditLogService;
+
+    public EnrollmentService(EnrollmentRepository enrollmentRepository, BenefitPlanService planService,
+                              InputSanitizer sanitizer, RateLimitService rateLimitService,
+                              AuditLogService auditLogService) {
+        this.enrollmentRepository = enrollmentRepository;
+        this.planService = planService;
+        this.sanitizer = sanitizer;
+        this.rateLimitService = rateLimitService;
+        this.auditLogService = auditLogService;
+    }
 
     @Transactional
     @PreAuthorize("hasAnyAuthority('HR_MANAGER', 'TENANT_ADMIN', 'SUPER_ADMIN')")
@@ -93,7 +102,7 @@ public class EnrollmentService {
         UUID userId = TenantContext.requireUserId();
         Enrollment enrollment = getEnrollment(enrollmentId);
         enrollment.setStatus(Enrollment.EnrollmentStatus.CANCELLED);
-        enrollment.setUpdatedBy(userId);
+        enrollment.setUpdatedBy(userId != null ? userId.toString() : null);
         enrollmentRepository.save(enrollment);
         log.info("Cancelled enrollment: {} by user: {}", enrollmentId, userId);
     }

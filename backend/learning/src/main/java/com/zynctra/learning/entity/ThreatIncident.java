@@ -50,6 +50,7 @@ public class ThreatIncident extends SecureBaseEntity {
 
     // Getters/setters
     public String getId() { return id; }
+    public void setId(String v) { this.id = v; }
     public String getUserId() { return userId; }
     public void setUserId(String v) { this.userId = v; }
     public String getDecision() { return decision; }

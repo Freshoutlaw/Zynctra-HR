@@ -3,7 +3,7 @@
 # Run from backend directory: bash health-check.sh
 
 echo "╔════════════════════════════════════════════════════════════╗"
-echo "║     ZYNCTRA BACKEND - HEALTH CHECK SCRIPT                 ║"
+echo "║     ZYNCTRA BACKEND - HEALTH CHECK SCRIPT                  ║"
 echo "╚════════════════════════════════════════════════════════════╝"
 echo ""
 

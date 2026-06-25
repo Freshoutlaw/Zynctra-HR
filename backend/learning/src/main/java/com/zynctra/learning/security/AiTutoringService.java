@@ -1,6 +1,7 @@
 package com.zynctra.learning.service;
 
 import com.zynctra.common.tenant.TenantContext;
+import com.zynctra.learning.dto.AiTutoringResponse;
 import com.zynctra.learning.entity.AiMessage;
 import com.zynctra.learning.entity.AiTutoringSession;
 import com.zynctra.learning.repository.AiTutoringSessionRepository;

@@ -51,6 +51,7 @@ public abstract class SecureBaseEntity {
     }
 
     public String getTenantId() { return tenantId; }
+    public void setTenantId(String v) { this.tenantId = v; }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
     public String getCreatedBy() { return createdBy; }

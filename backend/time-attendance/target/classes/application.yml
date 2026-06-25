@@ -1,7 +1,7 @@
 server:
-  port: 8084
+  port: 8005
   servlet:
-    context-path: /api/time-attendance
+    context-path: /time-attendance
   compression:
     enabled: true
     mime-types: application/json,application/xml,text/html,text/plain

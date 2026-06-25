@@ -24,6 +24,10 @@ public class LearningRateLimiter {
         return getLimiter("ai:" + tenantId + ":" + userId, aiConfig).acquirePermission();
     }
 
+    public boolean allowRequest(String userId, String tenantId) {
+        return allowAiRequest(userId, tenantId);
+    }
+
     public boolean allowDownload(String userId, String tenantId) {
         return getLimiter("dl:" + tenantId + ":" + userId, downloadConfig).acquirePermission();
     }

@@ -4,6 +4,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,20 +18,25 @@ import com.zynctra.benefits.model.AuditAction;
 import com.zynctra.benefits.repository.BenefitPlanRepository;
 import com.zynctra.benefits.security.Audited;
 import com.zynctra.benefits.validation.InputSanitizer;
-import com.zynctra.common.security.TenantContext;
+import com.zynctra.benefits.security.TenantContext;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Service
-@RequiredArgsConstructor
 public class BenefitPlanService {
+
+    private static final Logger log = LoggerFactory.getLogger(BenefitPlanService.class);
 
     private final BenefitPlanRepository planRepository;
     private final InputSanitizer sanitizer;
     private final RateLimitService rateLimitService;
     private final AuditLogService auditLogService;
+
+    public BenefitPlanService(BenefitPlanRepository planRepository, InputSanitizer sanitizer,
+                               RateLimitService rateLimitService, AuditLogService auditLogService) {
+        this.planRepository = planRepository;
+        this.sanitizer = sanitizer;
+        this.rateLimitService = rateLimitService;
+        this.auditLogService = auditLogService;
+    }
 
     @Transactional
     @PreAuthorize("hasAnyAuthority('HR_MANAGER', 'TENANT_ADMIN', 'SUPER_ADMIN')")
@@ -105,8 +112,8 @@ public class BenefitPlanService {
         UUID tenantId = TenantContext.requireTenantId();
         UUID userId = TenantContext.requireUserId();
         BenefitPlan plan = getPlan(planId);
-        plan.setDeletedAt(Instant.now());
-        plan.setUpdatedBy(userId);
+        plan.setDeletedAt(java.time.LocalDateTime.now());
+        plan.setUpdatedBy(userId != null ? userId.toString() : null);
         planRepository.save(plan);
         log.info("Deleted benefit plan: {} by user: {}", planId, userId);
     }

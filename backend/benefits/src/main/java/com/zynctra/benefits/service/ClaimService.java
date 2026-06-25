@@ -3,6 +3,8 @@ package com.zynctra.benefits.service;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,21 +18,28 @@ import com.zynctra.benefits.model.AuditAction;
 import com.zynctra.benefits.repository.ClaimRepository;
 import com.zynctra.benefits.security.Audited;
 import com.zynctra.benefits.validation.InputSanitizer;
-import com.zynctra.common.security.TenantContext;
+import com.zynctra.benefits.security.TenantContext;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Service
-@RequiredArgsConstructor
 public class ClaimService {
+
+    private static final Logger log = LoggerFactory.getLogger(ClaimService.class);
 
     private final ClaimRepository claimRepository;
     private final EnrollmentService enrollmentService;
     private final InputSanitizer sanitizer;
     private final RateLimitService rateLimitService;
     private final AuditLogService auditLogService;
+
+    public ClaimService(ClaimRepository claimRepository, EnrollmentService enrollmentService, 
+                        InputSanitizer sanitizer, RateLimitService rateLimitService, 
+                        AuditLogService auditLogService) {
+        this.claimRepository = claimRepository;
+        this.enrollmentService = enrollmentService;
+        this.sanitizer = sanitizer;
+        this.rateLimitService = rateLimitService;
+        this.auditLogService = auditLogService;
+    }
 
     @Transactional
     @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'HR_MANAGER', 'TENANT_ADMIN', 'SUPER_ADMIN')")
@@ -98,7 +107,7 @@ public class ClaimService {
 
         claim.setStatus(request.getNewStatus());
         claim.setAmountApproved(request.getAmountApproved());
-        claim.setUpdatedBy(userId);
+        claim.setUpdatedBy(userId != null ? userId.toString() : null);
 
         if (request.getNewStatus() == Claim.ClaimStatus.REIMBURSED) {
             claim.setReimbursementDate(LocalDate.now());

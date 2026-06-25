@@ -52,7 +52,7 @@ public class AnomalyDetectionEngine {
     }
 
     private static class UserActivityProfile {
-        private final Map<String, java.util.Queue<<Instant>> activities = new ConcurrentHashMap<>();
+        private final Map<String, java.util.Queue<Instant>> activities = new ConcurrentHashMap<>();
 
         void record(String activityType) {
             activities.computeIfAbsent(activityType, k -> new java.util.LinkedList<>())
@@ -60,7 +60,7 @@ public class AnomalyDetectionEngine {
         }
 
         int getRecentCount(String activityType, Instant since) {
-            java.util.Queue<<Instant> queue = activities.get(activityType);
+            java.util.Queue<Instant> queue = activities.get(activityType);
             if (queue == null) return 0;
             while (!queue.isEmpty() && queue.peek().isBefore(since)) {
                 queue.poll();

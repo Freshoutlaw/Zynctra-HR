@@ -48,8 +48,6 @@
         <flyway.version>9.22.3</flyway.version>
         <commons-csv.version>1.10.0</commons-csv.version>
         <itextpdf.version>5.5.13.3</itextpdf.version>
-        <!-- Disable Lombok - using manual getters/setters for Java 17 compatibility -->
-        <lombok.skip>true</lombok.skip>
         <apache-poi.version>5.2.5</apache-poi.version>
     </properties>
     
@@ -254,6 +252,13 @@
                 <configuration>
                     <source>17</source>
                     <target>17</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
         </plugins>

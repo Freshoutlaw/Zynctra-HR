@@ -13,9 +13,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
 
-@Data
 public class BenefitPlanRequest {
 
     @NotBlank
@@ -53,4 +51,85 @@ public class BenefitPlanRequest {
 
     @Future
     private LocalDate expirationDate;
+
+    // Getters and setters
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPlanCode() {
+        return planCode;
+    }
+
+    public void setPlanCode(String planCode) {
+        this.planCode = planCode;
+    }
+
+    public BenefitPlan.PlanType getType() {
+        return type;
+    }
+
+    public void setType(BenefitPlan.PlanType type) {
+        this.type = type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getCoverageDetails() {
+        return coverageDetails;
+    }
+
+    public void setCoverageDetails(String coverageDetails) {
+        this.coverageDetails = coverageDetails;
+    }
+
+    public BigDecimal getEmployerContribution() {
+        return employerContribution;
+    }
+
+    public void setEmployerContribution(BigDecimal employerContribution) {
+        this.employerContribution = employerContribution;
+    }
+
+    public BigDecimal getEmployeeContribution() {
+        return employeeContribution;
+    }
+
+    public void setEmployeeContribution(BigDecimal employeeContribution) {
+        this.employeeContribution = employeeContribution;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public LocalDate getEffectiveDate() {
+        return effectiveDate;
+    }
+
+    public void setEffectiveDate(LocalDate effectiveDate) {
+        this.effectiveDate = effectiveDate;
+    }
+
+    public LocalDate getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(LocalDate expirationDate) {
+        this.expirationDate = expirationDate;
+    }
 }

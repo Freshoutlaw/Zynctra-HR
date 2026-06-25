@@ -25,14 +25,14 @@ public class RoleController {
 
     @PostMapping
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<<Role> createRole(@Valid @RequestBody RoleDTO dto, Authentication auth) {
+    public ResponseEntity<Role> createRole(@Valid @RequestBody RoleDTO dto, Authentication auth) {
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(roleService.createRole(dto, auth.getName()));
     }
 
     @PostMapping("/{roleId}/assign/{userId}")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'SECURITY_ADMIN')")
-    public ResponseEntity<<Role> assignRole(@PathVariable String roleId,
+    public ResponseEntity<Role> assignRole(@PathVariable String roleId,
                                             @PathVariable String userId,
                                             Authentication auth) {
         if (!roleId.matches("^[a-f0-9\\-]{36}$") || !userId.matches("^[a-zA-Z0-9\\-_]{4,64}$")) {
@@ -43,7 +43,7 @@ public class RoleController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'SECURITY_ADMIN')")
-    public ResponseEntity<List<<Role>> getAllRoles() {
+    public ResponseEntity<List<Role>> getAllRoles() {
         return ResponseEntity.ok(roleService.getAllRoles());
     }
 

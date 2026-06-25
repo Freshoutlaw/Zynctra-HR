@@ -7,7 +7,7 @@ public class AiResponse {
     private boolean success;
     private String message;
     private String status;
-
+   
     public AiResponse() {
     }
 

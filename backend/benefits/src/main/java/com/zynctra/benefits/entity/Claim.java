@@ -64,14 +64,6 @@ public class Claim extends BaseEntity {
     @Column(name = "review_notes", length = 10000)
     private String reviewNotes;
 
-    @Column(name = "created_by")
-    private UUID createdBy;
-
-    @Column(name = "updated_by")
-    private UUID updatedBy;
-
-    @Column(name = "deleted_at")
-    private Instant deletedAt;
 
     public enum ClaimType {
         MEDICAL, DENTAL, VISION, PRESCRIPTION, HOSPITAL, OTHER
@@ -117,12 +109,7 @@ public class Claim extends BaseEntity {
     public void setDenialReason(String denialReason) { this.denialReason = denialReason; }
     public String getReviewNotes() { return reviewNotes; }
     public void setReviewNotes(String reviewNotes) { this.reviewNotes = reviewNotes; }
-    public UUID getCreatedBy() { return createdBy; }
-    public void setCreatedBy(UUID createdBy) { this.createdBy = createdBy; }
-    public UUID getUpdatedBy() { return updatedBy; }
-    public void setUpdatedBy(UUID updatedBy) { this.updatedBy = updatedBy; }
-    public Instant getDeletedAt() { return deletedAt; }
-    public void setDeletedAt(Instant deletedAt) { this.deletedAt = deletedAt; }
+
 
     public static Builder builder() { return new Builder(); }
 
@@ -146,8 +133,8 @@ public class Claim extends BaseEntity {
         public Builder reimbursementMethod(String m) { claim.reimbursementMethod = m; return this; }
         public Builder denialReason(String r) { claim.denialReason = r; return this; }
         public Builder reviewNotes(String n) { claim.reviewNotes = n; return this; }
-        public Builder createdBy(UUID id) { claim.createdBy = id; return this; }
-        public Builder updatedBy(UUID id) { claim.updatedBy = id; return this; }
+        public Builder createdBy(UUID id) { claim.setCreatedBy(id != null ? id.toString() : null); return this; }
+        public Builder updatedBy(UUID id) { claim.setUpdatedBy(id != null ? id.toString() : null); return this; }
         public Claim build() { return claim; }
     }
 }

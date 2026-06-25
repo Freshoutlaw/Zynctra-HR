@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 @Component
 public class AiResponseValidator {
 
-    private static final List<<Pattern> BLOCKED_PATTERNS = List.of(
+    private static final List<Pattern> BLOCKED_PATTERNS = List.of(
         Pattern.compile("(?i)(```\\s*(python|java|js|bash|sh|sql|php|rb))"),
         Pattern.compile("(?i)(sudo\\s+|rm\\s+-rf|exec\\s*\\(|eval\\s*\\()"),
         Pattern.compile("(?i)(api[_-]?key\\s*[:=]\\s*['\"]?[a-zA-Z0-9_-]{20,}['\"]?)"),
@@ -19,7 +19,7 @@ public class AiResponseValidator {
         Pattern.compile("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}") // Email (broad match)
     );
 
-    private static final List<<Pattern> PII_PATTERNS = List.of(
+    private static final List<Pattern> PII_PATTERNS = List.of(
         Pattern.compile("\\b\\d{3}-\\d{2}-\\d{4}\\b"),
         Pattern.compile("\\b\\d{4}[\\s-]?\\d{4}[\\s-]?\\d{4}[\\s-]?\\d{4}\\b"),
         Pattern.compile("\\b\\d{3}-\\d{3}-\\d{4}\\b"), // Phone

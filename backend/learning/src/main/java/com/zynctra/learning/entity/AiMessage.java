@@ -47,12 +47,14 @@ public class AiMessage extends SecureBaseEntity {
 
     // Getters/setters
     public String getId() { return id; }
+    public void setId(String v) { this.id = v; }
     public String getSessionId() { return sessionId; }
     public void setSessionId(String v) { this.sessionId = v; }
     public String getUserId() { return userId; }
     public void setUserId(String v) { this.userId = v; }
     public MessageRole getRole() { return role; }
     public void setRole(MessageRole v) { this.role = v; }
+    public void setRole(String v) { this.role = MessageRole.valueOf(v); }
     public String getContent() { return content; }
     public void setContent(String v) { this.content = v; }
     public String getAiResponse() { return aiResponse; }

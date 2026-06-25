@@ -37,13 +37,13 @@ public class ContentSecurityScanner {
         // Extension check
         if (BLOCKED_EXTENSIONS.contains(ext)) {
             SEC_LOG.warn("SECURITY_EVENT: blocked_file_extension ext={} name={}", ext, originalName);
-            return ScanResult.failed("File type not allowed: " + ext);
+            return ScanResult.createFailed("File type not allowed: " + ext);
         }
 
         // Size check
         long maxSize = isScorm ? MAX_SCORM_SIZE : MAX_FILE_SIZE;
         if (file.getSize() > maxSize) {
-            return ScanResult.failed("File exceeds maximum size of " + (maxSize / 1024 / 1024) + "MB");
+            return ScanResult.createFailed("File exceeds maximum size of " + (maxSize / 1024 / 1024) + "MB");
         }
 
         // Magic bytes check
@@ -53,13 +53,13 @@ public class ContentSecurityScanner {
             boolean valid = ALLOWED_MAGIC_BYTES.stream().anyMatch(magic::startsWith);
             if (!valid) {
                 SEC_LOG.warn("SECURITY_EVENT: invalid_file_magic magic={} name={}", magic, originalName);
-                return ScanResult.failed("Invalid file content detected");
+                return ScanResult.createFailed("Invalid file content detected");
             }
         } catch (IOException e) {
-            return ScanResult.failed("File validation failed");
+            return ScanResult.createFailed("File validation failed");
         }
 
-        return ScanResult.passed();
+        return ScanResult.createPassed();
     }
 
     private String bytesToHex(byte[] bytes) {
@@ -69,7 +69,7 @@ public class ContentSecurityScanner {
     }
 
     public record ScanResult(boolean passed, String reason) {
-        static ScanResult passed() { return new ScanResult(true, null); }
-        static ScanResult failed(String reason) { return new ScanResult(false, reason); }
+        public static ScanResult createPassed() { return new ScanResult(true, null); }
+        public static ScanResult createFailed(String reason) { return new ScanResult(false, reason); }
     }
 }

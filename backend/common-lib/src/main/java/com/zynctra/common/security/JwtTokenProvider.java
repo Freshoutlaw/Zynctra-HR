@@ -18,7 +18,7 @@ import java.util.Map;
 public class JwtTokenProvider {
     private static final Logger log = LoggerFactory.getLogger(JwtTokenProvider.class);
 
-    @Value("${security.jwt.secret:${JWT_SECRET:mysupersecretsecurekey123456789012345678901234567890}}")
+    @Value("${security.jwt.secret:${JWT_SECRET}}")
     private String jwtSecret;
 
     @Value("${security.jwt.expiration-ms:${JWT_EXPIRATION_MS:3600000}}")

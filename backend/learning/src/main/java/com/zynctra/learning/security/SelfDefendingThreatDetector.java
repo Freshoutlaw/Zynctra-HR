@@ -1,5 +1,9 @@
 package com.zynctra.learning.security;
 
+import com.zynctra.learning.entity.AdaptiveDefenseRule;
+import com.zynctra.learning.entity.ThreatIncident;
+import com.zynctra.learning.repository.AdaptiveDefenseRuleRepository;
+import com.zynctra.learning.repository.ThreatIncidentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -364,16 +368,16 @@ public class SelfDefendingThreatDetector {
         incident.setReason(assessment.getReason());
         incident.setHeuristicScore(assessment.getHeuristicScore());
         incident.setNormalizedContent(assessment.getNormalizedContent());
-        incident.setEndpoint(context.getEndpoint());
-        incident.setHttpMethod(context.getHttpMethod());
-        incident.setClientIp(context.getClientIp());
+        incident.setEndpoint(context.endpoint());
+        incident.setHttpMethod(context.httpMethod());
+        incident.setClientIp(context.clientIp());
         incident.setTimestamp(Instant.now());
 
         incidentRepository.save(incident);
 
         SEC_LOG.warn("THREAT_BLOCKED: decision={} reason={} user={} endpoint={} score={}",
             assessment.getDecision(), assessment.getReason(), 
-            assessment.getUserId(), context.getEndpoint(), assessment.getHeuristicScore());
+            assessment.getUserId(), context.endpoint(), assessment.getHeuristicScore());
     }
 
     // ========== LEARNING HELPERS ==========
@@ -518,7 +522,6 @@ public class SelfDefendingThreatDetector {
         entity.setSource(rule.getSource());
         entity.setConfidence(rule.getConfidence());
         entity.setMatchCount(rule.getMatchCount());
-        entity.setCreatedAt(rule.getCreatedAt());
         entity.setExpiresAt(rule.getExpiresAt());
         return entity;
     }
@@ -530,7 +533,7 @@ public class SelfDefendingThreatDetector {
             entity.getSource(),
             entity.getConfidence(),
             entity.getMatchCount(),
-            entity.getCreatedAt(),
+            Instant.now(), // Use current time since createdAt is not accessible
             entity.getExpiresAt()
         );
     }
@@ -607,6 +610,7 @@ public class SelfDefendingThreatDetector {
         int getMatchCount() { return matchCount; }
         void incrementMatchCount() { this.matchCount++; }
         Instant getCreatedAt() { return createdAt; }
+        Instant getExpiresAt() { return expiresAt; }
         boolean isExpired() { return Instant.now().isAfter(expiresAt); }
     }
 

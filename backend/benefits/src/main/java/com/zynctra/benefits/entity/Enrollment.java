@@ -39,14 +39,6 @@ public class Enrollment extends BaseEntity {
     @Column(name = "employer_contribution", precision = 15, scale = 2)
     private BigDecimal employerContribution;
 
-    @Column(name = "created_by")
-    private UUID createdBy;
-
-    @Column(name = "updated_by")
-    private UUID updatedBy;
-
-    @Column(name = "deleted_at")
-    private Instant deletedAt;
 
     public enum EnrollmentStatus {
         PENDING, ACTIVE, CANCELLED, EXPIRED
@@ -72,12 +64,7 @@ public class Enrollment extends BaseEntity {
     public void setEmployeeContribution(BigDecimal employeeContribution) { this.employeeContribution = employeeContribution; }
     public BigDecimal getEmployerContribution() { return employerContribution; }
     public void setEmployerContribution(BigDecimal employerContribution) { this.employerContribution = employerContribution; }
-    public UUID getCreatedBy() { return createdBy; }
-    public void setCreatedBy(UUID createdBy) { this.createdBy = createdBy; }
-    public UUID getUpdatedBy() { return updatedBy; }
-    public void setUpdatedBy(UUID updatedBy) { this.updatedBy = updatedBy; }
-    public Instant getDeletedAt() { return deletedAt; }
-    public void setDeletedAt(Instant deletedAt) { this.deletedAt = deletedAt; }
+
 
     public static Builder builder() { return new Builder(); }
 
@@ -93,8 +80,8 @@ public class Enrollment extends BaseEntity {
         public Builder dependentCount(Integer c) { enrollment.dependentCount = c; return this; }
         public Builder employeeContribution(BigDecimal v) { enrollment.employeeContribution = v; return this; }
         public Builder employerContribution(BigDecimal v) { enrollment.employerContribution = v; return this; }
-        public Builder createdBy(UUID id) { enrollment.createdBy = id; return this; }
-        public Builder updatedBy(UUID id) { enrollment.updatedBy = id; return this; }
+        public Builder createdBy(UUID id) { enrollment.setCreatedBy(id != null ? id.toString() : null); return this; }
+        public Builder updatedBy(UUID id) { enrollment.setUpdatedBy(id != null ? id.toString() : null); return this; }
         public Enrollment build() { return enrollment; }
     }
 }

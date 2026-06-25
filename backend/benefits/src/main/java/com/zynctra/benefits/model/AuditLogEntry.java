@@ -135,7 +135,7 @@ public class AuditLogEntry {
     private static void appendJsonField(StringBuilder sb, String name, String value) {
         sb.append('"');
         escapeJson(sb, name);
-        sb.append("":");
+        sb.append("\":");
         if (value == null) {
             sb.append("null");
         } else {
@@ -150,10 +150,10 @@ public class AuditLogEntry {
             char c = s.charAt(i);
             switch (c) {
                 case '"':
-                    sb.append("\\"");
+                    sb.append("\\\"");
                     break;
                 case '\\':
-                    sb.append("\\\");
+                    sb.append("\\\\");
                     break;
                 case '\b':
                     sb.append("\\b");

@@ -2,11 +2,9 @@ package com.zynctra.benefits.dto;
 
 import com.zynctra.benefits.entity.Claim;
 import jakarta.validation.constraints.*;
-import lombok.Data;
 
 import java.math.BigDecimal;
 
-@Data
 public class ClaimStatusUpdateRequest {
 
     @NotNull
@@ -21,4 +19,37 @@ public class ClaimStatusUpdateRequest {
 
     @Size(max = 2000)
     private String reviewNotes;
+
+    // Getters and setters
+    public Claim.ClaimStatus getNewStatus() {
+        return newStatus;
+    }
+
+    public void setNewStatus(Claim.ClaimStatus newStatus) {
+        this.newStatus = newStatus;
+    }
+
+    public BigDecimal getAmountApproved() {
+        return amountApproved;
+    }
+
+    public void setAmountApproved(BigDecimal amountApproved) {
+        this.amountApproved = amountApproved;
+    }
+
+    public String getDenialReason() {
+        return denialReason;
+    }
+
+    public void setDenialReason(String denialReason) {
+        this.denialReason = denialReason;
+    }
+
+    public String getReviewNotes() {
+        return reviewNotes;
+    }
+
+    public void setReviewNotes(String reviewNotes) {
+        this.reviewNotes = reviewNotes;
+    }
 }

@@ -90,7 +90,7 @@ public class RoleService {
     }
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'SECURITY_ADMIN')")
-    public List<<Role> getAllRoles() {
+    public List<Role> getAllRoles() {
         return roleRepository.findAllByTenantId(TenantContext.getCurrentTenant());
     }
 
